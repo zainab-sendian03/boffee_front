@@ -12,11 +12,10 @@ class signup extends StatefulWidget {
 class _signupState extends State<signup> {
   final username = TextEditingController();
   final age = TextEditingController();
-
   final password = TextEditingController();
   final email = TextEditingController();
   final confirmpass = TextEditingController();
-
+  bool passwordVisible = true;
   GlobalKey<FormState> formstats = GlobalKey();
   late final String? Function(String?) valid;
   validinput(String val, int max, int min) {
@@ -31,7 +30,6 @@ class _signupState extends State<signup> {
     }
   }
 
-  late bool gender;
   bool male = false;
   bool female = true;
   bool isloading = false;
@@ -46,13 +44,13 @@ class _signupState extends State<signup> {
         "user_name": username.text,
         "email": email.text,
         "password": password.text,
-        "password_confirmation": confirmpass.text,
-        "gendre_id": genderId.toString(),
+        "password confirmation": confirmpass.text,
         "age": age.text,
+        "gendre_id": genderId.toString(),
       });
       isloading = false;
-      if (response != null && response['success'] == true) {
-        print("success");
+      if (response['success'] == true) {
+        Navigator.of(context).pushNamedAndRemoveUntil("home", (route) => false);
       } else {
         print("signup fail");
       }
@@ -160,7 +158,6 @@ class _signupState extends State<signup> {
                                     if (value == true) {
                                       male = true;
                                       female = false;
-                                      gender = male;
                                     }
                                   });
                                 }),
@@ -183,7 +180,6 @@ class _signupState extends State<signup> {
                                     if (value == true) {
                                       female = true;
                                       male = false;
-                                      gender = female;
                                     }
                                   });
                                 }),
@@ -220,7 +216,22 @@ class _signupState extends State<signup> {
                         TextFormField(
                           controller: password,
                           validator: (valid) => validinput(valid!, 20, 8),
+                          obscureText: passwordVisible,
                           decoration: InputDecoration(
+                              suffixIcon: IconButton(
+                                icon: Icon(
+                                  passwordVisible
+                                      ? Icons.visibility_off
+                                      : Icons.visibility,
+                                  color: const Color(0xFF94745B),
+                                  size: 21,
+                                ),
+                                onPressed: () {
+                                  setState(() {
+                                    passwordVisible = !passwordVisible;
+                                  });
+                                },
+                              ),
                               hintText: "Password",
                               contentPadding: const EdgeInsets.symmetric(
                                   vertical: 20, horizontal: 20),
@@ -240,7 +251,22 @@ class _signupState extends State<signup> {
                         TextFormField(
                           validator: (valid) => validinput(valid!, 20, 8),
                           controller: confirmpass,
+                          obscureText: passwordVisible,
                           decoration: InputDecoration(
+                              suffixIcon: IconButton(
+                                icon: Icon(
+                                  passwordVisible
+                                      ? Icons.visibility_off
+                                      : Icons.visibility,
+                                  color: const Color(0xFF94745B),
+                                  size: 21,
+                                ),
+                                onPressed: () {
+                                  setState(() {
+                                    passwordVisible = !passwordVisible;
+                                  });
+                                },
+                              ),
                               hintText: "Confirm password",
                               contentPadding: const EdgeInsets.symmetric(
                                   vertical: 20, horizontal: 20),

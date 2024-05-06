@@ -35,42 +35,67 @@ class _loginState extends State<login> {
         "user_name": user_name.text,
         "password": password.text,
       });
-
-      print("cooooo");
       if (response['success'] == true) {
+        print("${response}");
         Navigator.of(context).pushNamedAndRemoveUntil("home", (route) => false);
       } else {
         showDialog(
+          barrierDismissible: false,
           context: context,
           builder: (context) {
             String contentText =
-                "كلمة السر او الحساب الالكتروني خطأ او الحساب غير موجود ";
+                "كلمة السر أو الحساب الالكتروني خطأ أو الحساب غير موجود \n يرجى إعادة المحاولة ";
             return AlertDialog(
+              backgroundColor: Colors.white60,
+              elevation: 0,
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(20)),
               icon: const Icon(
                 Icons.error,
                 size: 50,
-                color: Color.fromARGB(255, 235, 142, 2),
+                color: Color(0xFF94745B),
               ),
-              title: const Center(
-                child: Text(
-                  "تنبيه",
-                  style: TextStyle(
-                    fontSize: 30,
-                    color: Color.fromARGB(255, 235, 142, 2),
+              title: const Column(
+                children: [
+                  Center(
+                    child: Text(
+                      "خطأ",
+                      style: TextStyle(
+                        fontSize: 30,
+                        color: Color(0xFF5D3F2E),
+                      ),
+                    ),
                   ),
+                  Divider(
+                    color: Color(0xFF94745B),
+                    thickness: 3,
+                  )
+                ],
+              ),
+              content: Text(
+                contentText,
+                textAlign: TextAlign.center,
+                style: const TextStyle(
+                  fontSize: 15,
+                  fontWeight: FontWeight.w400,
                 ),
               ),
-              content: Text(contentText),
               actions: <Widget>[
-                TextButton(
-                  onPressed: () => Navigator.pop(context),
-                  child: const Text("Cancel",
-                      style: TextStyle(
-                        fontSize: 20,
-                        color: Color.fromARGB(255, 235, 142, 2),
-                      )),
+                Center(
+                  child: ElevatedButton(
+                    onPressed: () => Navigator.pop(context),
+                    style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFF94745B),
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(25)),
+                        padding: const EdgeInsets.only(
+                            left: 40, right: 40, top: 15, bottom: 15)),
+                    child: const Text("Cancel",
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: Colors.white,
+                        )),
+                  ),
                 ),
               ],
             );
@@ -165,74 +190,8 @@ class _loginState extends State<login> {
                           height: 60,
                         ),
                         ElevatedButton(
-                          onPressed: () {
-                            showDialog(
-                              barrierDismissible: false,
-                              context: context,
-                              builder: (context) {
-                                String contentText =
-                                    "كلمة السر أو الحساب الالكتروني خطأ أو الحساب غير موجود \n يرجى إعادة المحاولة ";
-                                return AlertDialog(
-                                  backgroundColor: Colors.white60,
-                                  elevation: 0,
-                                  shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(20)),
-                                  icon: const Icon(
-                                    Icons.error,
-                                    size: 50,
-                                    color: Color(0xFF94745B),
-                                  ),
-                                  title: const Column(
-                                    children: [
-                                      Center(
-                                        child: Text(
-                                          "خطأ",
-                                          style: TextStyle(
-                                            fontSize: 30,
-                                            color: Color(0xFF5D3F2E),
-                                          ),
-                                        ),
-                                      ),
-                                      Divider(
-                                        color: Color(0xFF94745B),
-                                        thickness: 3,
-                                      )
-                                    ],
-                                  ),
-                                  content: Text(
-                                    contentText,
-                                    textAlign: TextAlign.center,
-                                    style: TextStyle(
-                                      fontSize: 15,
-                                      fontWeight: FontWeight.w400,
-                                    ),
-                                  ),
-                                  actions: <Widget>[
-                                    Center(
-                                      child: ElevatedButton(
-                                        onPressed: () => Navigator.pop(context),
-                                        style: ElevatedButton.styleFrom(
-                                            backgroundColor:
-                                                const Color(0xFF94745B),
-                                            shape: RoundedRectangleBorder(
-                                                borderRadius:
-                                                    BorderRadius.circular(25)),
-                                            padding: const EdgeInsets.only(
-                                                left: 40,
-                                                right: 40,
-                                                top: 15,
-                                                bottom: 15)),
-                                        child: const Text("Cancel",
-                                            style: TextStyle(
-                                              fontSize: 14,
-                                              color: Colors.white,
-                                            )),
-                                      ),
-                                    ),
-                                  ],
-                                );
-                              },
-                            );
+                          onPressed: () async {
+                            await logIn();
                           },
                           style: ElevatedButton.styleFrom(
                               backgroundColor: const Color(0xFF94745B),

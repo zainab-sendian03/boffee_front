@@ -30,6 +30,7 @@ class Crud {
             responsebody['data']['token'] != null) {
           String token = responsebody['data']['token'];
           print("the token is $token");
+          print(response.body);
           return responsebody;
         } else {
           print("Error: Token not found in response");
