@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_application_test/auth/constants/linksapi.dart';
+import 'package:flutter_application_test/components/crud.dart';
 
 class signup extends StatefulWidget {
   const signup({super.key});
@@ -29,9 +31,34 @@ class _signupState extends State<signup> {
     }
   }
 
+  late bool gender;
   bool male = false;
   bool female = true;
-  //bool gender = false;
+  bool isloading = false;
+  final Crud _crud = Crud();
+  signUp() async {
+    isloading = true;
+    print("coming");
+    setState(() {});
+    if (formstats.currentState!.validate()) {
+      int genderId = male ? 1 : 2;
+      var response = await _crud.postrequest(linksignup, {
+        "user_name": username.text,
+        "email": email.text,
+        "password": password.text,
+        "password_confirmation": confirmpass.text,
+        "gendre_id": genderId.toString(),
+        "age": age.text,
+      });
+      isloading = false;
+      if (response != null && response['success'] == true) {
+        print("success");
+      } else {
+        print("signup fail");
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -69,7 +96,7 @@ class _signupState extends State<signup> {
                         Row(children: [
                           Expanded(
                             child: TextFormField(
-                              validator: (valid) => validinput(valid!, 20, 10),
+                              validator: (valid) => validinput(valid!, 10, 2),
                               controller: username,
                               decoration: InputDecoration(
                                   hintText: "User name",
@@ -125,7 +152,7 @@ class _signupState extends State<signup> {
                             Checkbox(
                                 value: male,
                                 side:
-                                    BorderSide(color: const Color(0xFF94745B)),
+                                    const BorderSide(color: Color(0xFF94745B)),
                                 shape: const CircleBorder(),
                                 activeColor: const Color(0xFF94745B),
                                 onChanged: (value) {
@@ -133,6 +160,7 @@ class _signupState extends State<signup> {
                                     if (value == true) {
                                       male = true;
                                       female = false;
+                                      gender = male;
                                     }
                                   });
                                 }),
@@ -147,7 +175,7 @@ class _signupState extends State<signup> {
                             Checkbox(
                                 shape: const CircleBorder(),
                                 side:
-                                    BorderSide(color: const Color(0xFF94745B)),
+                                    const BorderSide(color: Color(0xFF94745B)),
                                 activeColor: const Color(0xFF94745B),
                                 value: female,
                                 onChanged: (value) {
@@ -155,6 +183,7 @@ class _signupState extends State<signup> {
                                     if (value == true) {
                                       female = true;
                                       male = false;
+                                      gender = female;
                                     }
                                   });
                                 }),
@@ -169,7 +198,7 @@ class _signupState extends State<signup> {
                           height: 10,
                         ),
                         TextFormField(
-                          validator: (valid) => validinput(valid!, 20, 10),
+                          validator: (valid) => validinput(valid!, 30, 10),
                           controller: email,
                           decoration: InputDecoration(
                               hintText: "Email",
@@ -209,7 +238,7 @@ class _signupState extends State<signup> {
                           height: 20,
                         ),
                         TextFormField(
-                          validator: (valid) => validinput(valid!, 20, 10),
+                          validator: (valid) => validinput(valid!, 20, 8),
                           controller: confirmpass,
                           decoration: InputDecoration(
                               hintText: "Confirm password",
@@ -229,7 +258,9 @@ class _signupState extends State<signup> {
                           height: 60,
                         ),
                         ElevatedButton(
-                          onPressed: () async {},
+                          onPressed: () async {
+                            await signUp();
+                          },
                           style: ElevatedButton.styleFrom(
                               backgroundColor: const Color(0xFF94745B),
                               shape: RoundedRectangleBorder(

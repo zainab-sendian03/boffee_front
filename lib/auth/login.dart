@@ -13,8 +13,7 @@ class login extends StatefulWidget {
 class _loginState extends State<login> {
   final user_name = TextEditingController();
   final password = TextEditingController();
-  bool male = false;
-  bool female = false;
+
   final Crud _crud = Crud();
   GlobalKey<FormState> formstats = GlobalKey();
   late final String? Function(String?) valid;
@@ -30,13 +29,15 @@ class _loginState extends State<login> {
     }
   }
 
-  login() async {
+  logIn() async {
     if (formstats.currentState!.validate()) {
       var response = await _crud.postrequest(linklogin, {
         "user_name": user_name.text,
         "password": password.text,
       });
-      if (response is Map && response['success'] == true) {
+
+      print("cooooo");
+      if (response['success'] == true) {
         Navigator.of(context).pushNamedAndRemoveUntil("home", (route) => false);
       } else {
         showDialog(
@@ -114,7 +115,7 @@ class _loginState extends State<login> {
                           const EdgeInsets.only(right: 50, left: 50, top: 350),
                       child: Column(children: [
                         TextFormField(
-                          validator: (valid) => validinput(valid!, 20, 10),
+                          validator: (valid) => validinput(valid!, 20, 2),
                           controller: user_name,
                           decoration: InputDecoration(
                               hintText: "user_name",
@@ -135,7 +136,7 @@ class _loginState extends State<login> {
                         ),
                         TextFormField(
                           controller: password,
-                          validator: (valid) => validinput(valid!, 20, 8),
+                          validator: (valid) => validinput(valid!, 10, 8),
                           decoration: InputDecoration(
                               hintText: "Password",
                               contentPadding: const EdgeInsets.symmetric(
@@ -164,8 +165,74 @@ class _loginState extends State<login> {
                           height: 60,
                         ),
                         ElevatedButton(
-                          onPressed: () async {
-                            await login();
+                          onPressed: () {
+                            showDialog(
+                              barrierDismissible: false,
+                              context: context,
+                              builder: (context) {
+                                String contentText =
+                                    "كلمة السر أو الحساب الالكتروني خطأ أو الحساب غير موجود \n يرجى إعادة المحاولة ";
+                                return AlertDialog(
+                                  backgroundColor: Colors.white60,
+                                  elevation: 0,
+                                  shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(20)),
+                                  icon: const Icon(
+                                    Icons.error,
+                                    size: 50,
+                                    color: Color(0xFF94745B),
+                                  ),
+                                  title: const Column(
+                                    children: [
+                                      Center(
+                                        child: Text(
+                                          "خطأ",
+                                          style: TextStyle(
+                                            fontSize: 30,
+                                            color: Color(0xFF5D3F2E),
+                                          ),
+                                        ),
+                                      ),
+                                      Divider(
+                                        color: Color(0xFF94745B),
+                                        thickness: 3,
+                                      )
+                                    ],
+                                  ),
+                                  content: Text(
+                                    contentText,
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                      fontSize: 15,
+                                      fontWeight: FontWeight.w400,
+                                    ),
+                                  ),
+                                  actions: <Widget>[
+                                    Center(
+                                      child: ElevatedButton(
+                                        onPressed: () => Navigator.pop(context),
+                                        style: ElevatedButton.styleFrom(
+                                            backgroundColor:
+                                                const Color(0xFF94745B),
+                                            shape: RoundedRectangleBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(25)),
+                                            padding: const EdgeInsets.only(
+                                                left: 40,
+                                                right: 40,
+                                                top: 15,
+                                                bottom: 15)),
+                                        child: const Text("Cancel",
+                                            style: TextStyle(
+                                              fontSize: 14,
+                                              color: Colors.white,
+                                            )),
+                                      ),
+                                    ),
+                                  ],
+                                );
+                              },
+                            );
                           },
                           style: ElevatedButton.styleFrom(
                               backgroundColor: const Color(0xFF94745B),
