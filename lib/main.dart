@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_application_test/app/home.dart';
-import 'package:flutter_application_test/auth/login.dart';
-import 'package:flutter_application_test/auth/signup.dart';
-import 'package:flutter_application_test/welcomepages/pageview.dart';
-import 'package:flutter_application_test/welcomepages/splash.dart';
-import 'package:flutter_application_test/welcomepages/welcome.dart';
+import 'package:flutter_application_test/view/screens/firstpages/splash.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-void main() {
-  runApp(const MyApp());
+late SharedPreferences pref;
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  pref = await SharedPreferences.getInstance();
+
+  runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
@@ -15,17 +15,9 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return const MaterialApp(
       debugShowCheckedModeBanner: false,
-      initialRoute: "signup",
-      routes: {
-        "login": (context) => const login(),
-        "signup": (context) => const signup(),
-        "welcome": (context) => const welcome(),
-        "pview": (context) => const pageview(),
-        "home": (context) => const home(),
-        "splash": (context) => const CustomSplashScreen(),
-      },
+      home: SplashScreen(),
     );
   }
 }

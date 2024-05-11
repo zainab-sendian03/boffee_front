@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_application_test/view/screens/auth/login.dart';
+import 'package:flutter_application_test/view/screens/auth/signup.dart';
+
+import '../../../core/constants/colors.dart';
 
 class welcome extends StatefulWidget {
   const welcome({super.key});
@@ -59,13 +63,16 @@ class _welcomeState extends State<welcome> {
                                   style: ElevatedButton.styleFrom(
                                     padding: const EdgeInsets.only(
                                         top: 15, bottom: 15),
-                                    backgroundColor: const Color(0xFF94745B),
+                                    backgroundColor: Colorss.buttomColor,
                                     shape: RoundedRectangleBorder(
                                         borderRadius:
                                             BorderRadius.circular(10)),
                                   ),
                                   onPressed: () {
-                                    Navigator.of(context).pushNamed("login");
+                                    Navigator.of(context).push(
+                                      MaterialPageRoute(
+                                          builder: (context) => login()),
+                                    );
                                   },
                                   child: const Text(
                                     "Login",
@@ -97,7 +104,10 @@ class _welcomeState extends State<welcome> {
                                             width: 2.0)),
                                   ),
                                   onPressed: () {
-                                    Navigator.of(context).pushNamed("signup");
+                                    Navigator.of(context).push(
+                                      MaterialPageRoute(
+                                          builder: (context) => signup()),
+                                    );
                                   },
                                   child: const Text(
                                     "Create a new account",

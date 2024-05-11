@@ -1,18 +1,20 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_application_test/main.dart';
+import 'package:flutter_application_test/view/home.dart';
 import 'dart:async';
 
-import 'package:flutter_application_test/welcomepages/pageview.dart';
+import 'package:flutter_application_test/view/screens/firstpages/pageview.dart';
 
-class CustomSplashScreen extends StatefulWidget {
-  const CustomSplashScreen({super.key});
+class SplashScreen extends StatefulWidget {
+  const SplashScreen({super.key});
 
   @override
-  _CustomSplashScreenState createState() => _CustomSplashScreenState();
+  _SplashScreenState createState() => _SplashScreenState();
 }
 
-class _CustomSplashScreenState extends State<CustomSplashScreen>
+class _SplashScreenState extends State<SplashScreen>
     with SingleTickerProviderStateMixin {
   late AnimationController _animationController;
   late Animation<double> _animation;
@@ -34,7 +36,9 @@ class _CustomSplashScreenState extends State<CustomSplashScreen>
     Timer(const Duration(seconds: 3), () {
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (context) => const pageview()),
+        MaterialPageRoute(
+            builder: (context) =>
+                pref.getString('id') == null ? OnBoarding() : home()),
       );
     });
   }
