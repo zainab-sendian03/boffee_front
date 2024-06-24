@@ -2,7 +2,7 @@
 import 'package:curved_labeled_navigation_bar/curved_navigation_bar.dart';
 import 'package:curved_labeled_navigation_bar/curved_navigation_bar_item.dart';
 import 'package:flutter/material.dart';
-import 'package:userboffee/Core/colors.dart';
+import 'package:userboffee/Core/components/colors.dart';
 import 'package:userboffee/views/BooksUi.dart';
 import 'package:userboffee/views/Levels_Ui.dart';
 
@@ -25,7 +25,7 @@ class _CorePageState extends State<CorePage> {
   GlobalKey<CurvedNavigationBarState> _bottomNavigationKey = GlobalKey();
 
 List<Widget>Pages=[
-  quetsPage(),
+  QuetsPage(),
   BookUi(),
   Shelves_UI(),
   Levels_UI()
@@ -45,6 +45,7 @@ List<String>AppBarTitle=[
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        
         backgroundColor: Light_Brown,
         title: Text(AppBarTitle[page],style: TextStyle(color: dark_Brown),
         ),
