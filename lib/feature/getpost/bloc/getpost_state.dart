@@ -6,8 +6,10 @@ sealed class GetpostState {}
 final class GetpostInitial extends GetpostState {}
 
 final class SuccessGetPost_state extends GetpostState {
-final List<PostModel> posts;
 
+  final List<PostModel>posts;
+
+ 
   SuccessGetPost_state({required this.posts});
 
 }

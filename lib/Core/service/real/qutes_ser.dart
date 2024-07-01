@@ -2,8 +2,9 @@ import 'package:dio/dio.dart';
 import 'package:userboffee/Core/Models/basic_model.dart';
 import 'package:userboffee/Core/Models/post_model.dart';
 import 'package:userboffee/Core/config/options.dart';
+import 'package:userboffee/Core/constants/linksapi.dart';
  
-String BaseUrl = "http://localhost:8000/api/";
+String BaseUrl = "http://$ip_local:8000/api/";
  Dio dio = Dio();
 Future<ResultModel> getPosts() async {
 
@@ -11,9 +12,9 @@ Future<ResultModel> getPosts() async {
   try {
     if (response.statusCode == 200) {
       print("200 in ser getPosts");
-      List postslist = List.generate(response.data.length,
+      List<PostModel> postslist = List.generate(response.data["data"].length,
           (index) => PostModel.fromMap(response.data["data"][index]));
-      return ListOf(result: postslist);
+      return ListOf<PostModel>(result: postslist);
     } else {
       print("Error in get posts");
       return ErrorModel();

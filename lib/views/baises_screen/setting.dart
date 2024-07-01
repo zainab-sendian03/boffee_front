@@ -4,12 +4,12 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:lottie/lottie.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:userboffee/Core.dart';
-import 'package:userboffee/Core/components/colors.dart';
-import 'package:userboffee/Core/components/coponents.dart';
+import 'package:userboffee/Core/constants/colors.dart';
+import 'package:userboffee/Core/constants/components.dart';
 import 'package:userboffee/Core/config/options.dart';
 import 'package:userboffee/Core/provider/Theme_provider.dart';
 import 'package:userboffee/Core/provider/Theme_provider.dart';
-import 'package:userboffee/views/QuetsPage.dart';
+import 'package:userboffee/views/baises_screen/QuetsPage.dart';
 
 class SettingUi extends StatelessWidget {
   SettingUi({super.key});
@@ -45,7 +45,7 @@ class SettingUi extends StatelessWidget {
                 child: Text(
                   "Themes:",
                   style: TextStyle(
-                      color: dark_Brown,
+                      color: context.watch<ThemeProvider>().isDarkmode?Colors.white:dark_Brown,
                       fontSize: 20,
                       fontWeight: FontWeight.w500),
                 ),
@@ -79,14 +79,19 @@ class SettingUi extends StatelessWidget {
                 child: Text(
                   "Mode:",
                   style: TextStyle(
-                      color: dark_Brown,
+                      color: context.watch<ThemeProvider>().isDarkmode
+                      ? Colors.white
+                     : dark_Brown
+                       ,
                       fontSize: 20,
                       fontWeight: FontWeight.w500),
                 ),
               ),
               Switch(
-                 activeColor:dark_Brown,
-                 
+                  activeColor:   context.watch<ThemeProvider>().isDarkmode
+                      ? Colors.white
+                     : dark_Brown
+                       ,
                   value: context.watch<ThemeProvider>().isDarkmode,
                   onChanged: (value) {
                     context.read<ThemeProvider>().changeTheme();
@@ -98,7 +103,12 @@ class SettingUi extends StatelessWidget {
             child: Text(
               "Language:",
               style: TextStyle(
-                  color: dark_Brown, fontSize: 20, fontWeight: FontWeight.w500),
+                  color: context.watch<ThemeProvider>().isDarkmode
+                      ? Colors.white
+                     : dark_Brown
+                       ,
+                  fontSize: 20,
+                  fontWeight: FontWeight.w500),
             ),
           ),
           InkWell(
@@ -119,7 +129,10 @@ class SettingUi extends StatelessWidget {
             child: Text(
               "Font Size:",
               style: TextStyle(
-                  color: dark_Brown, fontSize: 20, fontWeight: FontWeight.w500),
+                   color: context.watch<ThemeProvider>().isDarkmode
+                      ? Colors.white
+                     : dark_Brown
+                       , fontSize: 20, fontWeight: FontWeight.w500),
             ),
           ),
 

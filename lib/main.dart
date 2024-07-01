@@ -26,11 +26,13 @@ import 'package:input_slider/input_slider.dart';
 import 'package:input_slider/input_slider_form.dart';
 import 'package:provider/provider.dart';
 import 'package:userboffee/Core.dart';
-import 'package:userboffee/Core/components/coponents.dart';
+import 'package:userboffee/Core/constants/components.dart';
 import 'package:userboffee/Core/config/options.dart';
+import 'package:userboffee/Core/provider/CoinProvider.dart';
 import 'package:userboffee/Core/provider/Theme_provider.dart';
-import 'package:userboffee/feature/setting.dart';
-import 'package:userboffee/views/QuetsPage.dart';
+import 'package:userboffee/views/baises_screen/setting.dart';
+import 'package:userboffee/views/baises_screen/QuetsPage.dart';
+import 'package:userboffee/views/firstpages/splash.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -41,15 +43,23 @@ void main() {
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return MultiBlocProvider(
+    return MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: (context)=> ThemeProvider()..initTheme())
+        ChangeNotifierProvider(create: (context)=> ThemeProvider()..initTheme()),
+        ChangeNotifierProvider(
+          create: (context) => CoinProvider(),
+        ),
+
       ],
-      child: MaterialApp(
-        debugShowCheckedModeBanner: false,
-       
-        theme: context.watch<ThemeProvider>().themedata,
-        home: CorePage()
+      child: Builder(
+        builder: (context) {
+          return MaterialApp(
+            debugShowCheckedModeBanner: false,
+           
+            theme: context.watch<ThemeProvider>().themedata,
+            home: SplashScreen()
+          );
+        }
       ),
     );
   }
