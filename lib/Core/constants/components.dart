@@ -8,7 +8,9 @@ import 'package:userboffee/Core/Models/post_model.dart';
 import 'package:userboffee/Core/constants/colors.dart';
 import 'package:userboffee/Core/constants/functions/validInput.dart';
 import 'package:userboffee/Core/service/real/qutes_ser.dart';
- TextEditingController body_controller = TextEditingController();
+
+TextEditingController body_controller = TextEditingController();
+
 class ColorContainer extends StatelessWidget {
   const ColorContainer({super.key, required this.color});
   final Color color;
@@ -89,95 +91,100 @@ class CircleIndecaterSwitch extends StatelessWidget {
 //   }
 // }
 
-
 class SearchContainer extends StatelessWidget {
   const SearchContainer({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Padding(
-        padding: const EdgeInsets.all(20),
-        child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 15),
-          decoration: BoxDecoration(
-            border: Border.all(color: const Color(0xFF5D3F2E)),
-            borderRadius: BorderRadius.circular(30),
-            color: Colors.white,
-          ),
-          child: TextFormField(
-            onTap: () {
-                   showDialog(
-                            context: context,
-                            builder: (context) {
-                              return AlertDialog(
-                                backgroundColor: biege,
-                                content: Container(
-                                  height: 290,
-                                  width: double.infinity,
+      padding: const EdgeInsets.all(20),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 15),
+        decoration: BoxDecoration(
+          border: Border.all(color: const Color(0xFF5D3F2E)),
+          borderRadius: BorderRadius.circular(30),
+          color: Colors.white,
+        ),
+        child: TextFormField(
+          onTap: () {
+            showDialog(
+                context: context,
+                builder: (context) {
+                  return AlertDialog(
+                    backgroundColor: biege,
+                    content: Container(
+                      height: 290,
+                      width: double.infinity,
+                      decoration: BoxDecoration(
+                          // color: biege,
+                          ),
+                      child: Column(
+                        children: [
+                          SizedBox(
+                              height: 200,
+                              width: 255,
+                              child: Form(
+                                child: TextFormField(
+                                    controller: body_controller,
+                                    maxLines: 5,
+                                    decoration: InputDecoration(
+                                        border: InputBorder.none,
+                                        hintMaxLines: 3,
+                                        hintText:
+                                            "write your prefered quote\n#book_name")),
+                              )),
+                          Align(
+                            alignment: Alignment(1, -0.5),
+                            child: InkWell(
+                                onTap: () async {
+                                  dynamic send_postreq = await createPostser(
+                                      PostModel(
+                                          body: body_controller.text,
+                                          user_name: "maryam"));
+                                  // ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                                },
+                                child: Container(
+                                  width: 50,
+                                  height: 28,
                                   decoration: BoxDecoration(
-                                      // color: biege,
-                                      ),
-                                  child: Column(
-                                    children: [
-                                      SizedBox(
-                                          height: 200,
-                                          width: 255,
-                                          child: Form(
-                                            child: TextFormField(
-                                                controller: body_controller,
-                                                maxLines: 5,
-                                                decoration: InputDecoration(
-                                                    border: InputBorder.none,
-                                                    hintMaxLines: 3,
-                                                    hintText:
-                                                        "write your prefered quote\n#book_name")),
-                                          )),
-                                      Align(
-                                        alignment: Alignment(1, -0.5),
-                                        child: InkWell(
-                                            onTap: () async {
-                                              dynamic send_postreq =
-                                                  await createPostser(PostModel(
-                                                      body:
-                                                          body_controller.text,
-                                                      user_name: "maryam"));
-                                                     // ScaffoldMessenger.of(context).hideCurrentSnackBar();
-                                            },
-                                            child: Container(
-                                              width: 50,
-                                              height: 28,
-                                              decoration: BoxDecoration(
-                                                gradient:LinearGradient(colors: [white,medium_Brown],begin: Alignment.bottomLeft,end: Alignment.topRight)
-                                                 , borderRadius:
-                                                      BorderRadius.circular(7),
-                                                 
-                                                  ),
-                                                  child: Text("Post",style: TextStyle(color: white,),textAlign: TextAlign.center,),
-                                            )),
-                                      )
-                                    ],
+                                    gradient: LinearGradient(
+                                        colors: [Color.fromARGB(255, 227, 222, 222), Color.fromARGB(255, 182, 159, 152),Color.fromARGB(255, 164, 138, 129),medium_Brown],
+                                        begin: Alignment.bottomLeft,
+                                        end: Alignment.topRight),
+                                    borderRadius: BorderRadius.circular(7),
                                   ),
-                                ),
-                              );
-                            });
-            },
-            decoration: InputDecoration(
-              border: InputBorder.none,
-              hintText: 'write your prefered quote',
-              hintStyle: const TextStyle(color: Color(0xFFA5A5A5)),
-              prefixIcon: IconButton(
-                  icon: const Icon(
-                    Icons.search,
-                    color: Color(0xFF5D3F2E),
-                  ),
-                  onPressed: () {}),
-            ),
+                                  child: Text(
+                                    "Post",
+                                    style: TextStyle(
+                                      color: white,
+                                    ),
+                                    textAlign: TextAlign.center,
+                                  ),
+                                )),
+                          )
+                        ],
+                      ),
+                    ),
+                  );
+                });
+          },
+          decoration: InputDecoration(
+            border: InputBorder.none,
+            hintText: 'write your prefered quote',
+            hintStyle: const TextStyle(color: Color(0xFFA5A5A5)),
+            prefixIcon: IconButton(
+                icon: const Icon(
+                  Icons.search,
+                  color: Color(0xFF5D3F2E),
+                ),
+                onPressed: () {}),
           ),
         ),
-      );
-
+      ),
+    );
   }
 }
+
 Future<dynamic> alert(
     BuildContext context, String cont, String title, String buttTxt) {
   return showDialog(
@@ -242,8 +249,6 @@ Future<dynamic> alert(
       });
 }
 
-
-
 class CustomTextFormField extends StatefulWidget {
   final String hintText;
   final TextEditingController controller;
@@ -296,7 +301,6 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
       validator: (valid) => validInput(valid!, widget.max, widget.min),
       obscureText: _visPassword,
       decoration: InputDecoration(
-        
         errorMaxLines: 2,
         suffixIcon: widget.showVisPasswordToggle
             ? IconButton(

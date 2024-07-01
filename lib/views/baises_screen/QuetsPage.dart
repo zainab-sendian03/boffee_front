@@ -99,10 +99,10 @@ class QuetsPage extends StatelessWidget {
                                       
                                       children: [
                                         Padding(
-                                          padding: const EdgeInsets.only(right: 6,left: 6),
-                                          child: IconButton(onPressed: (){}, icon: Icon(Icons.share_rounded),)
+                                          padding: const EdgeInsets.only(right: 2,left: 2),
+                                          child: IconButton(onPressed: (){}, icon: Icon(Icons.share_rounded,size: 18,),)
                                         ),
-                                        IconButton( onPressed: () {  }, icon: Icon(Icons.favorite_border),),
+                                        IconButton( onPressed: () {  }, icon: Icon(Icons.favorite_border,size: 18,),),
                                       ],
                                     ),
                                   ),
@@ -119,10 +119,10 @@ class QuetsPage extends StatelessWidget {
               );
             } else if (state is ErorrGetpost_state) {
               //  print("Error in else if");
-              return CircularProgressIndicator();
+              return Center(child: CircularProgressIndicator());
             } else {
               //   print("Excep in else ");
-              return CircularProgressIndicator();
+              return Center(child: CircularProgressIndicator());
             }
           },
         );
