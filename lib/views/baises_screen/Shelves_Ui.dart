@@ -1,4 +1,5 @@
 import 'dart:ui';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -55,7 +56,7 @@ class Shelves_UI extends StatelessWidget {
               child: Text(
                 "Reading",
                 style: TextStyle(fontSize: 22, color: white),
-              ),
+              ).tr(),
             ),
           ]),
           SizedBox(
@@ -92,7 +93,7 @@ class Shelves_UI extends StatelessWidget {
                   child: Text(
                     "Read Done",
                     style: TextStyle(fontSize: 22, color: white),
-                  ),
+                  ).tr(),
                 ),
               ],
             ),
@@ -131,7 +132,7 @@ class Shelves_UI extends StatelessWidget {
                   child: Text(
                     "Read Later",
                     style: TextStyle(fontSize: 22, color: white),
-                  ),
+                  ).tr(),
                 ),
               ],
             ),

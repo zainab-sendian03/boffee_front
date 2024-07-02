@@ -1,8 +1,10 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:curved_labeled_navigation_bar/curved_navigation_bar.dart';
 import 'package:curved_labeled_navigation_bar/curved_navigation_bar_item.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:userboffee/Core/constants/colors.dart';
 import 'package:userboffee/Core/provider/Theme_provider.dart';
 import 'package:userboffee/views/baises_screen/BooksUi.dart';
@@ -31,52 +33,89 @@ class _CorePageState extends State<CorePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        leadingWidth:150,
-        leading:Padding(
+        leadingWidth: 150,
+        leading: Padding(
           padding: const EdgeInsets.all(8.0),
           child: Container(
             width: 150,
             child: Text(
               AppBarTitle[page],
-              style: TextStyle(color: dark_Brown,fontSize: 20,fontWeight: FontWeight.w500),
-            ),
+              style: TextStyle(
+                  color: dark_Brown, fontSize: 20, fontWeight: FontWeight.w500),
+            ).tr(),
           ),
-        ) ,
+        ),
         actions: [
-          
           PopupMenuButton(
-            onSelected: (value) {
-              if(value=="value_Setting"){
-                Navigator.push(context, MaterialPageRoute(builder: (context){return SettingUi();}));
-              }
-            },
-            iconColor:dark_Brown,
-            color: biege,
+              onSelected: (value) {
+                if (value == "value_Setting") {
+                  Navigator.push(context, MaterialPageRoute(builder: (context) {
+                    return SettingUi();
+                  }));
+                }
+                if (value == "value_Contact")  {
+                  openemail();
+                }
+              },
+              iconColor: dark_Brown,
+              color: biege,
               itemBuilder: (context) => [
-                
                     PopupMenuItem(
-                        child: Row(
-                      children: [Icon(Icons.settings,color: dark_Brown,), Text("Setting",style: TextStyle(color: dark_Brown),
-                      
-                      ),],
-                    ),value: "value_Setting",),
+                      child: Row(
+                        children: [
+                          Icon(
+                            Icons.settings,
+                            color: dark_Brown,
+                          ),
+                          Text(
+                            "Setting",
+                            style: TextStyle(color: dark_Brown),
+                          ).tr(),
+                        ],
+                      ),
+                      value: "value_Setting",
+                    ),
                     PopupMenuItem(
-                        child: Row(
-                      children: [Icon(Icons.person,color: dark_Brown,), Text("My Profile",style: TextStyle(color: dark_Brown))],
+                      child: Row(
+                        children: [
+                          Icon(
+                            Icons.person,
+                            color: dark_Brown,
+                          ),
+                          Text("My Profile",
+                              style: TextStyle(color: dark_Brown)).tr()
+                        ],
+                      ),
+                      value: "value_Profile",
+                    ),
+                    PopupMenuItem(
+                      child: Row(
+                        children: [
+                          Icon(
+                            Icons.logout,
+                            color: dark_Brown,
+                          ),
+                          Text("Logout", style: TextStyle(color: dark_Brown)).tr()
+                        ],
+                      ),
+                      value: "value_Logout",
+                    ),
+                    PopupMenuItem(
+                      child: Row(
+                        children: [
+                          Icon(
+                            Icons.email,
+                            color: dark_Brown,
+                          ),
+                          Text("Contact us",
+                              style: TextStyle(color: dark_Brown)).tr()
+                        ],
+                      ),
+                      value: "value_Contact",
                     )
-                    ,value: "value_Profile",),
-                    PopupMenuItem(
-                        child: Row(
-                      children: [Icon(Icons.logout,color: dark_Brown,), Text("Logout",style: TextStyle(color: dark_Brown))],
-                    ),value: "value_Logout",),
-                     PopupMenuItem(
-                        child: Row(
-                      children: [Icon(Icons.email,color: dark_Brown,), Text("Contact us",style: TextStyle(color: dark_Brown))],
-                    ),value: "value_Contact",)
                   ])
         ],
         backgroundColor: Light_Brown,
-       
       ),
       bottomNavigationBar: CurvedNavigationBar(
         key: _bottomNavigationKey,
@@ -84,19 +123,19 @@ class _CorePageState extends State<CorePage> {
         items: [
           CurvedNavigationBarItem(
             child: Icon(Icons.home_outlined),
-            label: 'Home',
+            label: 'Home'.tr(),
           ),
           CurvedNavigationBarItem(
             child: Icon(Icons.book),
-            label: 'Books',
+            label: 'Books'.tr(),
           ),
           CurvedNavigationBarItem(
             child: Icon(Icons.shelves),
-            label: 'Shelves',
+            label: 'Shelves'.tr(),
           ),
           CurvedNavigationBarItem(
             child: Icon(Icons.add_chart),
-            label: 'Levels',
+            label: 'Levels'.tr(),
           ),
         ],
         color: Light_Brown,
@@ -113,5 +152,36 @@ class _CorePageState extends State<CorePage> {
       ),
       body: Pages[page],
     );
+  }
+}
+
+openemail() async {
+  // String? encodeQueryParameters(Map<String, String> params) {
+  //   return params.entries
+  //       .map((MapEntry<String, String> e) =>
+  //           '${Uri.encodeComponent(e.key)}=${Uri.encodeComponent(e.value)}')
+  //       .join('&');
+  // }
+
+  final Uri emailUri_maryam = Uri(
+    scheme: "mailto",
+    path: "maryamalbaba200@gmail.com",
+    // query: encodeQueryParameters(<String, String>{
+    //   'subject': 'Example Subject & Symbols are allowed!',
+    // }),
+  );
+
+  // if (  await canLaunchUrl(emailUri_maryam)) {
+  //  launchUrl(emailUri_maryam);
+
+  // } else {
+  //   throw Exception("Couldnot lunch $emailUri_maryam");
+  // }
+  try {
+    print("try in urlluncheer");
+    await launchUrl(emailUri_maryam);
+  } catch (e) {
+    print("error in url luncher contact with us");
+    print(e.toString());
   }
 }

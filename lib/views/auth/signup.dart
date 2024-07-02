@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:userboffee/Core/constants/components.dart';
 import 'package:userboffee/Core/constants/linksapi.dart';
@@ -109,9 +108,7 @@ class _signupState extends State<signup> {
                           children: [
                             Text(
                               "Gender",
-
-
-style: TextStyle(
+                              style: TextStyle(
                                   color: dark_Brown,
                                   fontSize: 19,
                                   fontWeight: FontWeight.w400),
@@ -202,8 +199,7 @@ style: TextStyle(
                                   borderRadius: BorderRadius.circular(25)),
                               padding: const EdgeInsets.only(
                                   left: 40, right: 40, top: 15, bottom: 15)),
-
-child: Text(
+                          child: Text(
                             "Sign Up",
                             style: TextStyle(fontSize: 15, color: white),
                           ),

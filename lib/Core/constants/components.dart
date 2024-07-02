@@ -1,4 +1,5 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
@@ -45,7 +46,8 @@ class LanguageContainer extends StatelessWidget {
       child: Text(
         text,
         textAlign: TextAlign.center,
-      ),
+        style: TextStyle(fontWeight: FontWeight.w800,fontSize: 17),
+      ).tr(),
     );
   }
 }
@@ -131,7 +133,7 @@ class SearchContainer extends StatelessWidget {
                                         border: InputBorder.none,
                                         hintMaxLines: 3,
                                         hintText:
-                                            "write your prefered quote\n#book_name")),
+                                            "write your prefered quote\n#book_name".tr())),
                               )),
                           Align(
                             alignment: Alignment(1, -0.5),
@@ -154,7 +156,7 @@ class SearchContainer extends StatelessWidget {
                                     borderRadius: BorderRadius.circular(7),
                                   ),
                                   child: Text(
-                                    "Post",
+                                    "Post".tr(),
                                     style: TextStyle(
                                       color: white,
                                     ),
@@ -170,7 +172,7 @@ class SearchContainer extends StatelessWidget {
           },
           decoration: InputDecoration(
             border: InputBorder.none,
-            hintText: 'write your prefered quote',
+            hintText: 'write your prefered quote'.tr(),
             hintStyle: const TextStyle(color: Color(0xFFA5A5A5)),
             prefixIcon: IconButton(
                 icon: const Icon(

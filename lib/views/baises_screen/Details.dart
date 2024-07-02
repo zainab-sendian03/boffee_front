@@ -1,14 +1,15 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:userboffee/Core/Models/detial_model.dart';
 import 'package:userboffee/Core/constants/colors.dart';
-
+import 'package:userboffee/Core/constants/linksapi.dart';
 
 class BookDetailsPage extends StatefulWidget {
-   BookDetailsPage({super.key, required this.detailModel});
-   final DetailModel detailModel;
-  
+  BookDetailsPage({super.key, required this.detailModel});
+  final DetailModel detailModel;
+
   @override
   State<BookDetailsPage> createState() => _BookDetailsPageState();
 }
@@ -53,7 +54,7 @@ class _BookDetailsPageState extends State<BookDetailsPage>
                     style: TextStyle(
                       fontSize: 17,
                       color: Colors.white,
-                    )),
+                    )).tr(),
               ),
               TextButton(
                 onPressed: () => Navigator.pop(context),
@@ -61,7 +62,7 @@ class _BookDetailsPageState extends State<BookDetailsPage>
                     style: TextStyle(
                       fontSize: 17,
                       color: Colors.brown,
-                    )),
+                    )).tr(),
               ),
             ],
           );
@@ -76,7 +77,9 @@ class _BookDetailsPageState extends State<BookDetailsPage>
 
 //,required this.detailModel
   @override
-  Widget build(BuildContext context,) {
+  Widget build(
+    BuildContext context,
+  ) {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Light_Brown,
@@ -107,39 +110,39 @@ class _BookDetailsPageState extends State<BookDetailsPage>
                   height: 200,
                   width: 150,
                   decoration: BoxDecoration(
-                    image: DecorationImage(
-                      image: NetworkImage(  "http://localhost:8000/" +
-                              widget.detailModel.cover.toString(),),
-                                fit: BoxFit.fill)
-                  ),
+                      image: DecorationImage(
+                          image: NetworkImage(
+                            "$linkservername" +
+                                widget.detailModel.cover.toString(),
+                          ),
+                          fit: BoxFit.fill)),
                 ),
               ),
-               Padding(
+              Padding(
                 padding: EdgeInsets.only(left: 15, top: 35),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
                     Text(
-                  widget.detailModel.title.toString(),    
+                      widget.detailModel.title.toString(),
                       style: TextStyle(
                           fontSize: 24.0, fontWeight: FontWeight.bold),
-                    ),
+                    ).tr(),
                     SizedBox(height: 10.0),
                     Text(
-                    widget.detailModel.author_name.toString(),
+                      widget.detailModel.author_name.toString(),
                       style: TextStyle(fontSize: 18.0),
-                    ),
+                    ).tr(),
                     SizedBox(height: 10.0),
                     Text(
-                                          widget.detailModel.total_pages.toString(),
-
+                      widget.detailModel.total_pages.toString(),
                       style: TextStyle(fontSize: 18.0),
-                    ),
+                    ).tr(),
                     SizedBox(height: 10.0),
                     Text(
                       'type',
                       style: TextStyle(fontSize: 18.0),
-                    ),
+                    ).tr(),
                   ],
                 ),
               ),
@@ -157,11 +160,10 @@ class _BookDetailsPageState extends State<BookDetailsPage>
               controller: _tabController,
               tabs: [
                 Tab(
-                  
                   child: Text(
                     'Info',
                     style: TextStyle(fontSize: 18),
-                  ),
+                  ).tr(),
                 ),
                 Center(
                   widthFactor: 2,
@@ -169,7 +171,7 @@ class _BookDetailsPageState extends State<BookDetailsPage>
                     child: Text(
                       'Reviews',
                       style: TextStyle(fontSize: 18),
-                    ),
+                    ).tr(),
                   ),
                 ),
               ],
@@ -180,12 +182,15 @@ class _BookDetailsPageState extends State<BookDetailsPage>
               controller: _tabController,
               children: [
                 Stack(
-                  
                   children: [
                     Padding(
-                      padding: const EdgeInsets.only(bottom: 135,left: 25,right: 25),
-                      child: Center(child: Text(widget. detailModel.description.toString(),
-                      style: TextStyle(fontSize: 20),)),
+                      padding: const EdgeInsets.only(
+                          bottom: 135, left: 25, right: 25),
+                      child: Center(
+                          child: Text(
+                        widget.detailModel.description.toString(),
+                        style: TextStyle(fontSize: 20),
+                      ).tr()),
                     ),
                     Padding(
                         padding: const EdgeInsets.only(
@@ -205,7 +210,7 @@ class _BookDetailsPageState extends State<BookDetailsPage>
                                 fontSize: 18,
                                 color: white,
                               ),
-                            ),
+                            ).tr(),
                           ),
                         )),
                     Padding(
@@ -214,18 +219,21 @@ class _BookDetailsPageState extends State<BookDetailsPage>
                         onPressed: () {
                           alert_report(context, TextEditingController());
                         },
-                        child: Text(        
-'Report',
+                        child: Text(
+                          'Report',
                           style: TextStyle(
                             fontSize: 18,
                             color: Colors.grey,
                           ),
-                        ),
+                        ).tr(),
                       ),
                     ),
                     Padding(
                         padding: const EdgeInsets.only(
-                            left: 200, top: 300, bottom: 70,),
+                          left: 200,
+                          top: 300,
+                          bottom: 70,
+                        ),
                         child: SizedBox(
                           width: 130,
                           height: 50,
@@ -243,7 +251,7 @@ class _BookDetailsPageState extends State<BookDetailsPage>
                                 fontSize: 16.8,
                                 color: medium_Brown,
                               ),
-                            ),
+                            ).tr(),
                           ),
                         )),
                   ],
@@ -274,7 +282,7 @@ class _BookDetailsPageState extends State<BookDetailsPage>
                         ),
                       ],
                     ),
-                 //   AddComment()
+                    //   AddComment()
                   ],
                 ),
               ],

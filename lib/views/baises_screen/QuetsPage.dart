@@ -38,25 +38,7 @@ class QuetsPage extends StatelessWidget {
                       child: ListView.builder(
                         itemCount: state.posts.length,
                         itemBuilder: (context, int index) {
-                          // return ListTile(
-                          //     contentPadding: EdgeInsets.all(17),
-                          //     isThreeLine: true,
-                          //     subtitle: Text(state.posts[index].body),
-                          //     title: Text(state.posts[index].user_name),
-                          //     trailing: SizedBox(
-                          //       height: 20,
-                          //       width: 60,
-                          //       child: Row(
-                          //         mainAxisAlignment:
-                          //             MainAxisAlignment.spaceBetween,
-                          //         children: [
-                          //           Icon(Icons.share_rounded),
-                          //           Icon(Icons.favorite_border),
-                          //         ],
-                          //       ),
-                          //     ));
-                          ////////////////===================
-                          ///
+                        
 
                       return    Padding(
                             padding: const EdgeInsets.all(8.0),

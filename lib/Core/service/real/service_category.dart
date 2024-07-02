@@ -5,10 +5,11 @@ import 'package:flutter/foundation.dart';
 import 'package:userboffee/Core/Models/basic_model.dart';
 import 'package:userboffee/Core/Models/category.dart';
 import 'package:userboffee/Core/Models/error.dart';
+import 'package:userboffee/Core/constants/linksapi.dart';
 
 abstract class categories{
   Dio dio=Dio();
-  String baseUrl='http://localhost:8000/api/types';
+  String baseUrl='${BaseUrl}types';
   late Response response;
   Future<List<ResultModel>> getAllCategories();
   Future<ResultModel> getOnecategory();

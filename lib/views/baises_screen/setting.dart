@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -31,7 +32,7 @@ class SettingUi extends StatelessWidget {
         title: Text(
           "Setting",
           style: TextStyle(color: dark_Brown),
-        ),
+        ).tr(),
       ),
       body: Column(
         mainAxisAlignment: MainAxisAlignment.start,
@@ -43,12 +44,12 @@ class SettingUi extends StatelessWidget {
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Text(
-                  "Themes:",
+                  "Themes".tr()+":",
                   style: TextStyle(
                       color: context.watch<ThemeProvider>().isDarkmode?Colors.white:dark_Brown,
                       fontSize: 20,
                       fontWeight: FontWeight.w500),
-                ),
+                ).tr(),
               ),
               InkWell(
                   onTap: () {},
@@ -77,7 +78,7 @@ class SettingUi extends StatelessWidget {
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Text(
-                  "Mode:",
+                  "Mode".tr()+":",
                   style: TextStyle(
                       color: context.watch<ThemeProvider>().isDarkmode
                       ? Colors.white
@@ -85,7 +86,7 @@ class SettingUi extends StatelessWidget {
                        ,
                       fontSize: 20,
                       fontWeight: FontWeight.w500),
-                ),
+                )
               ),
               Switch(
                   activeColor:   context.watch<ThemeProvider>().isDarkmode
@@ -101,7 +102,7 @@ class SettingUi extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: Text(
-              "Language:",
+              "Language".tr()+":",
               style: TextStyle(
                   color: context.watch<ThemeProvider>().isDarkmode
                       ? Colors.white
@@ -112,13 +113,22 @@ class SettingUi extends StatelessWidget {
             ),
           ),
           InkWell(
+            onTap: () {
+              if(context.locale.languageCode=="en"){
+                context.setLocale(Locale("ar"));
+              }
+            },
             child: Padding(
               padding: const EdgeInsets.all(8.0),
               child: LanguageContainer(text: "Arabic"),
             ),
           ),
           InkWell(
-            onTap: () {},
+            onTap: () {
+              if(context.locale.languageCode=="ar"){
+                context.setLocale(Locale("en"));
+              }
+            },
             child: Padding(
               padding: const EdgeInsets.all(8.0),
               child: LanguageContainer(text: "English"),
@@ -127,13 +137,13 @@ class SettingUi extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: Text(
-              "Font Size:",
+              "Font Size".tr()+":",
               style: TextStyle(
                    color: context.watch<ThemeProvider>().isDarkmode
                       ? Colors.white
                      : dark_Brown
                        , fontSize: 20, fontWeight: FontWeight.w500),
-            ),
+            )
           ),
 
 /////////

@@ -76,6 +76,7 @@
 //   }
 // }
 import 'package:dio/dio.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
@@ -86,6 +87,7 @@ import 'package:userboffee/Core/Models/basic_model.dart';
 import 'package:userboffee/Core/Models/category.dart';
 import 'package:userboffee/Core/Models/detial_model.dart';
 import 'package:userboffee/Core/constants/colors.dart';
+import 'package:userboffee/Core/constants/linksapi.dart';
 import 'package:userboffee/Core/service/real/get_type.dart';
 import 'package:userboffee/Core/service/real/service_category.dart';
 import 'package:userboffee/views/baises_screen/Details.dart';
@@ -135,7 +137,7 @@ class _BookUiState extends State<BookUi> {
                       },
                       decoration: InputDecoration(
                         border: InputBorder.none,
-                        hintText: 'Search',
+                        hintText: 'Search'.tr(),
                         hintStyle: const TextStyle(color: Color(0xFFA5A5A5)),
                         prefixIcon: IconButton(
                             icon: const Icon(
@@ -160,10 +162,10 @@ class _BookUiState extends State<BookUi> {
                       child: Align(
                         alignment: Alignment.centerLeft,
                         child: Text(
-                          'Most reading',
+                          'Most reading'.tr(),
                           style:
                               TextStyle(fontSize: 23, color: Color(0xFF5D3F2E)),
-                        ),
+                        ).tr(),
                       ),
                     )
                   ],
@@ -218,12 +220,12 @@ class _BookUiState extends State<BookUi> {
                           child: Padding(
                             padding: const EdgeInsets.only(bottom: 15, top: 20),
                             child: Text(
-                              'Categories',
+                              'Categories'.tr(),
                               style: TextStyle(
                                   // fontFamily: 'Imprima',
                                   fontSize: 23,
                                   color: Color(0xFF5D3F2E)),
-                            ),
+                            ).tr(),
                           ),
                         );
                       }),
@@ -249,7 +251,7 @@ class _BookUiState extends State<BookUi> {
                           child: Text(
                             temp[index].name.toString(),
                             style: TextStyle(fontSize: 18),
-                          ),
+                          ).tr(),
                         ),
                       ),
 
@@ -289,7 +291,7 @@ class _BookUiState extends State<BookUi> {
                                                   style: TextStyle(
                                                       fontSize: 14,
                                                       color: dark_Brown),
-                                                ),
+                                                ).tr(),
                                               ),
                                               Padding(
                                                 padding: const EdgeInsets.only(
@@ -302,7 +304,7 @@ class _BookUiState extends State<BookUi> {
                                                   style: TextStyle(
                                                       fontSize: 15,
                                                       color: medium_Brown),
-                                                ),
+                                                ).tr(),
                                               ),
                                             ]),
                                             width: 200,
@@ -344,7 +346,7 @@ class _BookUiState extends State<BookUi> {
                                                 decoration: BoxDecoration(
                                                   image: DecorationImage(
                                                       image: NetworkImage(
-                                                        "http://localhost:8000/" +
+                                                       " $linkservername" +
                                                             temp[index]
                                                                 .cover
                                                                 .toString(),

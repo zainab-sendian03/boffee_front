@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:userboffee/Core/Models/bookmodel_maya.dart';
@@ -34,7 +35,7 @@ class _searchpageState extends State<searchpage> {
                           Icons.search,
                           size: 30,
                         ),
-                        hintText: ('Search....'),
+                        hintText: "Search".tr(),
                         hoverColor: Color.fromARGB(255, 76, 32, 6),
                         iconColor: Color.fromARGB(255, 60, 24, 3),
                         focusColor: Color.fromARGB(255, 76, 32, 6),

@@ -1,11 +1,12 @@
 
 import 'package:dio/dio.dart';
 import 'package:userboffee/Core/Models/reading_model.dart';
+import 'package:userboffee/feature/getbooks/ser_get_books.dart';
 
 abstract class ReadingService {
   Dio dio = Dio();
  
-String baseurl = "http://localhost:8000/api/myShelf";
+String baseurl = "${BaseUrl}myShelf";
 
  late Response response;
  Future<List <ReadingModel>>getAllBook(String key);

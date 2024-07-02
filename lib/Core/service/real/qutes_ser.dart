@@ -4,7 +4,7 @@ import 'package:userboffee/Core/Models/post_model.dart';
 import 'package:userboffee/Core/config/options.dart';
 import 'package:userboffee/Core/constants/linksapi.dart';
  
-String BaseUrl = "http://$ip_local:8000/api/";
+
  Dio dio = Dio();
 Future<ResultModel> getPosts() async {
 
