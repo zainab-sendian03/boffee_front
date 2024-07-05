@@ -1,13 +1,17 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_application_test/view/screens/firstpages/splash.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter_application_test/core/config/options.dart';
+import 'package:flutter_application_test/core/provider/Theme_provider.dart';
+import 'package:flutter_application_test/views/firstpages/splash.dart';
+import 'package:flutter_application_test/views/home.dart';
+import 'package:provider/provider.dart';
+import 'core/provider/CoinProvider.dart';
 
-late SharedPreferences pref;
+String token = "2|tsg3dDjTs2dtdSG38UXbqYiPmKw9jquPmn9V7fwX";
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  pref = await SharedPreferences.getInstance();
-
-  runApp(MyApp());
+  Setup();
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
@@ -15,9 +19,21 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: SplashScreen(),
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(
+          create: (context) => CoinProvider(),
+        ),
+        ChangeNotifierProvider(
+            create: (context) => ThemeProvider()..initTheme()),
+      ],
+      child: Builder(builder: (context) {
+        return const MaterialApp(
+          //theme: context.watch<ThemeProvider>().themedata,
+          debugShowCheckedModeBanner: false,
+          home: SplashScreen(),
+        );
+      }),
     );
   }
 }

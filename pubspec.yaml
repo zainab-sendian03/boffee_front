@@ -29,14 +29,28 @@ environment:
 # versions available, run `flutter pub outdated`.
 dependencies:
   animated_text_kit: ^4.2.2
-  shared_preferences: ^2.0.0
+  awesome_snackbar_content: ^0.1.3
   cupertino_icons: ^1.0.2
+  dio: ^5.4.3+1
   easy_splash_screen: ^1.0.4
+  file_picker: ^8.0.3
   flutter:
     sdk: flutter
+  flutter_pdfview: ^1.3.2
+  flutter_rating_bar: ^4.0.1
+ 
   http: ^1.2.1
   page_view_dot_indicator: ^2.3.0
   path: ^1.9.0
+  path_provider: ^2.1.3
+  provider: ^6.1.2
+  shared_preferences: ^2.0.0
+  syncfusion_flutter_pdfviewer: ^26.1.38
+  curved_labeled_navigation_bar: ^2.0.2
+  lottie: ^3.1.2
+  input_slider: ^0.3.1
+  flutter_bloc: ^8.1.6
+  get_it: ^7.7.0
 
 dev_dependencies:
   flutter_lints: ^2.0.0
@@ -60,6 +74,13 @@ flutter:
     - asset/images/pic1.png
     - asset/images/pic2.png
     - asset/images/pic3.png
+    - asset/images/coin.png
+    - asset/images/read.png
+    - asset/images/readdone.png
+    - asset/images/reading.png
+    - asset/images/readlater.png
+    - asset/the_little_prince.pdf
+
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
   # For details regarding adding assets from package dependencies, see
@@ -70,17 +91,17 @@ flutter:
   # list giving the asset and other descriptors for the font. For
   # example:
   fonts:
-     - family: Quicksand
-       fonts:
-         - asset: asset/fonts/Quicksand-Bold.ttf
-         - asset: asset/fonts/Quicksand-Light.ttf
-           weight: 700
-     - family: OpenSans
-       fonts:
-         - asset: asset/fonts/OpenSans-Regular.ttf
-           weight: 700
+    - family: Quicksand
+      fonts:
+        - asset: asset/fonts/Quicksand-Bold.ttf
+        - asset: asset/fonts/Quicksand-Light.ttf
+          weight: 700
+    - family: OpenSans
+      fonts:
+        - asset: asset/fonts/OpenSans-Regular.ttf
+          weight: 700
   #       - asset: fonts/TrajanPro_Bold.ttf
-  #         
+  #
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/custom-fonts/#from-packages
