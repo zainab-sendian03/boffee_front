@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_application_test/core/config/options.dart';
 import 'package:flutter_application_test/core/provider/Theme_provider.dart';
 import 'package:flutter_application_test/views/firstpages/splash.dart';
-import 'package:flutter_application_test/views/home.dart';
 import 'package:provider/provider.dart';
 import 'core/provider/CoinProvider.dart';
 

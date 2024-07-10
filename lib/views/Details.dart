@@ -3,6 +3,7 @@ import 'package:flutter_application_test/core/Models/detial_model.dart';
 import 'package:flutter_application_test/core/constants/colors.dart';
 import 'package:flutter_application_test/core/constants/linksapi.dart';
 import 'package:flutter_application_test/views/AddComment.dart';
+import 'package:flutter_application_test/views/PDFviewer.dart';
 
 class BookDetailsPage extends StatefulWidget {
   const BookDetailsPage({super.key, required this.detailModel});
@@ -16,13 +17,6 @@ class _BookDetailsPageState extends State<BookDetailsPage>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
 
-//  void openPDF(BuildContext context, File file) {
-//     Navigator.of(context).push(
-//       MaterialPageRoute(
-//         builder: (context) => PDFviewer(file: file),
-//       ),
-//     );
-//   }
   Future<dynamic> alert_report(
       BuildContext context, TextEditingController noteCont) {
     return showDialog(
@@ -196,27 +190,73 @@ class _BookDetailsPageState extends State<BookDetailsPage>
                         style: const TextStyle(fontSize: 20),
                       )),
                     ),
-                    Padding(
-                        padding: const EdgeInsets.only(
-                            left: 35, bottom: 70, top: 300),
-                        child: SizedBox(
-                          width: 130,
-                          height: 50,
-                          child: ElevatedButton(
-                            style: ButtonStyle(
-                              backgroundColor: MaterialStateProperty.all<Color>(
-                                  Colors.brown),
-                            ),
-                            onPressed: () {},
-                            child: Text(
-                              'Read now',
-                              style: TextStyle(
-                                fontSize: 18,
-                                color: white,
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Padding(
+                            padding: const EdgeInsets.only(
+                                bottom: 70, top: 300, left: 20),
+                            child: SizedBox(
+                              width: 130,
+                              height: 50,
+                              child: ElevatedButton(
+                                style: ButtonStyle(
+                                  backgroundColor:
+                                      MaterialStateProperty.all<Color>(
+                                          Colors.brown),
+                                ),
+                                onPressed: () {
+                                  Navigator.of(context).push(
+                                    MaterialPageRoute(
+                                      builder: (context) => PDFviewer(
+                                        detailModel: widget.detailModel,
+                                      ),
+                                    ),
+                                  );
+                                  print("path:" + widget.detailModel.file);
+                                  print("title:" + widget.detailModel.title);
+                                  print("pages:" +
+                                      widget.detailModel.total_pages
+                                          .toString());
+                                },
+                                child: Text(
+                                  'Read now',
+                                  style: TextStyle(
+                                    fontSize: 18,
+                                    color: white,
+                                  ),
+                                ),
                               ),
+                            )),
+                        Padding(
+                            padding: const EdgeInsets.only(
+                              top: 300,
+                              right: 20,
+                              bottom: 70,
                             ),
-                          ),
-                        )),
+                            child: SizedBox(
+                              width: 130,
+                              height: 50,
+                              child: ElevatedButton(
+                                style: ButtonStyle(
+                                  backgroundColor:
+                                      MaterialStateProperty.all<Color>(
+                                          Colors.white),
+                                  side: MaterialStateProperty.all(
+                                      const BorderSide(color: Colors.brown)),
+                                ),
+                                onPressed: () {},
+                                child: Text(
+                                  'Read Later',
+                                  style: TextStyle(
+                                    fontSize: 16.8,
+                                    color: medium_Brown,
+                                  ),
+                                ),
+                              ),
+                            )),
+                      ],
+                    ),
                     Padding(
                       padding: const EdgeInsets.only(top: 375, left: 35),
                       child: TextButton(
@@ -232,32 +272,6 @@ class _BookDetailsPageState extends State<BookDetailsPage>
                         ),
                       ),
                     ),
-                    Padding(
-                        padding: const EdgeInsets.only(
-                          left: 200,
-                          top: 300,
-                          bottom: 70,
-                        ),
-                        child: SizedBox(
-                          width: 130,
-                          height: 50,
-                          child: ElevatedButton(
-                            style: ButtonStyle(
-                              backgroundColor: MaterialStateProperty.all<Color>(
-                                  Colors.white),
-                              side: MaterialStateProperty.all(
-                                  const BorderSide(color: Colors.brown)),
-                            ),
-                            onPressed: () {},
-                            child: Text(
-                              'Read Later',
-                              style: TextStyle(
-                                fontSize: 16.8,
-                                color: medium_Brown,
-                              ),
-                            ),
-                          ),
-                        )),
                   ],
                 ),
                 Stack(

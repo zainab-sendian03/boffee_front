@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_application_test/core/Models/category.dart';
 import 'package:flutter_application_test/core/Models/detial_model.dart';
 import 'package:flutter_application_test/core/constants/colors.dart';
+import 'package:flutter_application_test/core/constants/linksapi.dart';
 import 'package:flutter_application_test/core/service/real/get_type.dart';
 import 'package:flutter_application_test/core/service/real/service_category.dart';
 import 'package:flutter_application_test/views/Details.dart';
@@ -110,6 +111,7 @@ class _BookUiState extends State<BookUi> {
                                     description: 'description',
                                     cover: 'cover',
                                     total_pages: 23,
+                                    file: '',
                                   ),
                                 ),
                               ),
@@ -262,7 +264,7 @@ class _BookUiState extends State<BookUi> {
                                                 decoration: BoxDecoration(
                                                   image: DecorationImage(
                                                       image: NetworkImage(
-                                                        "http://localhost:8000/${temp[index].cover}",
+                                                        "http://$ip_Zainab:8000/${temp[index].cover}",
                                                       ),
                                                       fit: BoxFit.fill),
                                                   borderRadius:

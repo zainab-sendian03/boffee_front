@@ -8,3 +8,4 @@ String linksignup = "$linkservername/api/register";
 String linklogin = "$linkservername/api/login";
 
 String linkrating = "$linkservername/api/rate";
+String linkgetpath = "$linkservername/api/book/2";

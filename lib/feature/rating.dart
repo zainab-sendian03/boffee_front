@@ -1,8 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_application_test/core/constants/linksapi.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
-
-import '../core/service/real/crud.dart';
 
 class rating extends StatefulWidget {
   final ValueChanged<double> onRatingSelected;
@@ -28,27 +25,8 @@ class _ratingState extends State<rating> {
   }
 
   TextEditingController review_con = TextEditingController();
-  final Crud _crud = Crud();
   GlobalKey<FormState> formstats = GlobalKey();
   late final String? Function(String?) valid;
-
-  Rate() async {
-    try {
-      var response = await _crud.postrequest(linkrating, {
-        //"book_id": user_name.text,
-        "rate": _rating,
-      });
-      if (response is Map && response['success'] == true) {
-        // Navigator.of(context).push(
-        //   MaterialPageRoute(builder: (context) => const home()),
-        // );
-      } else {
-        print("fail");
-      }
-    } catch (e) {
-      print("ERROR $e");
-    }
-  }
 
   @override
   Widget build(BuildContext context) {

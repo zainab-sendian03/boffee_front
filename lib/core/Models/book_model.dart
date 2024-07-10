@@ -5,6 +5,7 @@ class BookModel {
   String title;
   String cover;
   String author_name;
+
   BookModel({
     required this.id,
     required this.title,

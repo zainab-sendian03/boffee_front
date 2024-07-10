@@ -24,13 +24,20 @@ class _loginState extends State<login> {
   final Crud _crud = Crud();
   GlobalKey<FormState> formstats = GlobalKey();
   late final String? Function(String?) valid;
+  bool isLoading = false;
 
   logIn() async {
+    setState(() {
+      isLoading = true;
+    });
     if (formstats.currentState!.validate()) {
       try {
         var response = await _crud.postrequest(linklogin, {
           "user_name": user_name.text,
           "password": password.text,
+        });
+        setState(() {
+          isLoading = false;
         });
         if (response is Map && response['success'] == true) {
           pref.setString("id", response['data']['id'].toString());
@@ -49,6 +56,10 @@ class _loginState extends State<login> {
       } catch (e) {
         print("ERROR $e");
       }
+    } else {
+      setState(() {
+        isLoading = false;
+      });
     }
   }
 
@@ -112,7 +123,7 @@ class _loginState extends State<login> {
                             },
                             child: Padding(
                               padding:
-                                  const EdgeInsets.only(left: 157, bottom: 10),
+                                  const EdgeInsets.only(left: 130, bottom: 10),
                               child: Text(
                                 "Forget password?",
                                 style:
@@ -124,7 +135,7 @@ class _loginState extends State<login> {
                         ),
                         ElevatedButton(
                           onPressed: () async {
-                            await logIn();
+                            logIn();
                           },
                           style: ElevatedButton.styleFrom(
                               backgroundColor: medium_Brown,
@@ -164,6 +175,16 @@ class _loginState extends State<login> {
                             ))
                       ])))
             ])),
+            if (isLoading)
+              Padding(
+                padding: EdgeInsets.only(top: 670),
+                child: Center(
+                  child: CircularProgressIndicator(
+                    backgroundColor: Light_Brown,
+                    color: dark_Brown,
+                  ),
+                ),
+              ),
           ],
         ));
   }

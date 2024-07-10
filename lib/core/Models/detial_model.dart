@@ -7,12 +7,15 @@ class DetailModel {
   String description;
   String cover;
   num total_pages;
+  String file;
+
   DetailModel({
     required this.id,
     required this.title,
     required this.author_name,
     required this.description,
     required this.cover,
+    required this.file,
     required this.total_pages,
   });
 
@@ -31,19 +34,20 @@ class DetailModel {
       description: description ?? this.description,
       cover: cover ?? this.cover,
       total_pages: total_pages ?? this.total_pages,
+      file: file,
     );
   }
 
   Map<String, dynamic> toMap() {
     final result = <String, dynamic>{};
-  
+
     result.addAll({'id': id});
     result.addAll({'title': title});
     result.addAll({'author_name': author_name});
     result.addAll({'description': description});
     result.addAll({'cover': cover});
     result.addAll({'total_pages': total_pages});
-  
+
     return result;
   }
 
@@ -55,12 +59,14 @@ class DetailModel {
       description: map['description'] ?? '',
       cover: map['cover'] ?? '',
       total_pages: map['total_pages'] ?? '',
+      file: map['file'],
     );
   }
 
   String toJson() => json.encode(toMap());
 
-  factory DetailModel.fromJson(String source) => DetailModel.fromMap(json.decode(source));
+  factory DetailModel.fromJson(String source) =>
+      DetailModel.fromMap(json.decode(source));
 
   @override
   String toString() {
@@ -70,23 +76,23 @@ class DetailModel {
   @override
   bool operator ==(Object other) {
     if (identical(this, other)) return true;
-  
+
     return other is DetailModel &&
-      other.id == id &&
-      other.title == title &&
-      other.author_name == author_name &&
-      other.description == description &&
-      other.cover == cover &&
-      other.total_pages == total_pages;
+        other.id == id &&
+        other.title == title &&
+        other.author_name == author_name &&
+        other.description == description &&
+        other.cover == cover &&
+        other.total_pages == total_pages;
   }
 
   @override
   int get hashCode {
     return id.hashCode ^
-      title.hashCode ^
-      author_name.hashCode ^
-      description.hashCode ^
-      cover.hashCode ^
-      total_pages.hashCode;
+        title.hashCode ^
+        author_name.hashCode ^
+        description.hashCode ^
+        cover.hashCode ^
+        total_pages.hashCode;
   }
 }

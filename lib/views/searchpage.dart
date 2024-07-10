@@ -61,15 +61,17 @@ class _searchpageState extends State<searchpage> {
                                       context,
                                       MaterialPageRoute(
                                           builder: (context) => BookDetailsPage(
-                                              detailModel: DetailModel(
-                                                  id: temp[index].id,
-                                                  title: temp[index].title,
-                                                  author_name:
-                                                      temp[index].toString(),
-                                                  description:
-                                                      temp[index].toString(),
-                                                  cover: temp[index].toString(),
-                                                  total_pages: 20))));
+                                                  detailModel: DetailModel(
+                                                id: temp[index].id,
+                                                title: temp[index].title,
+                                                author_name:
+                                                    temp[index].toString(),
+                                                description:
+                                                    temp[index].toString(),
+                                                cover: temp[index].toString(),
+                                                total_pages: 20,
+                                                file: '',
+                                              ))));
                                 },
                                 title: Text(temp[index].title),
                               )

@@ -117,7 +117,7 @@ class _OnBoardingState extends State<OnBoarding> {
               ),
             ),
             Padding(
-              padding: const EdgeInsets.only(top: 650, left: 330),
+              padding: const EdgeInsets.only(top: 650, left: 300),
               child: TextButton(
                 onPressed: () {
                   if (currentIn < 2)
