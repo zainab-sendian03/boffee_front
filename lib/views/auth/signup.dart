@@ -39,7 +39,7 @@ class _signupState extends State<signup> {
         Navigator.of(context).push(
           MaterialPageRoute(builder: (context) => const login()),
         );
-      } else if (confirmpass != password) {
+      } else if (confirmpass.text != password.text) {
         alert(formstats.currentContext!,
             "Password does not match. Please re-type again.", "Wrong", "Close");
       } else {

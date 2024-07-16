@@ -13,3 +13,7 @@ Color dark_Brown=Color(0xff5D3F2E);
 Color medium_Brown=Color(0xff94745B);
 Color biege=Color(0xffFFF8F1);
 Color offwhite= Color(0xffFFF8F1);
+Color grey=Colors.grey;
+Color rose=Color.fromARGB(255, 241, 205, 227);
+Color green=Color.fromARGB(255, 193, 230, 194);
+Color babyblue= Color.fromARGB(255, 170, 194, 213);

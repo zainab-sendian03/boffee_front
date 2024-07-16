@@ -56,6 +56,9 @@ dependencies:
   syncfusion_flutter_pdfviewer: ^26.1.39
   url_launcher: ^6.3.0
   easy_localization: ^3.0.7
+  universal_io: ^2.2.2
+  share_plus: ^9.0.0
+  connectivity_plus: ^6.0.3
 
 dev_dependencies:
   flutter_test:
@@ -89,7 +92,11 @@ flutter:
     - asset/images/pic3.png
     - asset/images/coin.png
     - asset/images/read.png
+    - asset/images/readlater.png
+    - asset/images/reading.png
+    - asset/images/readdone.png
     - asset/translate/
+    - asset/images/nointernet.png
   #   - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see

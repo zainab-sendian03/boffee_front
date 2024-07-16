@@ -5,8 +5,11 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:userboffee/Core/config/options.dart';
 import 'package:userboffee/Core/constants/colors.dart';
 import 'package:userboffee/Core/provider/Theme_provider.dart';
+import 'package:userboffee/Core/service/real/logout.dart';
+import 'package:userboffee/views/auth/signup.dart';
 import 'package:userboffee/views/baises_screen/BooksUi.dart';
 import 'package:userboffee/views/baises_screen/Levels_Ui.dart';
 
@@ -47,14 +50,24 @@ class _CorePageState extends State<CorePage> {
         ),
         actions: [
           PopupMenuButton(
-              onSelected: (value) {
+              onSelected: (value) async {
                 if (value == "value_Setting") {
                   Navigator.push(context, MaterialPageRoute(builder: (context) {
                     return SettingUi();
                   }));
                 }
-                if (value == "value_Contact")  {
+                if (value == "value_Contact") {
                   openemail();
+                }
+                if (value == "value_Logout") {
+                  bool res = await logout();
+                  print("res logout");
+                  if (res) {
+                     print("res logout is true");
+                    Navigator.push(context,MaterialPageRoute(builder: (context)=>signup()) );
+                    pref.clear();
+                     print("\pref has cleared");
+                  }
                 }
               },
               iconColor: dark_Brown,
@@ -83,7 +96,8 @@ class _CorePageState extends State<CorePage> {
                             color: dark_Brown,
                           ),
                           Text("My Profile",
-                              style: TextStyle(color: dark_Brown)).tr()
+                                  style: TextStyle(color: dark_Brown))
+                              .tr()
                         ],
                       ),
                       value: "value_Profile",
@@ -95,7 +109,8 @@ class _CorePageState extends State<CorePage> {
                             Icons.logout,
                             color: dark_Brown,
                           ),
-                          Text("Logout", style: TextStyle(color: dark_Brown)).tr()
+                          Text("Logout", style: TextStyle(color: dark_Brown))
+                              .tr()
                         ],
                       ),
                       value: "value_Logout",
@@ -108,14 +123,16 @@ class _CorePageState extends State<CorePage> {
                             color: dark_Brown,
                           ),
                           Text("Contact us",
-                              style: TextStyle(color: dark_Brown)).tr()
+                                  style: TextStyle(color: dark_Brown))
+                              .tr()
                         ],
                       ),
                       value: "value_Contact",
                     )
                   ])
         ],
-        backgroundColor: Light_Brown,
+        //!  /////////////////Edit here
+        backgroundColor: context.watch<ThemeProvider>().newcolor,
       ),
       bottomNavigationBar: CurvedNavigationBar(
         key: _bottomNavigationKey,
@@ -137,8 +154,8 @@ class _CorePageState extends State<CorePage> {
             child: Icon(Icons.add_chart),
             label: 'Levels'.tr(),
           ),
-        ],
-        color: Light_Brown,
+        ],    //context.watch<ThemeProvider>().newcolor,
+        color: context.watch<ThemeProvider>().newcolor,
         buttonBackgroundColor: medium_Brown,
         backgroundColor: no_color,
         animationCurve: Curves.linear,

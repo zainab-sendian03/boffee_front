@@ -22,7 +22,8 @@ class _SplashScreenState extends State<SplashScreen>
 
   @override
   void initState() {
-    super.initState();
+    //!maryam has update  here
+    if (mounted) super.initState();
     _animationController = AnimationController(
       vsync: this,
       duration: const Duration(seconds: 3),
@@ -31,63 +32,62 @@ class _SplashScreenState extends State<SplashScreen>
       parent: _animationController,
       curve: Curves.bounceOut,
     );
-
-    _animationController.forward();
+//!maryam has update here
+    if (mounted) _animationController.forward();
 
     Timer(const Duration(seconds: 3), () {
-      Navigator.pushReplacement(
+      Navigator.push(
         context,
         MaterialPageRoute(
             builder: (context) =>
-                pref.getString('id') == null ? OnBoarding() : CorePage()),
+                pref.getString('token') == null ? OnBoarding() : CorePage()),
       );
     });
   }
 
   @override
   void dispose() {
-    _animationController.dispose();
-    super.dispose();
+    //! maryam has update this magic
+    if (mounted) _animationController.dispose();
+   if (mounted) super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Stack(
-        children: [
-          Positioned.fill(
-            child: Image.asset(
-              bg,
-              fit: BoxFit.fill,
-            ),
+    return Stack(
+      children: [
+        Positioned.fill(
+          child: Image.asset(
+            bg,
+            fit: BoxFit.fill,
           ),
-          Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                ScaleTransition(
-                    scale: _animation, child: Image.asset(logo, width: 100)),
-                FadeTransition(
-                  opacity: _animation,
-                  child: Padding(
-                    padding: EdgeInsets.only(top: 20),
-                    child: Text(
-                      "Boffee",
-                      style: TextStyle(
-                        letterSpacing: 8,
-                        fontSize: 30,
-                        fontFamily: "Quicksand",
-                        color: dark_Brown,
-                        fontStyle: FontStyle.italic,
-                      ),
+        ),
+        Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              ScaleTransition(
+                  scale: _animation, child: Image.asset(logo, width: 100)),
+              FadeTransition(
+                opacity: _animation,
+                child: Padding(
+                  padding: EdgeInsets.only(top: 20),
+                  child: Text(
+                    "Boffee",
+                    style: TextStyle(
+                      letterSpacing: 8,
+                      fontSize: 30,
+                      fontFamily: "Quicksand",
+                      color: dark_Brown,
+                      fontStyle: FontStyle.italic,
                     ),
                   ),
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 }

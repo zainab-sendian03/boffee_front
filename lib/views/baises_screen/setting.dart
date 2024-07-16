@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:lottie/lottie.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:userboffee/Core.dart';
 import 'package:userboffee/Core/constants/colors.dart';
@@ -38,40 +39,57 @@ class SettingUi extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            // mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Text(
-                  "Themes".tr()+":",
-                  style: TextStyle(
-                      color: context.watch<ThemeProvider>().isDarkmode?Colors.white:dark_Brown,
-                      fontSize: 20,
-                      fontWeight: FontWeight.w500),
-                ).tr(),
-              ),
-              InkWell(
-                  onTap: () {},
-                  child: ColorContainer(
-                    color: Color.fromARGB(255, 218, 172, 187),
-                  )),
-              InkWell(
-                  onTap: () {},
-                  child: ColorContainer(
-                    color: const Color.fromARGB(255, 152, 200, 154),
-                  )),
-              InkWell(
-                  onTap: () {},
-                  child: ColorContainer(
-                    color: Color.fromARGB(255, 170, 194, 213),
-                  )),
-              InkWell(
-                  onTap: () {},
-                  child: ColorContainer(
-                    color: Colors.grey,
-                  )),
-            ],
+          SizedBox(
+            width: double.infinity,
+            child: Row(
+              // mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Text(
+                    "Themes".tr()+":",
+                    style: TextStyle(
+                        color: context.watch<ThemeProvider>().isDarkmode?Colors.white:dark_Brown,
+                        fontSize: 20,
+                        fontWeight: FontWeight.w500),
+                  ).tr(),
+                ),
+                InkWell(
+                    onTap: () {
+                      Provider.of<ThemeProvider>(context,listen: false).changecolor(rose);
+                      getIt.get<SharedPreferences>().setString("themecolor", "rose");
+                    },
+                    child: ColorContainer(
+                      color:  rose
+                      //context.watch<ThemeProvider>().newcolor,
+                     
+                   
+                    )),
+                InkWell(
+                    onTap: () {
+                      Provider.of<ThemeProvider>(context,listen: false).changecolor(green);
+                      getIt.get<SharedPreferences>().setString("themecolor", "green");
+                    },
+                    child: ColorContainer(
+                      color:green
+                    )),
+                InkWell(
+                    onTap: () {
+                      Provider.of<ThemeProvider>(context,listen: false).changecolor(babyblue);
+                      getIt.get<SharedPreferences>().setString("themecolor", "babyblue");
+                    },
+                    child: ColorContainer(
+                      color: babyblue
+                    )),
+                InkWell(
+                    onTap: () {
+                      Provider.of<ThemeProvider>(context,listen: false).changecolor(grey);
+                    },
+                    child: ColorContainer(
+                      color:grey,
+                    )),
+              ],
+            ),
           ),
           Row(
             children: [
@@ -80,7 +98,7 @@ class SettingUi extends StatelessWidget {
                 child: Text(
                   "Mode".tr()+":",
                   style: TextStyle(
-                      color: context.watch<ThemeProvider>().isDarkmode
+                      color: context.watch<ThemeProvider>().isDarkmode!
                       ? Colors.white
                      : dark_Brown
                        ,
@@ -89,13 +107,13 @@ class SettingUi extends StatelessWidget {
                 )
               ),
               Switch(
-                  activeColor:   context.watch<ThemeProvider>().isDarkmode
+                  activeColor:   context.watch<ThemeProvider>().isDarkmode!
                       ? Colors.white
                      : dark_Brown
                        ,
-                  value: context.watch<ThemeProvider>().isDarkmode,
+                  value: context.watch<ThemeProvider>().isDarkmode!,
                   onChanged: (value) {
-                    context.read<ThemeProvider>().changeTheme();
+                     context.read<ThemeProvider>().changeTheme();
                   })
             ],
           ),
@@ -104,7 +122,7 @@ class SettingUi extends StatelessWidget {
             child: Text(
               "Language".tr()+":",
               style: TextStyle(
-                  color: context.watch<ThemeProvider>().isDarkmode
+                  color: context.watch<ThemeProvider>().isDarkmode!
                       ? Colors.white
                      : dark_Brown
                        ,
@@ -117,6 +135,8 @@ class SettingUi extends StatelessWidget {
               if(context.locale.languageCode=="en"){
                 context.setLocale(Locale("ar"));
               }
+              //Todo:maybe wrong
+                  getIt.get<SharedPreferences>().setString("lan", "ar");
             },
             child: Padding(
               padding: const EdgeInsets.all(8.0),
@@ -127,24 +147,18 @@ class SettingUi extends StatelessWidget {
             onTap: () {
               if(context.locale.languageCode=="ar"){
                 context.setLocale(Locale("en"));
+                
+
               }
+              //ToDo:maybe wrong becase of back or from me
+                  getIt.get<SharedPreferences>().setString("lan", "en");
             },
             child: Padding(
               padding: const EdgeInsets.all(8.0),
               child: LanguageContainer(text: "English"),
             ),
           ),
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Text(
-              "Font Size".tr()+":",
-              style: TextStyle(
-                   color: context.watch<ThemeProvider>().isDarkmode
-                      ? Colors.white
-                     : dark_Brown
-                       , fontSize: 20, fontWeight: FontWeight.w500),
-            )
-          ),
+         
 
 /////////
         ],

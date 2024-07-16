@@ -26,6 +26,7 @@ class _loginState extends State<login> {
   final Crud _crud = Crud();
   GlobalKey<FormState> formstats = GlobalKey();
   late final String? Function(String?) valid;
+// String accesToken = getit.get<SharedPreferences>().getString('token') ?? '';
 
   logIn() async {
     if (formstats.currentState!.validate()) {
@@ -38,6 +39,8 @@ class _loginState extends State<login> {
           pref.setString("id", response['data']['id'].toString());
           pref.setString("user_name", response['data']['user_name']);
           pref.setString("password", response['data']['password']);
+          pref.setString("token", response['data']['token']);
+
           Navigator.of(context).push(
             MaterialPageRoute(builder: (context) => const CorePage()),
           );
@@ -109,7 +112,7 @@ class _loginState extends State<login> {
                             onPressed: () {
                               Navigator.of(context).push(
                                 MaterialPageRoute(
-                                  builder: (context) => const mailadd()),
+                                    builder: (context) => const mailadd()),
                               );
                             },
                             child: Padding(

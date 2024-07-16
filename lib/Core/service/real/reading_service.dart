@@ -1,6 +1,8 @@
 
 import 'package:dio/dio.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:userboffee/Core/Models/reading_model.dart';
+import 'package:userboffee/Core/config/options.dart';
 import 'package:userboffee/feature/getbooks/ser_get_books.dart';
 
 abstract class ReadingService {
@@ -37,7 +39,9 @@ String token = "2|tsg3dDjTs2dtdSG38UXbqYiPmKw9jquPmn9V7fwX";
       },
       options: Options(
         headers: {
-          "Authorization":"Bearer $token"
+          "Authorization":"Bearer $token",
+            "Language_Code":
+          getIt.get<SharedPreferences>().getString("lan")
         }
       )
       );

@@ -3,12 +3,15 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:lottie/lottie.dart';
 import 'package:userboffee/Core/Models/post_model.dart';
 
 import 'package:userboffee/Core/constants/colors.dart';
 import 'package:userboffee/Core/constants/functions/validInput.dart';
 import 'package:userboffee/Core/service/real/qutes_ser.dart';
+import 'package:userboffee/feature/addpost_bloc/addPost/addpost_bloc.dart';
+import 'package:userboffee/feature/getpost/bloc/getpost_bloc.dart';
 
 TextEditingController body_controller = TextEditingController();
 
@@ -19,8 +22,8 @@ class ColorContainer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: EdgeInsets.all(10),
-      width: 40,
+      margin: EdgeInsets.all(7),
+      width: MediaQuery.of(context).size.width*0.1,
       height: 40,
       decoration: BoxDecoration(
         color: color,
@@ -46,7 +49,7 @@ class LanguageContainer extends StatelessWidget {
       child: Text(
         text,
         textAlign: TextAlign.center,
-        style: TextStyle(fontWeight: FontWeight.w800,fontSize: 17),
+        style: TextStyle(fontWeight: FontWeight.w800, fontSize: 17),
       ).tr(),
     );
   }
@@ -109,64 +112,101 @@ class SearchContainer extends StatelessWidget {
         ),
         child: TextFormField(
           onTap: () {
+            BuildContext? dialogContext;
             showDialog(
                 context: context,
                 builder: (context) {
-                  return AlertDialog(
-                    backgroundColor: biege,
-                    content: Container(
-                      height: 290,
-                      width: double.infinity,
-                      decoration: BoxDecoration(
-                          // color: biege,
+                  return BlocProvider(
+                    create: (context) => AddpostBloc(),
+                    child: Builder(builder: (context) {
+                      return AlertDialog(
+                        backgroundColor: biege,
+                        content: BlocListener<AddpostBloc, AddpostState>(
+                          listener: (context, state) {
+                          if (state is Succuess_createpostState) {
+                            Navigator.pop(context);
+                            context.read<GetpostBloc>().add(GettingPostEvent());
+                          }
+                          },
+                          child: Container(
+                            height: 290,
+                            width: double.infinity,
+                            decoration: BoxDecoration(
+                                // color: biege,
+                                ),
+                            child: Column(
+                              children: [
+                                SizedBox(
+                                    height: 200,
+                                    width: 255,
+                                    child: Form(
+                                      child: TextFormField(
+                                          controller: body_controller,
+                                          maxLines: 5,
+                                          decoration: InputDecoration(
+                                              border: InputBorder.none,
+                                              hintMaxLines: 3,
+                                              hintText:
+                                                  "write your prefered quote\n#book_name"
+                                                      .tr())),
+                                    )),
+                                Align(
+                                  alignment: Alignment(1, -0.5),
+                                  // child: BlocListener<GetpostBloc, GetpostState>(
+                                  //   listener: (context, state) {
+                                  //   if(state is  SuccessGetPost_state){
+                                  //    if(state is Succuess_createpostState){state.posts.length++;}
+                                  //   }
+                                  // },
+                                  child: InkWell(
+                                      onTap: () {
+                                        context.read<AddpostBloc>().add(
+                                              createpostEvent(
+                                                post: PostModel(
+                                                    body: body_controller.text,
+                                                    user_name: "maryam"),
+                                              ),
+                                            );
+
+                                        //  Navigator.pop(dialogContext);
+                                        // Navigator.pop(context);
+                                        // ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                                      },
+                                      child: Container(
+                                        width: 50,
+                                        height: 28,
+                                        decoration: BoxDecoration(
+                                          gradient: LinearGradient(
+                                              colors: [
+                                                Color.fromARGB(
+                                                    255, 227, 222, 222),
+                                                Color.fromARGB(
+                                                    255, 182, 159, 152),
+                                                Color.fromARGB(
+                                                    255, 164, 138, 129),
+                                                medium_Brown
+                                              ],
+                                              begin: Alignment.bottomLeft,
+                                              end: Alignment.topRight),
+                                          borderRadius:
+                                              BorderRadius.circular(7),
+                                        ),
+                                        child: Text(
+                                          "Post".tr(),
+                                          style: TextStyle(
+                                            color: white,
+                                          ),
+                                          textAlign: TextAlign.center,
+                                        ),
+                                      )),
+                                  //  ),
+                                ),
+                              ],
+                            ),
                           ),
-                      child: Column(
-                        children: [
-                          SizedBox(
-                              height: 200,
-                              width: 255,
-                              child: Form(
-                                child: TextFormField(
-                                    controller: body_controller,
-                                    maxLines: 5,
-                                    decoration: InputDecoration(
-                                        border: InputBorder.none,
-                                        hintMaxLines: 3,
-                                        hintText:
-                                            "write your prefered quote\n#book_name".tr())),
-                              )),
-                          Align(
-                            alignment: Alignment(1, -0.5),
-                            child: InkWell(
-                                onTap: () async {
-                                  dynamic send_postreq = await createPostser(
-                                      PostModel(
-                                          body: body_controller.text,
-                                          user_name: "maryam"));
-                                  // ScaffoldMessenger.of(context).hideCurrentSnackBar();
-                                },
-                                child: Container(
-                                  width: 50,
-                                  height: 28,
-                                  decoration: BoxDecoration(
-                                    gradient: LinearGradient(
-                                        colors: [Color.fromARGB(255, 227, 222, 222), Color.fromARGB(255, 182, 159, 152),Color.fromARGB(255, 164, 138, 129),medium_Brown],
-                                        begin: Alignment.bottomLeft,
-                                        end: Alignment.topRight),
-                                    borderRadius: BorderRadius.circular(7),
-                                  ),
-                                  child: Text(
-                                    "Post".tr(),
-                                    style: TextStyle(
-                                      color: white,
-                                    ),
-                                    textAlign: TextAlign.center,
-                                  ),
-                                )),
-                          )
-                        ],
-                      ),
-                    ),
+                        ),
+                      );
+                    }),
                   );
                 });
           },

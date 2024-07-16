@@ -112,7 +112,7 @@ class _BookDetailsPageState extends State<BookDetailsPage>
                   decoration: BoxDecoration(
                       image: DecorationImage(
                           image: NetworkImage(
-                            "$linkservername" +
+                            "$linkservername/" +
                                 widget.detailModel.cover.toString(),
                           ),
                           fit: BoxFit.fill)),

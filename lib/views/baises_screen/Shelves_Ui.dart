@@ -47,7 +47,7 @@ class Shelves_UI extends StatelessWidget {
                           BlendMode.srcOver,
                         ),
                         image: AssetImage(
-                          'assets/images/reading.png', // Replace with your image URL
+                          'asset/images/reading.png', // Replace with your image URL
                         ),
                       ))),
             ),
@@ -85,7 +85,7 @@ class Shelves_UI extends StatelessWidget {
                             BlendMode.srcOver,
                           ),
                           image: AssetImage(
-                            'assets/images/readdone.png', // Replace with your image URL
+                            'asset/images/readdone.png', // Replace with your image URL
                           ),
                         ))),
                 Padding(
@@ -124,7 +124,7 @@ class Shelves_UI extends StatelessWidget {
                             BlendMode.srcOver,
                           ),
                           image: AssetImage(
-                            'assets/images/readlater.png', // Replace with your image URL
+                            'asset/images/readlater.png', // Replace with your image URL
                           ),
                         ))),
                 Padding(

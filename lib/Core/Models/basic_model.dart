@@ -8,7 +8,9 @@ class ErrorModel extends ResultModel {}
 
 class ExceptionModel extends ResultModel {}
 
-class successModel extends ResultModel {}
+class successModel extends ResultModel {
+ 
+}
 
 class ListOf<T> extends ResultModel {
 
@@ -23,5 +25,12 @@ class ListOfbook<T> extends ResultModel {
   List<Bookmodel> result;
   ListOfbook({
     required this.result,
+  });
+}
+class ListofEverything<T extends ResultModel>  extends ResultModel{
+ 
+  List<T> listresult;
+  ListofEverything({
+    required this.listresult,
   });
 }

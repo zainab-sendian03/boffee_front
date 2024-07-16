@@ -75,6 +75,18 @@
 //     );
 //   }
 // }
+
+
+
+
+
+
+
+
+
+
+
+
 import 'package:dio/dio.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/foundation.dart';
@@ -346,7 +358,7 @@ class _BookUiState extends State<BookUi> {
                                                 decoration: BoxDecoration(
                                                   image: DecorationImage(
                                                       image: NetworkImage(
-                                                       " $linkservername" +
+                                                       "$linkservername/" +
                                                             temp[index]
                                                                 .cover
                                                                 .toString(),
