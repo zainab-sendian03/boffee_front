@@ -1,7 +1,7 @@
 import 'dart:convert';
 
 class DetailModel {
-  num id;
+  int id;
   String title;
   String author_name;
   String description;
@@ -20,7 +20,7 @@ class DetailModel {
   });
 
   DetailModel copyWith({
-    num? id,
+    int? id,
     String? title,
     String? author_name,
     String? description,

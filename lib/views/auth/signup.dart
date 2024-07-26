@@ -34,26 +34,33 @@ class _signupState extends State<signup> {
 
     if (formstats.currentState!.validate()) {
       int genderId = male ? 1 : 2;
-      var response = await _crud.postrequest(linksignup, {
-        "user_name": username.text,
-        "email": email.text,
-        "password": password.text,
-        "password confirmation": confirmpass.text,
-        "age": age.text,
-        "gendre_id": genderId.toString(),
-      });
-
+      var response = await _crud.postrequest(
+        linksignup,
+        {
+          "user_name": username.text,
+          "email": email.text,
+          "password": password.text,
+          "password_confirmation": confirmpass.text,
+          "age": age.text,
+          "gendre_id": genderId.toString(),
+        },
+        headers: {
+          "Accept": "application/json",
+          "Content-Type": "application/json",
+        },
+      );
       setState(() {
         isLoading = false;
       });
-
       if (response is Map && response['success'] == true) {
         Navigator.of(context).push(
           MaterialPageRoute(builder: (context) => const login()),
         );
-      } else if (confirmpass != password) {
-        alert(formstats.currentContext!,
-            "Password does not match. Please re-type again.", "Wrong", "Close");
+      } else if (response is Map &&
+          response['errors'] != null &&
+          response['errors']['password'] != null) {
+        alert(formstats.currentContext!, response['errors']['password'][0],
+            "Error", "Close");
       } else {
         print("fail signup");
       }

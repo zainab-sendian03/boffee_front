@@ -37,7 +37,7 @@ class _SplashScreenState extends State<SplashScreen>
         context,
         MaterialPageRoute(
             builder: (context) =>
-                pref.getString('id') == null ? OnBoarding() : CorePage()),
+                pref.getString('token') == null ? OnBoarding() : CorePage()),
       );
     });
   }

@@ -9,6 +9,7 @@ import 'package:flutter_application_test/views/baises_screen/Levels_Ui.dart';
 import 'package:flutter_application_test/views/baises_screen/QuetsPage.dart';
 import 'package:flutter_application_test/views/baises_screen/Shelves_Ui.dart';
 import 'package:flutter_application_test/views/baises_screen/setting.dart';
+import 'package:flutter_application_test/views/profile.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class CorePage extends StatefulWidget {
@@ -22,9 +23,9 @@ class CorePage extends StatefulWidget {
 class _CorePageState extends State<CorePage> {
   int page = 0;
   final GlobalKey<CurvedNavigationBarState> _bottomNavigationKey = GlobalKey();
-
   List<Widget> Pages = [QuetsPage(), BookUi(), Shelves_UI(), Levels_UI()];
   List<String> AppBarTitle = ["Home", "Books", "Shelves", "Levels"];
+ 
 
   @override
   Widget build(BuildContext context) {
@@ -70,6 +71,11 @@ class _CorePageState extends State<CorePage> {
                       ),
                     ),
                     PopupMenuItem(
+                      onTap: () {
+                        Navigator.of(context).push(MaterialPageRoute(
+                            builder: (context) => Profile(
+                                )));
+                      },
                       value: "value_Profile",
                       child: Row(
                         children: [

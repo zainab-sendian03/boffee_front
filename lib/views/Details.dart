@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_application_test/core/Models/detial_model.dart';
 import 'package:flutter_application_test/core/constants/colors.dart';
 import 'package:flutter_application_test/core/constants/linksapi.dart';
+import 'package:flutter_application_test/core/service/real/crud.dart';
 import 'package:flutter_application_test/views/AddComment.dart';
 import 'package:flutter_application_test/views/PDFviewer.dart';
+import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 
 class BookDetailsPage extends StatefulWidget {
   const BookDetailsPage({super.key, required this.detailModel});
@@ -16,7 +18,7 @@ class BookDetailsPage extends StatefulWidget {
 class _BookDetailsPageState extends State<BookDetailsPage>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
-
+  double avgRating = 0;
   Future<dynamic> alert_report(
       BuildContext context, TextEditingController noteCont) {
     return showDialog(
@@ -68,10 +70,36 @@ class _BookDetailsPageState extends State<BookDetailsPage>
         });
   }
 
+  final Crud _crud = Crud();
+  Future<void> get_AVG_rating() async {
+    try {
+      final bookId = widget.detailModel.id;
+      final url = "$link_AVGrating/$bookId";
+
+      print("AVG Rating URL: $url");
+
+      var response = await _crud.getrequest(url);
+      print("Server response: $response"); 
+
+      if (response is Map && response.containsKey('average_rating')) {
+        setState(() {
+          avgRating = double.parse(response['average_rating']);
+        });
+        print("Average rating fetched successfully");
+      } else {
+        print("Failed to fetch average rating");
+        print("Server response: $response");
+      }
+    } catch (e) {
+      print(e);
+    }
+  }
+
   @override
   void initState() {
     _tabController = TabController(length: 2, vsync: this);
     super.initState();
+    get_AVG_rating();
   }
 
 //,required this.detailModel
@@ -140,6 +168,17 @@ class _BookDetailsPageState extends State<BookDetailsPage>
                     const Text(
                       'type',
                       style: TextStyle(fontSize: 18.0),
+                    ),
+                    const SizedBox(height: 10.0),
+                    RatingBarIndicator(
+                      rating: avgRating,
+                      unratedColor: Colors.amber.withAlpha(50),
+                      itemCount: 5,
+                      itemSize: 30.0,
+                      itemBuilder: (context, _) => const Icon(
+                        Icons.star,
+                        color: Colors.amber,
+                      ),
                     ),
                   ],
                 ),
@@ -213,11 +252,9 @@ class _BookDetailsPageState extends State<BookDetailsPage>
                                       ),
                                     ),
                                   );
-                                  print("path:" + widget.detailModel.file);
-                                  print("title:" + widget.detailModel.title);
-                                  print("pages:" +
-                                      widget.detailModel.total_pages
-                                          .toString());
+                                  print("path:${widget.detailModel.file}");
+                                  print("title:${widget.detailModel.title}");
+                                  print("pages:${widget.detailModel.total_pages}");
                                 },
                                 child: Text(
                                   'Read now',
@@ -241,7 +278,8 @@ class _BookDetailsPageState extends State<BookDetailsPage>
                                 style: ButtonStyle(
                                   backgroundColor:
                                       MaterialStateProperty.all<Color>(
-                                          Colors.white),
+                                          no_color),
+                                  elevation: MaterialStateProperty.all(0),
                                   side: MaterialStateProperty.all(
                                       const BorderSide(color: Colors.brown)),
                                 ),

@@ -32,17 +32,30 @@ class _loginState extends State<login> {
     });
     if (formstats.currentState!.validate()) {
       try {
-        var response = await _crud.postrequest(linklogin, {
-          "user_name": user_name.text,
-          "password": password.text,
-        });
+        var response = await _crud.postrequest(
+          linklogin,
+          {
+            "user_name": user_name.text,
+            "password": password.text,
+          },
+          headers: {
+            "Accept": "application/json",
+            "Content-Type": "application/json",
+          },
+        );
+
         setState(() {
           isLoading = false;
         });
+        print("Response status: ${response['statusCode']}");
+        print("Response body: ${response['body']}");
+
         if (response is Map && response['success'] == true) {
           pref.setString("id", response['data']['id'].toString());
           pref.setString("user_name", response['data']['user_name']);
           pref.setString("password", response['data']['password']);
+          pref.setString("token", response['data']['token']);
+
           Navigator.of(context).push(
             MaterialPageRoute(builder: (context) => const CorePage()),
           );
@@ -177,7 +190,7 @@ class _loginState extends State<login> {
             ])),
             if (isLoading)
               Padding(
-                padding: EdgeInsets.only(top: 670),
+                padding: EdgeInsets.only(top: 675),
                 child: Center(
                   child: CircularProgressIndicator(
                     backgroundColor: Light_Brown,

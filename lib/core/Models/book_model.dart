@@ -1,7 +1,7 @@
 import 'dart:convert';
 
 class BookModel {
-  num id;
+  int id;
   String title;
   String cover;
   String author_name;
@@ -14,7 +14,7 @@ class BookModel {
   });
 
   BookModel copyWith({
-    num? id,
+    int? id,
     String? title,
     String? cover,
     String? author_name,

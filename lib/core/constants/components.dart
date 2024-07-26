@@ -1,5 +1,7 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
+
 import 'package:flutter/material.dart';
+import 'package:flutter_application_test/core/Models/note_model.dart';
 import 'package:flutter_application_test/core/Models/post_model.dart';
 import 'package:flutter_application_test/core/constants/colors.dart';
 import 'package:flutter_application_test/core/functions/validInput.dart';
@@ -325,50 +327,85 @@ Future<dynamic> alert(
       });
 }
 
-// ignore: must_be_immutable
-class AddNote extends StatelessWidget {
-  AddNote({super.key});
+// ignore_for_file: must_be_immutable
+class CardNote extends StatelessWidget {
+  final NoteModel noteModel;
+  final void Function()? onDelete;
+  final void Function()? onEdit;
 
-  TextEditingController notecontroller = TextEditingController();
+  const CardNote({
+    Key? key,
+    required this.noteModel,
+    required this.onDelete,
+    required this.onEdit,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return AlertDialog(
-      backgroundColor: const Color(0xFFFFF8F1),
-      elevation: 0,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-      content: SizedBox(
-        width: MediaQuery.of(context).size.width * 0.65,
-        height: MediaQuery.of(context).size.height * 0.2,
-        child: TextFormField(
-          showCursor: false,
-          maxLines: 10,
-          controller: notecontroller,
-          decoration: const InputDecoration(
-              border: InputBorder.none,
-              hintText: "add your note....",
-              hintStyle: TextStyle(color: Color(0XFFA5A5A5))),
-        ),
-      ),
-      actions: <Widget>[
-        Padding(
-          padding: const EdgeInsets.only(top: 50),
-          child: ElevatedButton(
-            onPressed: () => Navigator.pop(context),
-            style: ElevatedButton.styleFrom(
-                backgroundColor: medium_Brown,
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(25)),
-                padding: const EdgeInsets.only(
-                    left: 25, right: 25, top: 10, bottom: 10)),
-            child: const Text("Add",
-                style: TextStyle(
-                  fontSize: 14,
-                  color: Colors.white,
-                )),
+    return Padding(
+      padding: const EdgeInsets.only(left: 30, right: 30, top: 30),
+      child: Card(
+        child: Container(
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(10),
+            boxShadow: const [
+              BoxShadow(
+                color: Colors.brown,
+                offset: Offset(0, 5),
+                blurRadius: 10,
+              )
+            ],
+          ),
+          constraints: BoxConstraints(maxHeight: 200),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  IconButton(
+                    icon: const Icon(Icons.delete),
+                    onPressed: onDelete,
+                    color: medium_Brown,
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.edit),
+                    onPressed: onEdit,
+                    color: medium_Brown,
+                  ),
+                ],
+              ),
+              Padding(
+                padding: const EdgeInsets.only(left: 20),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      "page: ${noteModel.pageNum}",
+                      style: const TextStyle(
+                          fontSize: 15,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black),
+                    ),
+                    Text(
+                      "Book title: ${noteModel.title}",
+                      style: const TextStyle(
+                          fontSize: 15,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black),
+                    ),
+                    Text(
+                      noteModel.body ?? '',
+                      style: const TextStyle(fontSize: 20, color: Colors.black),
+                    ),
+                  ],
+                ),
+              ),
+            ],
           ),
         ),
-      ],
+      ),
     );
   }
 }

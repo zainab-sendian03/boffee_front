@@ -48,6 +48,7 @@ class ServeShelf extends ReadingService {
     }
   }
 
+
   @override
   Future<ReadingModel> getOneBook() {
     // TODO: implement getOneBook

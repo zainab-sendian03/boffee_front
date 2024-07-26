@@ -1,8 +1,10 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
+
 import 'package:flutter/material.dart';
 import 'package:flutter_application_test/core/Models/detial_model.dart';
-import 'package:flutter_application_test/core/constants/components.dart';
+import 'package:flutter_application_test/core/Models/note_model.dart';
 import 'package:flutter_application_test/core/constants/linksapi.dart';
+import 'package:flutter_application_test/core/provider/Note_provider.dart';
 import 'package:flutter_application_test/core/service/real/crud.dart';
 import 'package:flutter_application_test/views/Details.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
@@ -22,73 +24,203 @@ class PDFviewer extends StatefulWidget {
 }
 
 class _PDFviewerState extends State<PDFviewer> {
-  //PDFViewController? pdfcontroller;
   final PdfViewerController _pdfViewerController = PdfViewerController();
-
-  int indexPage = 0;
-  double ratingValue = 0;
-  // ignore: unused_field
-  final double _initialRating = 0.0;
-  GlobalKey x = GlobalKey();
   TextEditingController review_con = TextEditingController();
   TextEditingController notecontroller = TextEditingController();
-
+  String? currentPdfFile;
+  int indexPage = 0;
+  double ratingValue = 0;
+  final Crud crud = Crud();
+  GlobalKey x = GlobalKey();
+  String token = "4|fMNeGwvIFMZ9Dq0tKMsSk3MixWmWqQKHG17Z0CRl";
+  @override
   void initState() {
     super.initState();
+
     _initializePDFView();
-    _loadLastPage();
   }
 
   Future<void> _initializePDFView() async {
     await Future.delayed(const Duration(seconds: 2));
+    if (currentPdfFile != widget.detailModel.file) {
+      setState(() {
+        indexPage = 0;
+        currentPdfFile = widget.detailModel.file;
+      });
+    }
+    await _loadLastPage();
     print("PDFView initialization complete");
   }
 
   Future<void> _loadLastPage() async {
     final prefs = await SharedPreferences.getInstance();
-    int? lastPage = prefs.getInt('lastPage');
-    setState(() {
-      if (lastPage != null) {
+    int? lastPage = prefs.getInt('lastPage_${widget.detailModel.id}');
+    int? lastFileId = prefs.getInt('lastFile_${widget.detailModel.id}');
+
+    if (lastPage != null && widget.detailModel.id == lastFileId) {
+      setState(() {
         indexPage = lastPage;
-        _pdfViewerController.jumpToPage(indexPage);
-      } else {
+      });
+      _pdfViewerController.jumpToPage(indexPage);
+    } else {
+      setState(() {
         indexPage = 0;
-        _pdfViewerController.jumpToPage(indexPage);
-      }
-    });
+      });
+    }
   }
 
   Future<void> _savePageIndex(int pageIndex) async {
     final prefs = await SharedPreferences.getInstance();
-    await prefs.setInt('lastPage', pageIndex);
+    await prefs.setInt('lastPage_${widget.detailModel.id}', pageIndex);
+    await prefs.setInt(
+        'lastFile_${widget.detailModel.id}', widget.detailModel.id);
   }
 
-  final Crud crud = Crud();
-  Rate() async {
+  add_Rate() async {
     try {
-      String bookId = widget.detailModel.id.toString();
-      String rateValue = ratingValue.toString();
-
-      var response = await crud.postrequest(linkrating, {
-        "book_id": bookId,
-        "rate": rateValue,
-      });
-      print("rating is:$ratingValue");
-      print("id is:${widget.detailModel.id}");
+      Map<String, dynamic> body = {
+        "book_id": widget.detailModel.id,
+        "rate": ratingValue.toInt(),
+      };
+      print("Rating Book ID: ${widget.detailModel.id}");
+      var response = await crud.postrequest(
+        link_rating,
+        body,
+        headers: {
+          "Accept": "application/json",
+          "Authorization": "Bearer $token",
+          "Content-Type": "application/json",
+        },
+      );
+      print("rating is: $ratingValue");
+      print("id is: ${widget.detailModel.id}");
+      print("Response: $response");
 
       if (response is Map && response['success'] == true) {
-        Navigator.of(context).push(
-          MaterialPageRoute(
-              builder: (context) => BookDetailsPage(
-                    detailModel: widget.detailModel,
-                  )),
-        );
+        ScaffoldMessenger.of(context).hideCurrentSnackBar();
+        Navigator.of(context).push(MaterialPageRoute(
+            builder: (context) => BookDetailsPage(
+                  detailModel: widget.detailModel,
+                )));
+        print("success");
       } else {
         print("fail");
+        print("Server response: $response");
       }
     } catch (e) {
       print("ERROR $e");
     }
+  }
+
+  add_Note() async {
+    try {
+      print("Note Book ID: ${widget.detailModel.id}");
+      final bookId = widget.detailModel.id;
+      final url = "$link_storeNote/$bookId";
+
+      Map<String, dynamic> body = {
+        "page_num": indexPage,
+        "body": notecontroller.text,
+        "book_id": widget.detailModel.id,
+      };
+      var response = await crud.postrequest(
+        url,
+        body,
+        headers: {
+          "Accept": "application/json",
+          "Authorization": "Bearer 3|b1BZirQmIeGc6IUCWxW5LnTLvXY9VuyHmSJGTnFt",
+          "Content-Type": "application/json",
+        },
+      );
+      print("index page is: $indexPage");
+      print("Response: $response");
+
+      if (response is Map && response['success'] == true) {
+        NoteModel newNote = NoteModel.fromJson(response['data']);
+        NoteProvider.notesNotifier.value = [
+          ...NoteProvider.notesNotifier.value,
+          newNote
+        ];
+        Navigator.pop(context);
+        print("success note");
+      } else {
+        print("fail");
+        print("Server response: $response");
+      }
+    } catch (e) {
+      print("ERROR $e");
+    }
+  }
+
+  // update_progress() async {
+  //   try {
+  //     final bookId = widget.detailModel.id;
+  //     final url = "$link_progress/$bookId";
+  //     Map<String, dynamic> body = {
+  //       "progress": indexPage,
+  //     };
+  //     var response = await crud.postrequest(
+  //       url,
+  //       body,
+  //       headers: {
+  //         "Accept": "application/json",
+  //         "Authorization": "Bearer $token",
+  //         "Content-Type": "application/json",
+  //       },
+  //     );
+  //     print("index page is: $indexPage");
+  //     print("Response: $response");
+
+  //     if (response is Map && response['success'] == true) {
+  //       Navigator.pop(context);
+  //       print("success note");
+  //     } else {
+  //       print("fail");
+  //       print("Server response: $response");
+  //     }
+  //   } catch (e) {
+  //     print("ERROR $e");
+  //   }
+  // }
+
+  AlertDialog _alertDialog(BuildContext context) {
+    return AlertDialog(
+      backgroundColor: const Color(0xFFFFF8F1),
+      elevation: 0,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+      content: SizedBox(
+        width: MediaQuery.of(context).size.width * 0.65,
+        height: MediaQuery.of(context).size.height * 0.2,
+        child: TextFormField(
+          showCursor: false,
+          maxLines: 10,
+          controller: notecontroller,
+          decoration: const InputDecoration(
+              border: InputBorder.none,
+              hintText: "add your note....",
+              hintStyle: TextStyle(color: Color(0XFFA5A5A5))),
+        ),
+      ),
+      actions: <Widget>[
+        Padding(
+          padding: const EdgeInsets.only(top: 50),
+          child: ElevatedButton(
+            onPressed: () => add_Note(),
+            style: ElevatedButton.styleFrom(
+                backgroundColor: medium_Brown,
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(25)),
+                padding: const EdgeInsets.only(
+                    left: 25, right: 25, top: 10, bottom: 10)),
+            child: const Text("Add",
+                style: TextStyle(
+                  fontSize: 14,
+                  color: Colors.white,
+                )),
+          ),
+        ),
+      ],
+    );
   }
 
   SnackBar snakB(BuildContext context) {
@@ -173,7 +305,7 @@ class _PDFviewerState extends State<PDFviewer> {
                     width: double.infinity,
                     child: ElevatedButton(
                       onPressed: () async {
-                        await Rate();
+                        await add_Rate();
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: const Color(0xFF94745B),
@@ -222,7 +354,7 @@ class _PDFviewerState extends State<PDFviewer> {
                 showDialog(
                   context: context,
                   builder: (BuildContext context) {
-                    return AddNote();
+                    return _alertDialog(context);
                   },
                 );
               },
@@ -250,6 +382,7 @@ class _PDFviewerState extends State<PDFviewer> {
                   SizedBox(
                     height: 620,
                     child: SfPdfViewer.network(
+                      enableDocumentLinkAnnotation: true,
                       pdfUrl,
                       controller: _pdfViewerController,
                       canShowScrollHead: false,
@@ -267,22 +400,15 @@ class _PDFviewerState extends State<PDFviewer> {
                       initialScrollOffset: const Offset(10, 10),
                       onDocumentLoadFailed: (details) {
                         print("Failed to load PDF: ${details.description}");
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text(
+                                "Failed to load PDF: ${details.description}"),
+                          ),
+                        );
                       },
                     ),
                   ),
-
-                  // SfPdfViewer.asset(
-                  //   pdffile,
-                  //   canShowScrollHead: false,
-                  //   pageSpacing: 2,
-                  //   onTextSelectionChanged:
-                  //       (PdfTextSelectionChangedDetails details) {
-                  //     if (details.selectedText != null) {
-                  //       print(details.selectedText);
-                  //     }
-                  //   },
-                  //   initialScrollOffset: Offset(10, 10),
-                  // ),
                   Padding(
                     padding: const EdgeInsets.only(top: 620),
                     child: Container(
@@ -330,7 +456,7 @@ class _PDFviewerState extends State<PDFviewer> {
                                 child: ElevatedButton(
                                   onPressed: () {
                                     if (indexPage <
-                                        widget.detailModel.total_pages) {
+                                        widget.detailModel.total_pages + 1) {
                                       setState(() {
                                         indexPage++;
                                         _pdfViewerController

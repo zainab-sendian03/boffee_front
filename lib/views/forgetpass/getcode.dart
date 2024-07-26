@@ -15,7 +15,11 @@ class getCode extends StatefulWidget {
 
 class _getCodeState extends State<getCode> {
   GlobalKey<FormState> formstats = GlobalKey();
-  final email = TextEditingController();
+  final first = TextEditingController();
+  final second = TextEditingController();
+  final third = TextEditingController();
+  final fourth = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -66,7 +70,7 @@ class _getCodeState extends State<getCode> {
                               flex: 1,
                               child: CustomTextFormField(
                                 hintText: "",
-                                controller: email,
+                                controller: first,
                                 min: 1,
                                 max: 1,
                                 visPassword: false,
@@ -79,7 +83,7 @@ class _getCodeState extends State<getCode> {
                               flex: 1,
                               child: CustomTextFormField(
                                 hintText: "",
-                                controller: email,
+                                controller: second,
                                 min: 1,
                                 max: 1,
                                 visPassword: false,
@@ -92,7 +96,7 @@ class _getCodeState extends State<getCode> {
                               flex: 1,
                               child: CustomTextFormField(
                                 hintText: "",
-                                controller: email,
+                                controller: third,
                                 min: 1,
                                 max: 1,
                                 visPassword: false,
@@ -105,7 +109,7 @@ class _getCodeState extends State<getCode> {
                               flex: 1,
                               child: CustomTextFormField(
                                 hintText: "",
-                                controller: email,
+                                controller: fourth,
                                 min: 1,
                                 max: 1,
                                 visPassword: false,

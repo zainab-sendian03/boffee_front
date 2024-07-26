@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_test/core/config/options.dart';
 import 'package:flutter_application_test/core/provider/Theme_provider.dart';
-import 'package:flutter_application_test/views/firstpages/splash.dart';
+import 'package:flutter_application_test/views/auth/login.dart';
 import 'package:provider/provider.dart';
 import 'core/provider/CoinProvider.dart';
 
-String token = "2|tsg3dDjTs2dtdSG38UXbqYiPmKw9jquPmn9V7fwX";
+String token = "1|SaZ72QDqWDosEQTUCW4oxSCQJ3UeajdWkOSX4QPM";
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -27,10 +27,10 @@ class MyApp extends StatelessWidget {
             create: (context) => ThemeProvider()..initTheme()),
       ],
       child: Builder(builder: (context) {
-        return const MaterialApp(
+        return MaterialApp(
           //theme: context.watch<ThemeProvider>().themedata,
           debugShowCheckedModeBanner: false,
-          home: SplashScreen(),
+          home: login(),
         );
       }),
     );
