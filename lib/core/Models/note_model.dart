@@ -5,51 +5,52 @@ class NoteModel {
   int? pageNum;
   String? body;
   int? color;
-  String? title;
   String? createdAt;
   String? updatedAt;
-  String? bookCover;
+  String? title;
+  String? cover;
+  String? file;
 
-  NoteModel({
-    this.id,
-    this.userId,
-    this.bookId,
-    this.pageNum,
-    this.body,
-    this.color,
-    this.title,
-    this.createdAt,
-    this.updatedAt,
-    this.bookCover,
-  });
+  NoteModel(
+      {this.id,
+      this.userId,
+      this.bookId,
+      this.pageNum,
+      this.body,
+      this.color,
+      this.createdAt,
+      this.updatedAt,
+      this.title,
+      this.cover,
+      this.file});
 
-  factory NoteModel.fromJson(Map<String, dynamic> json) {
-    return NoteModel(
-      id: json['id'],
-      userId: json['user_id'],
-      bookId: json['book_id'],
-      pageNum: json['page_num'],
-      body: json['body'],
-      title: json['title'],
-      color: json['color'],
-      createdAt: json['created_at'],
-      updatedAt: json['updated_at'],
-      bookCover: json['book_cover'],
-    );
+  NoteModel.fromJson(Map<String, dynamic> json) {
+    id = json['id'];
+    userId = json['user_id'];
+    bookId = json['book_id'];
+    pageNum = json['page_num'];
+    body = json['body'];
+    color = json['color'];
+    createdAt = json['created_at'];
+    updatedAt = json['updated_at'];
+    title = json['title'];
+    cover = json['cover'];
+    file = json['file'];
   }
 
   Map<String, dynamic> toJson() {
-    return {
-      'id': id,
-      'user_id': userId,
-      'book_id': bookId,
-      'page_num': pageNum,
-      'body': body,
-      'color': color,
-      'title': title,
-      'created_at': createdAt,
-      'updated_at': updatedAt,
-      'book_cover': bookCover,
-    };
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['id'] = this.id;
+    data['user_id'] = this.userId;
+    data['book_id'] = this.bookId;
+    data['page_num'] = this.pageNum;
+    data['body'] = this.body;
+    data['color'] = this.color;
+    data['created_at'] = this.createdAt;
+    data['updated_at'] = this.updatedAt;
+    data['title'] = this.title;
+    data['cover'] = this.cover;
+    data['file'] = this.file;
+    return data;
   }
 }

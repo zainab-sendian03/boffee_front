@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_test/core/Models/book_model.dart';
+import 'package:flutter_application_test/core/Models/d_withFile.dart';
 import 'package:flutter_application_test/core/Models/detial_model.dart';
 import 'package:flutter_application_test/core/constants/colors.dart';
 import 'package:flutter_application_test/core/service/real/search_service.dart';
@@ -61,17 +62,21 @@ class _searchpageState extends State<searchpage> {
                                       context,
                                       MaterialPageRoute(
                                           builder: (context) => BookDetailsPage(
-                                                  detailModel: DetailModel(
-                                                id: temp[index].id,
-                                                title: temp[index].title,
-                                                author_name:
-                                                    temp[index].toString(),
-                                                description:
-                                                    temp[index].toString(),
-                                                cover: temp[index].toString(),
-                                                total_pages: 20,
-                                                file: '',
-                                              ))));
+                                                detail_File: Detail_withFile(
+                                                    file: DetailModel(
+                                                      id: temp[index].id,
+                                                      title: temp[index].title,
+                                                      author_name: temp[index]
+                                                          .toString(),
+                                                      description: temp[index]
+                                                          .toString(),
+                                                      cover: temp[index]
+                                                          .toString(),
+                                                      total_pages: 20,
+                                                      file: '',
+                                                    ),
+                                                    shelfId: 0),
+                                              )));
                                 },
                                 title: Text(temp[index].title),
                               )

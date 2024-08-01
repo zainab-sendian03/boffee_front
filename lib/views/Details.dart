@@ -1,15 +1,17 @@
+import 'package:animated_snack_bar/animated_snack_bar.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_application_test/core/Models/detial_model.dart';
+import 'package:flutter_application_test/core/Models/d_withFile.dart';
 import 'package:flutter_application_test/core/constants/colors.dart';
 import 'package:flutter_application_test/core/constants/linksapi.dart';
 import 'package:flutter_application_test/core/service/real/crud.dart';
 import 'package:flutter_application_test/views/AddComment.dart';
 import 'package:flutter_application_test/views/PDFviewer.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class BookDetailsPage extends StatefulWidget {
-  const BookDetailsPage({super.key, required this.detailModel});
-  final DetailModel detailModel;
+  const BookDetailsPage({super.key, required this.detail_File});
+  final Detail_withFile detail_File;
 
   @override
   State<BookDetailsPage> createState() => _BookDetailsPageState();
@@ -19,6 +21,8 @@ class _BookDetailsPageState extends State<BookDetailsPage>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
   double avgRating = 0;
+  bool isFirstTime = true;
+
   Future<dynamic> alert_report(
       BuildContext context, TextEditingController noteCont) {
     return showDialog(
@@ -73,13 +77,13 @@ class _BookDetailsPageState extends State<BookDetailsPage>
   final Crud _crud = Crud();
   Future<void> get_AVG_rating() async {
     try {
-      final bookId = widget.detailModel.id;
+      final bookId = widget.detail_File.file!.id;
       final url = "$link_AVGrating/$bookId";
 
       print("AVG Rating URL: $url");
 
       var response = await _crud.getrequest(url);
-      print("Server response: $response"); 
+      print("Server response: $response");
 
       if (response is Map && response.containsKey('average_rating')) {
         setState(() {
@@ -95,11 +99,35 @@ class _BookDetailsPageState extends State<BookDetailsPage>
     }
   }
 
+  Future<void> checkFirstTime() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    bool _isFirstTime = prefs.getBool('isFirstTime') ?? true;
+    if (_isFirstTime) {
+      _showSnackBar();
+      await prefs.setBool('isFirstTime', false);
+    }
+  }
+
+  void _showSnackBar() {
+    AnimatedSnackBar(
+      duration: Duration(milliseconds: 10),
+      builder: (context) {
+        return MaterialAnimatedSnackBar(
+          messageText: "The book has been added to Reading shelf",
+          type: AnimatedSnackBarType.success,
+          foregroundColor: Colors.white,
+          backgroundColor: medium_Brown,
+        );
+      },
+    ).show(context);
+  }
+
   @override
   void initState() {
     _tabController = TabController(length: 2, vsync: this);
     super.initState();
     get_AVG_rating();
+    checkFirstTime();
   }
 
 //,required this.detailModel
@@ -123,6 +151,16 @@ class _BookDetailsPageState extends State<BookDetailsPage>
             },
           ),
         ],
+        leading: IconButton(
+          icon: Icon(
+            Icons.arrow_back_outlined,
+            color: dark_Brown,
+            size: 35,
+          ),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),
       ),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -139,7 +177,7 @@ class _BookDetailsPageState extends State<BookDetailsPage>
                   decoration: BoxDecoration(
                       image: DecorationImage(
                           image: NetworkImage(
-                            "http://$ip_Zainab:8000/${widget.detailModel.cover}",
+                            "http://$ip_Zainab:8000/${widget.detail_File.file!.cover}",
                           ),
                           fit: BoxFit.fill)),
                 ),
@@ -150,18 +188,18 @@ class _BookDetailsPageState extends State<BookDetailsPage>
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
                     Text(
-                      widget.detailModel.title.toString(),
+                      widget.detail_File.file!.title.toString(),
                       style: const TextStyle(
                           fontSize: 24.0, fontWeight: FontWeight.bold),
                     ),
                     const SizedBox(height: 10.0),
                     Text(
-                      widget.detailModel.author_name.toString(),
+                      widget.detail_File.file!.author_name.toString(),
                       style: const TextStyle(fontSize: 18.0),
                     ),
                     const SizedBox(height: 10.0),
                     Text(
-                      widget.detailModel.total_pages.toString(),
+                      widget.detail_File.file!.total_pages.toString(),
                       style: const TextStyle(fontSize: 18.0),
                     ),
                     const SizedBox(height: 10.0),
@@ -225,7 +263,7 @@ class _BookDetailsPageState extends State<BookDetailsPage>
                           bottom: 135, left: 25, right: 25),
                       child: Center(
                           child: Text(
-                        widget.detailModel.description.toString(),
+                        widget.detail_File.file!.description.toString(),
                         style: const TextStyle(fontSize: 20),
                       )),
                     ),
@@ -248,13 +286,16 @@ class _BookDetailsPageState extends State<BookDetailsPage>
                                   Navigator.of(context).push(
                                     MaterialPageRoute(
                                       builder: (context) => PDFviewer(
-                                        detailModel: widget.detailModel,
+                                        detail_File: widget.detail_File,
                                       ),
                                     ),
                                   );
-                                  print("path:${widget.detailModel.file}");
-                                  print("title:${widget.detailModel.title}");
-                                  print("pages:${widget.detailModel.total_pages}");
+                                  print(
+                                      "path:${widget.detail_File.file!.file}");
+                                  print(
+                                      "title:${widget.detail_File.file!.title}");
+                                  print(
+                                      "pages:${widget.detail_File.file!.total_pages}");
                                 },
                                 child: Text(
                                   'Read now',

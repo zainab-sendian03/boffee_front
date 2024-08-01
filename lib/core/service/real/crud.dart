@@ -4,8 +4,7 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 class Crud {
-
-  Future<dynamic> getrequest(String url,  {Map<String, String>? headers}) async {
+  Future<dynamic> getrequest(String url, {Map<String, String>? headers}) async {
     try {
       var response = await http.get(
         Uri.parse(url),
@@ -49,14 +48,14 @@ class Crud {
 
         print("Decoded response body: $responsebody");
 
-        if (responsebody is Map && responsebody['data'] != null) {
+        if (responsebody is Map) {
           return responsebody;
         } else {
-          print("Error: Data not found in response");
-          return 'Data not found';
+          print("Error: Unexpected response format");
+          return 'Unexpected response format';
         }
       } else {
-        print("Error ${response.statusCode}");
+        print("Error ${response.statusCode}: ${response.body}");
         return {'statusCode': response.statusCode, 'body': response.body};
       }
     } catch (e) {

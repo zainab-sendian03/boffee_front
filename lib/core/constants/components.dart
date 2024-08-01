@@ -340,6 +340,19 @@ class CardNote extends StatelessWidget {
     required this.onEdit,
   }) : super(key: key);
 
+  Color getColor(int colorCode) {
+    switch (colorCode) {
+      case 1:
+        return const Color(0xFF87986A);
+      case 2:
+        return const Color(0xFF92A1C3);
+      case 3:
+        return const Color(0xFFF3A0AD);
+      default:
+        return Colors.grey;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -347,17 +360,17 @@ class CardNote extends StatelessWidget {
       child: Card(
         child: Container(
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: getColor(noteModel.color as int),
             borderRadius: BorderRadius.circular(10),
             boxShadow: const [
               BoxShadow(
-                color: Colors.brown,
-                offset: Offset(0, 5),
+                color: Colors.grey,
+                offset: Offset(0, 2),
                 blurRadius: 10,
               )
             ],
           ),
-          constraints: BoxConstraints(maxHeight: 200),
+          constraints: const BoxConstraints(maxHeight: 150),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -367,12 +380,12 @@ class CardNote extends StatelessWidget {
                   IconButton(
                     icon: const Icon(Icons.delete),
                     onPressed: onDelete,
-                    color: medium_Brown,
+                    color: white,
                   ),
                   IconButton(
                     icon: const Icon(Icons.edit),
                     onPressed: onEdit,
-                    color: medium_Brown,
+                    color: white,
                   ),
                 ],
               ),
@@ -383,21 +396,21 @@ class CardNote extends StatelessWidget {
                   children: [
                     Text(
                       "page: ${noteModel.pageNum}",
-                      style: const TextStyle(
+                      style: TextStyle(
                           fontSize: 15,
                           fontWeight: FontWeight.bold,
-                          color: Colors.black),
+                          color: white),
                     ),
                     Text(
                       "Book title: ${noteModel.title}",
-                      style: const TextStyle(
+                      style: TextStyle(
                           fontSize: 15,
                           fontWeight: FontWeight.bold,
-                          color: Colors.black),
+                          color: white),
                     ),
                     Text(
                       noteModel.body ?? '',
-                      style: const TextStyle(fontSize: 20, color: Colors.black),
+                      style: TextStyle(fontSize: 20, color: white),
                     ),
                   ],
                 ),

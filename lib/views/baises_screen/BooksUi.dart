@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_test/core/Models/category.dart';
+import 'package:flutter_application_test/core/Models/d_withFile.dart';
 import 'package:flutter_application_test/core/Models/detial_model.dart';
 import 'package:flutter_application_test/core/constants/colors.dart';
 import 'package:flutter_application_test/core/constants/linksapi.dart';
@@ -104,7 +105,8 @@ class _BookUiState extends State<BookUi> {
                               context,
                               MaterialPageRoute(
                                 builder: (context) => BookDetailsPage(
-                                  detailModel: DetailModel(
+                                    detail_File: Detail_withFile(
+                                  file: DetailModel(
                                     id: 2,
                                     title: 'title',
                                     author_name: 'author_name',
@@ -113,7 +115,8 @@ class _BookUiState extends State<BookUi> {
                                     total_pages: 23,
                                     file: '',
                                   ),
-                                ),
+                                  shelfId: 0,
+                                )),
                               ),
                             );
                           },
@@ -253,8 +256,12 @@ class _BookUiState extends State<BookUi> {
                                                     MaterialPageRoute(
                                                       builder: (context) =>
                                                           BookDetailsPage(
-                                                              detailModel:
-                                                                  temp[index]),
+                                                        detail_File:
+                                                            Detail_withFile(
+                                                          file: temp[index],
+                                                          shelfId: null,
+                                                        ),
+                                                      ),
                                                     ));
                                                 print(temp[index]);
                                               },

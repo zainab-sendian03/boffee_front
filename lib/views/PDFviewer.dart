@@ -1,7 +1,8 @@
-// ignore_for_file: public_member_api_docs, sort_constructors_first
-
+import 'dart:convert';
+import 'dart:io';
+import 'package:animated_snack_bar/animated_snack_bar.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_application_test/core/Models/detial_model.dart';
+import 'package:flutter_application_test/core/Models/d_withFile.dart';
 import 'package:flutter_application_test/core/Models/note_model.dart';
 import 'package:flutter_application_test/core/constants/linksapi.dart';
 import 'package:flutter_application_test/core/provider/Note_provider.dart';
@@ -11,13 +12,14 @@ import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_application_test/core/constants/colors.dart';
 import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
+import 'package:http/http.dart' as http;
 
 class PDFviewer extends StatefulWidget {
   const PDFviewer({
     Key? key,
-    required this.detailModel,
+    required this.detail_File,
   }) : super(key: key);
-  final DetailModel detailModel;
+  final Detail_withFile detail_File;
 
   @override
   State<PDFviewer> createState() => _PDFviewerState();
@@ -29,35 +31,53 @@ class _PDFviewerState extends State<PDFviewer> {
   TextEditingController notecontroller = TextEditingController();
   String? currentPdfFile;
   int indexPage = 0;
+  int selectedColor = 1;
   double ratingValue = 0;
+  String? shelfId;
+  int? userId;
   final Crud crud = Crud();
   GlobalKey x = GlobalKey();
-  String token = "4|fMNeGwvIFMZ9Dq0tKMsSk3MixWmWqQKHG17Z0CRl";
+
   @override
   void initState() {
     super.initState();
-
-    _initializePDFView();
+    fetchUserId();
+    fetchShelfId().then((_) {
+      _initializePDFView();
+    });
   }
 
   Future<void> _initializePDFView() async {
     await Future.delayed(const Duration(seconds: 2));
-    if (currentPdfFile != widget.detailModel.file) {
+    await _checkAndClearForNewUser();
+    if (currentPdfFile != widget.detail_File.file!.file) {
       setState(() {
         indexPage = 0;
-        currentPdfFile = widget.detailModel.file;
+        currentPdfFile = widget.detail_File.file!.file;
       });
     }
     await _loadLastPage();
     print("PDFView initialization complete");
   }
 
+  Future<void> _checkAndClearForNewUser() async {
+    final prefs = await SharedPreferences.getInstance();
+    String? lastUser = prefs.getString('lastUser');
+    String currentUser = userId.toString();
+
+    if (lastUser != currentUser) {
+      await prefs.remove('lastPage_${widget.detail_File.file!.id}');
+      await prefs.remove('lastFile_${widget.detail_File.file!.id}');
+      await prefs.setString('lastUser', currentUser);
+    }
+  }
+
   Future<void> _loadLastPage() async {
     final prefs = await SharedPreferences.getInstance();
-    int? lastPage = prefs.getInt('lastPage_${widget.detailModel.id}');
-    int? lastFileId = prefs.getInt('lastFile_${widget.detailModel.id}');
+    int? lastPage = prefs.getInt('lastPage_${widget.detail_File.file!.id}');
+    int? lastFileId = prefs.getInt('lastFile_${widget.detail_File.file!.id}');
 
-    if (lastPage != null && widget.detailModel.id == lastFileId) {
+    if (lastPage != null && widget.detail_File.file!.id == lastFileId) {
       setState(() {
         indexPage = lastPage;
       });
@@ -71,36 +91,66 @@ class _PDFviewerState extends State<PDFviewer> {
 
   Future<void> _savePageIndex(int pageIndex) async {
     final prefs = await SharedPreferences.getInstance();
-    await prefs.setInt('lastPage_${widget.detailModel.id}', pageIndex);
+    await prefs.setInt('lastPage_${widget.detail_File.file!.id}', pageIndex);
     await prefs.setInt(
-        'lastFile_${widget.detailModel.id}', widget.detailModel.id);
+        'lastFile_${widget.detail_File.file!.id}', widget.detail_File.file!.id);
   }
 
-  add_Rate() async {
+  Future<void> fetchUserId() async {
+    try {
+      var response = await http.get(
+        Uri.parse(link_userDetails),
+        headers: {
+          "Authorization": "Bearer 2|STgNButQ5SKXCd6KFR8eMvLqZIw6PixLjocNMpzG",
+        },
+      );
+      print("Server response: ${response.body}");
+
+      if (response.statusCode == 200) {
+        var responseBody = json.decode(response.body);
+        if (responseBody is Map<String, dynamic> &&
+            responseBody['success'] == true) {
+          setState(() {
+            userId = responseBody['data']['id'];
+            print("User_id: $userId");
+          });
+        } else {
+          print('Failed to fetch User id');
+        }
+      } else {
+        print('Failed to fetch User id');
+      }
+    } catch (e) {
+      print(e);
+      print('An error occurred');
+    }
+  }
+
+  Future<void> add_Rate() async {
     try {
       Map<String, dynamic> body = {
-        "book_id": widget.detailModel.id,
+        "book_id": widget.detail_File.file!.id,
         "rate": ratingValue.toInt(),
       };
-      print("Rating Book ID: ${widget.detailModel.id}");
+      print("Rating Book ID: ${widget.detail_File.file!.id}");
       var response = await crud.postrequest(
         link_rating,
         body,
         headers: {
           "Accept": "application/json",
-          "Authorization": "Bearer $token",
+          "Authorization": "Bearer 2|STgNButQ5SKXCd6KFR8eMvLqZIw6PixLjocNMpzG",
           "Content-Type": "application/json",
         },
       );
       print("rating is: $ratingValue");
-      print("id is: ${widget.detailModel.id}");
+      print("id is: ${widget.detail_File.file!.id}");
       print("Response: $response");
 
       if (response is Map && response['success'] == true) {
         ScaffoldMessenger.of(context).hideCurrentSnackBar();
         Navigator.of(context).push(MaterialPageRoute(
             builder: (context) => BookDetailsPage(
-                  detailModel: widget.detailModel,
+                  detail_File: widget.detail_File,
                 )));
         print("success");
       } else {
@@ -112,24 +162,24 @@ class _PDFviewerState extends State<PDFviewer> {
     }
   }
 
-  add_Note() async {
+  Future<void> add_Note() async {
     try {
-      print("Note Book ID: ${widget.detailModel.id}");
-      final bookId = widget.detailModel.id;
+      print("Note Book ID: ${widget.detail_File.file!.id}");
+      final bookId = widget.detail_File.file!.id;
       final url = "$link_storeNote/$bookId";
 
       Map<String, dynamic> body = {
         "page_num": indexPage,
         "body": notecontroller.text,
-        "book_id": widget.detailModel.id,
+        "book_id": widget.detail_File.file!.id,
+        "color": selectedColor,
       };
       var response = await crud.postrequest(
         url,
         body,
         headers: {
           "Accept": "application/json",
-          "Authorization": "Bearer 3|b1BZirQmIeGc6IUCWxW5LnTLvXY9VuyHmSJGTnFt",
-          "Content-Type": "application/json",
+          "Authorization": "Bearer 2|STgNButQ5SKXCd6KFR8eMvLqZIw6PixLjocNMpzG",
         },
       );
       print("index page is: $indexPage");
@@ -141,6 +191,18 @@ class _PDFviewerState extends State<PDFviewer> {
           ...NoteProvider.notesNotifier.value,
           newNote
         ];
+
+        AnimatedSnackBar(
+          duration: Duration(milliseconds: 10),
+          builder: (context) {
+            return MaterialAnimatedSnackBar(
+              messageText: "The note has been added to your profile",
+              type: AnimatedSnackBarType.success,
+              foregroundColor: Colors.white,
+              backgroundColor: medium_Brown,
+            );
+          },
+        ).show(context);
         Navigator.pop(context);
         print("success note");
       } else {
@@ -152,36 +214,87 @@ class _PDFviewerState extends State<PDFviewer> {
     }
   }
 
-  // update_progress() async {
-  //   try {
-  //     final bookId = widget.detailModel.id;
-  //     final url = "$link_progress/$bookId";
-  //     Map<String, dynamic> body = {
-  //       "progress": indexPage,
-  //     };
-  //     var response = await crud.postrequest(
-  //       url,
-  //       body,
-  //       headers: {
-  //         "Accept": "application/json",
-  //         "Authorization": "Bearer $token",
-  //         "Content-Type": "application/json",
-  //       },
-  //     );
-  //     print("index page is: $indexPage");
-  //     print("Response: $response");
+  Future<void> fetchShelfId() async {
+    try {
+      final bookId = widget.detail_File.file!.id;
 
-  //     if (response is Map && response['success'] == true) {
-  //       Navigator.pop(context);
-  //       print("success note");
-  //     } else {
-  //       print("fail");
-  //       print("Server response: $response");
-  //     }
-  //   } catch (e) {
-  //     print("ERROR $e");
-  //   }
-  // }
+      var response = await http.get(
+        Uri.parse("$link_enough/$bookId"),
+        headers: {
+          "Authorization": "Bearer 2|STgNButQ5SKXCd6KFR8eMvLqZIw6PixLjocNMpzG",
+        },
+      );
+      print("Server response: ${response.body}");
+
+      if (response.statusCode == 200) {
+        var responseBody = json.decode(response.body);
+        if (responseBody is Map<String, dynamic> &&
+            responseBody['success'] == true) {
+          setState(() {
+            shelfId = responseBody['data']['Shelf_id'].toString();
+            print("self_id: $shelfId");
+          });
+        } else {
+          print('Failed to fetch User Details');
+        }
+      } else {
+        print('Failed to fetch User Details');
+      }
+    } catch (e) {
+      print(e);
+      print('An error occurred');
+    }
+  }
+
+  update_progress() async {
+    try {
+      print("----------------------------------------------");
+      if (shelfId == null) {
+        print("Shelf ID is null. Cannot update progress.");
+        return;
+      }
+      final url = "$link_progress/$shelfId";
+
+      print("Shelf ID: $shelfId");
+      int index = indexPage + 1;
+      Map<String, dynamic> body = {
+        "progress": index,
+      };
+      var response = await crud.postrequest(
+        url,
+        body,
+        headers: {
+          "Accept": "application/json",
+          "Authorization": "Bearer 2|STgNButQ5SKXCd6KFR8eMvLqZIw6PixLjocNMpzG",
+          "Content-Type": "application/json",
+        },
+      );
+
+      print("Index page is: $index");
+      print("Response: $response");
+
+      if (response is Map) {
+        if (response['success'] == true) {
+          print("Update progress success");
+        } else {
+          print("Update progress failed");
+          print("Server response message: ${response['message']}");
+        }
+      } else {
+        print("Unexpected response format: $response");
+      }
+    } catch (e) {
+      print("ERROR: $e");
+
+      if (e is HttpException) {
+        print("HttpException: ${e.message}");
+      } else if (e is SocketException) {
+        print("SocketException: ${e.message}");
+      } else {
+        print("Unknown error: $e");
+      }
+    }
+  }
 
   AlertDialog _alertDialog(BuildContext context) {
     return AlertDialog(
@@ -204,19 +317,41 @@ class _PDFviewerState extends State<PDFviewer> {
       actions: <Widget>[
         Padding(
           padding: const EdgeInsets.only(top: 50),
-          child: ElevatedButton(
-            onPressed: () => add_Note(),
-            style: ElevatedButton.styleFrom(
-                backgroundColor: medium_Brown,
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(25)),
-                padding: const EdgeInsets.only(
-                    left: 25, right: 25, top: 10, bottom: 10)),
-            child: const Text("Add",
-                style: TextStyle(
-                  fontSize: 14,
-                  color: Colors.white,
-                )),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              DropdownButton<int>(
+                dropdownColor: const Color(0xFFFFF8F1),
+                value: selectedColor,
+                items: const [
+                  DropdownMenuItem(value: 1, child: Text("Green")),
+                  DropdownMenuItem(value: 2, child: Text("Blue")),
+                  DropdownMenuItem(value: 3, child: Text("Pink")),
+                ],
+                onChanged: (value) {
+                  setState(() {
+                    selectedColor = value!;
+                  });
+                },
+              ),
+              ElevatedButton(
+                onPressed: () {
+                  add_Note();
+                  notecontroller.clear();
+                },
+                style: ElevatedButton.styleFrom(
+                    backgroundColor: medium_Brown,
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(25)),
+                    padding: const EdgeInsets.only(
+                        left: 25, right: 25, top: 10, bottom: 10)),
+                child: const Text("Add",
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: Colors.white,
+                    )),
+              ),
+            ],
           ),
         ),
       ],
@@ -256,7 +391,7 @@ class _PDFviewerState extends State<PDFviewer> {
                   ),
                   const SizedBox(height: 12),
                   const Text(
-                    'You have read this book completely and obtained 100 gold coins.',
+                    'You have read this book completely and obtained 5 coins.',
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       fontWeight: FontWeight.w400,
@@ -331,13 +466,16 @@ class _PDFviewerState extends State<PDFviewer> {
 
   @override
   Widget build(BuildContext context) {
-    double percent = ((100 * indexPage) / widget.detailModel.total_pages);
+    double percent = ((100 * indexPage) / widget.detail_File.file!.total_pages);
     String finalPercent = percent.toStringAsFixed(0);
-
+    const String baseUrl = "http://10.0.2.2:8000";
+    final String filePath = widget.detail_File.file!.file;
+    final String pdfUrl = "$baseUrl$filePath";
+    print("the pdfUrl: $pdfUrl");
     return Scaffold(
         appBar: AppBar(
           backgroundColor: insidbook_color,
-          title: Text(widget.detailModel.title),
+          title: Text(widget.detail_File.file!.title),
           leading: IconButton(
             icon: Icon(
               Icons.arrow_back_outlined,
@@ -373,10 +511,6 @@ class _PDFviewerState extends State<PDFviewer> {
         body: FutureBuilder(
             future: _initializePDFView(),
             builder: (context, snapshot) {
-              print("Initialization done");
-              final pdfFilePath = widget.detailModel.file;
-              final pdfUrl = "http://10.0.2.2:8000$pdfFilePath";
-              print("Loading PDF from URL: $pdfUrl");
               return Stack(
                 children: [
                   SizedBox(
@@ -402,8 +536,13 @@ class _PDFviewerState extends State<PDFviewer> {
                         print("Failed to load PDF: ${details.description}");
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(
+                            backgroundColor: const Color(0xFFFFF8F1),
                             content: Text(
-                                "Failed to load PDF: ${details.description}"),
+                                "Failed to load PDF: ${details.description}",
+                                style: const TextStyle(
+                                  fontSize: 14,
+                                  color: Colors.black,
+                                )),
                           ),
                         );
                       },
@@ -424,15 +563,16 @@ class _PDFviewerState extends State<PDFviewer> {
                                 padding:
                                     const EdgeInsets.only(left: 40, top: 15),
                                 child: ElevatedButton(
-                                  onPressed: () {
-                                    setState(() {
-                                      if (indexPage > 0) {
+                                  onPressed: () async {
+                                    if (indexPage > 0) {
+                                      await update_progress();
+                                      setState(() {
                                         indexPage--;
                                         _pdfViewerController
                                             .jumpToPage(indexPage);
                                         _savePageIndex(indexPage);
-                                      }
-                                    });
+                                      });
+                                    }
                                   },
                                   style: ElevatedButton.styleFrom(
                                     backgroundColor: medium_Brown,
@@ -454,9 +594,9 @@ class _PDFviewerState extends State<PDFviewer> {
                                 padding:
                                     const EdgeInsets.only(right: 40, top: 15),
                                 child: ElevatedButton(
-                                  onPressed: () {
+                                  onPressed: () async {
                                     if (indexPage <
-                                        widget.detailModel.total_pages + 1) {
+                                        widget.detail_File.file!.total_pages) {
                                       setState(() {
                                         indexPage++;
                                         _pdfViewerController
@@ -464,13 +604,15 @@ class _PDFviewerState extends State<PDFviewer> {
                                         _savePageIndex(indexPage);
                                         print("$indexPage");
                                       });
+                                      await update_progress();
                                     }
                                     if (indexPage ==
-                                        widget.detailModel.total_pages) {
+                                        widget.detail_File.file!.total_pages) {
                                       SnackBar snackBar = snakB(context);
                                       ScaffoldMessenger.of(context)
                                           .showSnackBar(snackBar);
                                     }
+                                    await update_progress();
                                   },
                                   style: ElevatedButton.styleFrom(
                                     backgroundColor: medium_Brown,
@@ -483,7 +625,12 @@ class _PDFviewerState extends State<PDFviewer> {
                                     ),
                                   ),
                                   child: Icon(
-                                    Icons.arrow_forward_ios,
+                                    indexPage <
+                                            widget.detail_File.file!
+                                                    .total_pages -
+                                                1
+                                        ? Icons.arrow_forward_ios
+                                        : Icons.done,
                                     color: white,
                                   ),
                                 ),
@@ -505,19 +652,20 @@ class _PDFviewerState extends State<PDFviewer> {
                                 inactiveColor: white,
                                 value: indexPage.toDouble().clamp(
                                     1.0,
-                                    (widget.detailModel.total_pages)
+                                    (widget.detail_File.file!.total_pages)
                                         .toDouble()),
                                 min: 0,
-                                max:
-                                    (widget.detailModel.total_pages).toDouble(),
-                                divisions:
-                                    (widget.detailModel.total_pages) as int,
-                                onChanged: (double value) {
+                                max: (widget.detail_File.file!.total_pages)
+                                    .toDouble(),
+                                divisions: (widget
+                                    .detail_File.file!.total_pages) as int,
+                                onChanged: (double value) async {
                                   setState(() {
                                     indexPage = value.toInt();
                                     _pdfViewerController.jumpToPage(indexPage);
                                     _savePageIndex(indexPage);
                                   });
+                                  await update_progress();
                                 },
                               ),
                             ),
@@ -528,7 +676,7 @@ class _PDFviewerState extends State<PDFviewer> {
                               Padding(
                                 padding: const EdgeInsets.only(left: 40),
                                 child: Text(
-                                  "Page $indexPage/${widget.detailModel.total_pages}",
+                                  "Page ${indexPage}/${widget.detail_File.file!.total_pages}",
                                   style: TextStyle(fontSize: 15, color: white),
                                 ),
                               ),

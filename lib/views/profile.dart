@@ -10,6 +10,8 @@ import 'package:flutter_application_test/core/constants/linksapi.dart';
 import 'package:flutter_application_test/core/provider/Note_provider.dart';
 import 'package:flutter_application_test/core/service/real/crud.dart';
 
+import '../main.dart';
+
 class Profile extends StatefulWidget {
   const Profile({
     Key? key,
@@ -21,13 +23,9 @@ class Profile extends StatefulWidget {
 
 class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
   late TabController _tabController;
-  NoteModel? noteModel;
-
   TextEditingController notecontroller = TextEditingController();
   Future<Map<String, dynamic>>? _user;
   final Crud crud = Crud();
-  int indexPage = 0;
-  String token = "4|fMNeGwvIFMZ9Dq0tKMsSk3MixWmWqQKHG17Z0CRl";
 
   @override
   void initState() {
@@ -93,7 +91,7 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
         body,
         headers: {
           "Accept": "application/json",
-          "Authorization": "Bearer $token",
+          "Authorization": "Bearer 3|NTO82H0HqEo4yqVYKOJHaAj0xMX7K7obtUFs7hte",
           "Content-Type": "application/json",
         },
       );
@@ -118,11 +116,9 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
     }
   }
 
-  final Crud _crud = Crud();
-
   Future<Map<String, dynamic>> getNote() async {
     try {
-      var response = await _crud.getrequest(link_showNote, headers: {
+      var response = await crud.getrequest(link_showNote, headers: {
         "Authorization": "Bearer $token",
       });
 
@@ -150,7 +146,7 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
       var response = await http.get(
         Uri.parse(link_userDetails),
         headers: {
-          "Authorization": "Bearer $token",
+          "Authorization": "Bearer 2|STgNButQ5SKXCd6KFR8eMvLqZIw6PixLjocNMpzG",
         },
       );
       print("Server response: ${response.body}");
