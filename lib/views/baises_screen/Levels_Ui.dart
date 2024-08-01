@@ -1,9 +1,11 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:http/http.dart';
 import 'package:userboffee/Core/constants/colors.dart';
 import 'package:userboffee/Core/constants/linksapi.dart';
+import 'package:userboffee/Core/provider/Theme_provider.dart';
 import 'package:userboffee/feature/levels/levels_bloc.dart';
 
 class Levels_UI extends StatelessWidget {
@@ -24,9 +26,11 @@ class Levels_UI extends StatelessWidget {
         return BlocConsumer<LevelsBloc, LevelsState>(
           listener: (context, state) {
             if (state is Suceess_level_state) {
-              ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("sucess"),backgroundColor: Colors.green,));
+              print("level sucess");
+            //  ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("sucess"),backgroundColor: Colors.green,));
             } else {
-              ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("ooofffffff",),backgroundColor: Colors.red,));
+              print("level failed");
+             // ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("ooofffffff",),backgroundColor: Colors.red,));
             }
           },
           builder: (context, state) {
@@ -35,12 +39,29 @@ class Levels_UI extends StatelessWidget {
               print("success in ui level");
               return Column(
                 children: [
-                  Container(
-
-                    width: 400,
-                    height: 100,
-                    color: lightColor,
-                    child: Text("qwertyuiop[sdfghjkl;klhkmojoeo]"),
+                  Center(
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Container(
+                      
+                        width: 400,
+                        height: 90,
+                        decoration: BoxDecoration(
+                           boxShadow: [
+                                        BoxShadow(
+                      color: Colors.grey,
+                      offset: Offset(0.0, 1.0), //(x,y)
+                      blurRadius: 6.0,
+                                        ),
+                                      ],
+                              color: context.watch<ThemeProvider>().newcolor,
+                          borderRadius: BorderRadius.all(Radius.circular(10))),
+                        child: Padding(
+                          padding: const EdgeInsets.all(4.0),
+                          child: Text("you will level up as you read more and more books\n then your coffee beans will increase").tr(),
+                        ),
+                      ),
+                    ),
                   ),
                  
                            Container(
@@ -71,5 +92,4 @@ class Levels_UI extends StatelessWidget {
   }
 }
 
-class $ {
-}
+

@@ -1,14 +1,22 @@
+
+import 'package:animated_snack_bar/animated_snack_bar.dart';
 import 'package:easy_localization/easy_localization.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:userboffee/Core/Models/detial_model.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_rating_bar/flutter_rating_bar.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:userboffee/Core/Models/d_withFile.dart';
 import 'package:userboffee/Core/constants/colors.dart';
 import 'package:userboffee/Core/constants/linksapi.dart';
+import 'package:userboffee/Core/provider/Theme_provider.dart';
+import 'package:userboffee/Core/service/real/crud.dart';
+import 'package:userboffee/views/AddComment.dart';
+import 'package:userboffee/views/PDFviewer.dart';
 
 class BookDetailsPage extends StatefulWidget {
-  BookDetailsPage({super.key, required this.detailModel});
-  final DetailModel detailModel;
+  const BookDetailsPage({super.key, required this.detail_File});
+  final Detail_withFile detail_File;
 
   @override
   State<BookDetailsPage> createState() => _BookDetailsPageState();
@@ -17,6 +25,8 @@ class BookDetailsPage extends StatefulWidget {
 class _BookDetailsPageState extends State<BookDetailsPage>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
+  double avgRating = 0;
+  bool isFirstTime = true;
 
   Future<dynamic> alert_report(
       BuildContext context, TextEditingController noteCont) {
@@ -54,7 +64,7 @@ class _BookDetailsPageState extends State<BookDetailsPage>
                     style: TextStyle(
                       fontSize: 17,
                       color: Colors.white,
-                    )).tr(),
+                    )),
               ),
               TextButton(
                 onPressed: () => Navigator.pop(context),
@@ -62,17 +72,67 @@ class _BookDetailsPageState extends State<BookDetailsPage>
                     style: TextStyle(
                       fontSize: 17,
                       color: Colors.brown,
-                    )).tr(),
+                    )),
               ),
             ],
           );
         });
   }
 
+  final Crud _crud = Crud();
+  Future<void> get_AVG_rating() async {
+    try {
+      final bookId = widget.detail_File.file!.id;
+      final url = "$link_AVGrating/$bookId";
+
+      print("AVG Rating URL: $url");
+
+      var response = await _crud.getrequest(url);
+      print("Server response: $response");
+
+      if (response is Map && response.containsKey('average_rating')) {
+        setState(() {
+          avgRating = double.parse(response['average_rating']);
+        });
+        print("Average rating fetched successfully");
+      } else {
+        print("Failed to fetch average rating");
+        print("Server response: $response");
+      }
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  Future<void> checkFirstTime() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    bool _isFirstTime = prefs.getBool('isFirstTime') ?? true;
+    if (_isFirstTime) {
+      _showSnackBar();
+      await prefs.setBool('isFirstTime', false);
+    }
+  }
+
+  void _showSnackBar() {
+    AnimatedSnackBar(
+      duration: Duration(milliseconds: 10),
+      builder: (context) {
+        return MaterialAnimatedSnackBar(
+          messageText: "The book has been added to Reading shelf",
+          type: AnimatedSnackBarType.success,
+          foregroundColor: Colors.white,
+          backgroundColor: medium_Brown,
+        );
+      },
+    ).show(context);
+  }
+
   @override
   void initState() {
     _tabController = TabController(length: 2, vsync: this);
     super.initState();
+    get_AVG_rating();
+    checkFirstTime();
   }
 
 //,required this.detailModel
@@ -82,7 +142,7 @@ class _BookDetailsPageState extends State<BookDetailsPage>
   ) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Light_Brown,
+        backgroundColor: context.watch<ThemeProvider>().newcolor,
         title: Text(
           'Book Details',
           style: TextStyle(color: dark_Brown),
@@ -90,12 +150,22 @@ class _BookDetailsPageState extends State<BookDetailsPage>
         actions: [
           IconButton(
             color: white,
-            icon: Icon(Icons.favorite_outline),
+            icon: const Icon(Icons.favorite_outline),
             onPressed: () {
               // اضف هنا الاكشن الذي تريده عند الضغط على أيقونة المفضلة
             },
           ),
         ],
+        leading: IconButton(
+          icon: Icon(
+            Icons.arrow_back_outlined,
+            color: dark_Brown,
+            size: 35,
+          ),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),
       ),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -112,37 +182,47 @@ class _BookDetailsPageState extends State<BookDetailsPage>
                   decoration: BoxDecoration(
                       image: DecorationImage(
                           image: NetworkImage(
-                            "$linkservername/" +
-                                widget.detailModel.cover.toString(),
+                            "http://$ip_local:8000${widget.detail_File.file!.cover}",
                           ),
                           fit: BoxFit.fill)),
                 ),
               ),
               Padding(
-                padding: EdgeInsets.only(left: 15, top: 35),
+                padding: const EdgeInsets.only(left: 15, top: 35),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
                     Text(
-                      widget.detailModel.title.toString(),
-                      style: TextStyle(
+                      widget.detail_File.file!.title.toString(),
+                      style: const TextStyle(
                           fontSize: 24.0, fontWeight: FontWeight.bold),
-                    ).tr(),
-                    SizedBox(height: 10.0),
+                    ),
+                    const SizedBox(height: 10.0),
                     Text(
-                      widget.detailModel.author_name.toString(),
-                      style: TextStyle(fontSize: 18.0),
-                    ).tr(),
-                    SizedBox(height: 10.0),
+                      widget.detail_File.file!.author_name.toString(),
+                      style: const TextStyle(fontSize: 18.0),
+                    ),
+                    const SizedBox(height: 10.0),
                     Text(
-                      widget.detailModel.total_pages.toString(),
-                      style: TextStyle(fontSize: 18.0),
-                    ).tr(),
-                    SizedBox(height: 10.0),
-                    Text(
+                      widget.detail_File.file!.total_pages.toString(),
+                      style: const TextStyle(fontSize: 18.0),
+                    ),
+                    const SizedBox(height: 10.0),
+                    const Text(
                       'type',
                       style: TextStyle(fontSize: 18.0),
-                    ).tr(),
+                    ),
+                    const SizedBox(height: 10.0),
+                    RatingBarIndicator(
+                      rating: avgRating,
+                      unratedColor: Colors.amber.withAlpha(50),
+                      itemCount: 5,
+                      itemSize: 30.0,
+                      itemBuilder: (context, _) => const Icon(
+                        Icons.star,
+                        color: Colors.amber,
+                      ),
+                    ),
                   ],
                 ),
               ),
@@ -158,7 +238,7 @@ class _BookDetailsPageState extends State<BookDetailsPage>
               labelColor: Colors.brown,
               isScrollable: true,
               controller: _tabController,
-              tabs: [
+              tabs:  [
                 Tab(
                   child: Text(
                     'Info',
@@ -169,9 +249,9 @@ class _BookDetailsPageState extends State<BookDetailsPage>
                   widthFactor: 2,
                   child: Tab(
                     child: Text(
-                      'Reviews',
+                      'Reviews'.tr(),
                       style: TextStyle(fontSize: 18),
-                    ).tr(),
+                    ),
                   ),
                 ),
               ],
@@ -188,72 +268,91 @@ class _BookDetailsPageState extends State<BookDetailsPage>
                           bottom: 135, left: 25, right: 25),
                       child: Center(
                           child: Text(
-                        widget.detailModel.description.toString(),
-                        style: TextStyle(fontSize: 20),
-                      ).tr()),
+                        widget.detail_File.file!.description.toString(),
+                        style: const TextStyle(fontSize: 20),
+                      )),
                     ),
-                    Padding(
-                        padding: const EdgeInsets.only(
-                            left: 35, bottom: 70, top: 300),
-                        child: SizedBox(
-                          width: 130,
-                          height: 50,
-                          child: ElevatedButton(
-                            style: ButtonStyle(
-                              backgroundColor: MaterialStateProperty.all<Color>(
-                                  Colors.brown),
-                            ),
-                            onPressed: () {},
-                            child: Text(
-                              'Read now',
-                              style: TextStyle(
-                                fontSize: 18,
-                                color: white,
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Padding(
+                            padding: const EdgeInsets.only(
+                                bottom: 70, top: 300, left: 20),
+                            child: SizedBox(
+                              width: 130,
+                              height: 50,
+                              child: ElevatedButton(
+                                style: ButtonStyle(
+                                  backgroundColor:
+                                      MaterialStateProperty.all<Color>(
+                                          Colors.brown),
+                                ),
+                                onPressed: () {
+                                  Navigator.of(context).push(
+                                    MaterialPageRoute(
+                                      builder: (context) => PDFviewer(
+                                        detail_File: widget.detail_File,
+                                      ),
+                                    ),
+                                  );
+                                  print(
+                                      "path:${widget.detail_File.file!.file}");
+                                  print(
+                                      "title:${widget.detail_File.file!.title}");
+                                  print(
+                                      "pages:${widget.detail_File.file!.total_pages}");
+                                },
+                                child: Text(
+                                  'Read now',
+                                  style: TextStyle(
+                                    fontSize: 18,
+                                    color: white,
+                                  ),
+                                ).tr(),
                               ),
-                            ).tr(),
-                          ),
-                        )),
-                    Padding(
-                      padding: const EdgeInsets.only(top: 375, left: 35),
-                      child: TextButton(
-                        onPressed: () {
-                          alert_report(context, TextEditingController());
-                        },
-                        child: Text(
-                          'Report',
-                          style: TextStyle(
-                            fontSize: 18,
-                            color: Colors.grey,
-                          ),
-                        ).tr(),
-                      ),
+                            )),
+                        Padding(
+                            padding: const EdgeInsets.only(
+                              top: 300,
+                              right: 20,
+                              bottom: 70,
+                            ),
+                            child: SizedBox(
+                              width: 130,
+                              height: 50,
+                              child: ElevatedButton(
+                                style: ButtonStyle(
+                                  backgroundColor:
+                                      MaterialStateProperty.all<Color>(
+                                          no_color),
+                                  elevation: MaterialStateProperty.all(0),
+                                  side: MaterialStateProperty.all(
+                                      const BorderSide(color: Colors.brown)),
+                                ),
+                                onPressed: () {},
+                                child: Text(
+                                  'Read Later',
+                                  style: TextStyle(
+                                    fontSize: 16.8,
+                                    color: medium_Brown,
+                                  ),
+                                ).tr(),
+                              ),
+                            )),
+                      ],
                     ),
-                    Padding(
-                        padding: const EdgeInsets.only(
-                          left: 200,
-                          top: 300,
-                          bottom: 70,
+                    TextButton(
+                      onPressed: () {
+                        alert_report(context, TextEditingController());
+                      },
+                      child: const Text(
+                        'Report',
+                        style: TextStyle(
+                          fontSize: 18,
+                          color: Colors.grey,
                         ),
-                        child: SizedBox(
-                          width: 130,
-                          height: 50,
-                          child: ElevatedButton(
-                            style: ButtonStyle(
-                              backgroundColor: MaterialStateProperty.all<Color>(
-                                  Colors.white),
-                              side: MaterialStateProperty.all(
-                                  BorderSide(color: Colors.brown)),
-                            ),
-                            onPressed: () {},
-                            child: Text(
-                              'Read Later',
-                              style: TextStyle(
-                                fontSize: 16.8,
-                                color: medium_Brown,
-                              ),
-                            ).tr(),
-                          ),
-                        )),
+                      ).tr(),
+                    ),
                   ],
                 ),
                 Stack(
@@ -262,8 +361,8 @@ class _BookDetailsPageState extends State<BookDetailsPage>
                       scrollDirection: Axis.vertical,
                       children: <Widget>[
                         Padding(
-                          padding:
-                              EdgeInsets.only(left: 30, right: 30, top: 30),
+                          padding: const EdgeInsets.only(
+                              left: 30, right: 30, top: 30),
                           child: Container(
                             decoration: BoxDecoration(
                                 color: offwhite,
@@ -271,7 +370,7 @@ class _BookDetailsPageState extends State<BookDetailsPage>
                                 boxShadow: [
                                   BoxShadow(
                                     color: Light_Brown,
-                                    offset: Offset(0, 5),
+                                    offset: const Offset(0, 5),
                                     blurRadius: 10,
                                     // spreadRadius: 10,
                                   )
@@ -282,7 +381,7 @@ class _BookDetailsPageState extends State<BookDetailsPage>
                         ),
                       ],
                     ),
-                    //   AddComment()
+                    const AddComment()
                   ],
                 ),
               ],

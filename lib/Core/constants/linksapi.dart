@@ -3,12 +3,24 @@ String BaseUrl ="http://$ip_local:8000/api/";
 
 String ip_Zainab ="10.0.2.2";
 String ip_local ="localhost";
-String ip_maryam ="192.168.1.6";
+String ip_maryam ="192.168.137.120";
 //auth
 String linksignup ="$linkservername/api/register";
 String linklogin = "$linkservername/api/login";
+String link_userDetails = "$linkservername/api/user/show";
 
-String linkrating = "$linkservername/api/rate";
+//rating
+String link_rating = "$linkservername/api/rate";
+String link_AVGrating = "$linkservername/api/avg";
+
+//note
+String link_storeNote = "$linkservername/api/note";
+String link_EditNote = "$linkservername/api/update";
+String link_showNote = "$linkservername/api/notes";
+
+//book
+String link_progress = "$linkservername/api/shelf";
+String link_enough = "$linkservername/api/book";
 
 //url  before quote
 

@@ -29,7 +29,7 @@ class SettingUi extends StatelessWidget {
               Icons.arrow_back_ios_new,
               color: white,
             )),
-        backgroundColor: Light_Brown,
+        backgroundColor:context.watch<ThemeProvider>().newcolor,
         title: Text(
           "Setting",
           style: TextStyle(color: dark_Brown),
@@ -61,6 +61,17 @@ class SettingUi extends StatelessWidget {
                     },
                     child: ColorContainer(
                       color:  rose
+                      //context.watch<ThemeProvider>().newcolor,
+                     
+                   
+                    )),
+                    InkWell(
+                    onTap: () {
+                      Provider.of<ThemeProvider>(context,listen: false).changecolor(Light_Brown);
+                      getIt.get<SharedPreferences>().setString("themecolor", "brown");
+                    },
+                    child: ColorContainer(
+                      color:  Light_Brown
                       //context.watch<ThemeProvider>().newcolor,
                      
                    

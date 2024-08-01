@@ -22,11 +22,12 @@
     "NO Internet connection": "NO Internet connection",
     "Check your Internet": "Check your Internet",
     
-    "Female": "Female",
+    "female": "Female",
     "Male": "Male",
     "My quotes": "quotes",
-    "favorite book": "favorite book",
-    "my notes": "my notes",
+    "Favourite book": "favorite book",
+    "Favourite quotes":"Favourite quotes",
+    "My notes": "my notes",
     "Themes": "Themes",
     "Mode": "Mode",
     "Language": "Language",
@@ -48,5 +49,6 @@
     "Book Details": "Book Details",
     " Cancle": "Cancle",
     "Send": "Send",
-    "type": "type"
+    "type": "type",
+    "you will level up as you read more and more books\n then your coffee beans will increase":"you will level up as you read more and more books\n then your coffee beans will increase"
 }

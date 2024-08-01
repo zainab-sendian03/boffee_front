@@ -5,10 +5,12 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:lottie/lottie.dart';
+import 'package:userboffee/Core/Models/note_model.dart';
 import 'package:userboffee/Core/Models/post_model.dart';
 
 import 'package:userboffee/Core/constants/colors.dart';
 import 'package:userboffee/Core/constants/functions/validInput.dart';
+import 'package:userboffee/Core/provider/Theme_provider.dart';
 import 'package:userboffee/Core/service/real/qutes_ser.dart';
 import 'package:userboffee/feature/addpost_bloc/addPost/addpost_bloc.dart';
 import 'package:userboffee/feature/getpost/bloc/getpost_bloc.dart';
@@ -45,7 +47,7 @@ class LanguageContainer extends StatelessWidget {
       width: 200,
       height: 30,
       decoration: BoxDecoration(
-          color: Light_Brown, borderRadius: BorderRadius.circular(5)),
+          color: context.watch<ThemeProvider>().newcolor, borderRadius: BorderRadius.circular(5)),
       child: Text(
         text,
         textAlign: TextAlign.center,
@@ -164,7 +166,7 @@ class SearchContainer extends StatelessWidget {
                                               createpostEvent(
                                                 post: PostModel(
                                                     body: body_controller.text,
-                                                    user_name: "maryam"),
+                                                    user_name: "maryam",),
                                               ),
                                             );
 
@@ -363,6 +365,100 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
         ),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(20),
+        ),
+      ),
+    );
+  }
+}
+class CardNote extends StatelessWidget {
+  final NoteModel noteModel;
+  final void Function()? onDelete;
+  final void Function()? onEdit;
+
+  const CardNote({
+    Key? key,
+    required this.noteModel,
+    required this.onDelete,
+    required this.onEdit,
+  }) : super(key: key);
+
+  Color getColor(int colorCode) {
+    switch (colorCode) {
+      case 1:
+        return const Color(0xFF87986A);
+      case 2:
+        return const Color(0xFF92A1C3);
+      case 3:
+        return const Color(0xFFF3A0AD);
+      default:
+        return Colors.grey;
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(left: 30, right: 30, top: 30),
+      child: Card(
+        child: Container(
+          decoration: BoxDecoration(
+            color: getColor(noteModel.color as int),
+            borderRadius: BorderRadius.circular(10),
+            boxShadow: const [
+              BoxShadow(
+                color: Colors.grey,
+                offset: Offset(0, 2),
+                blurRadius: 10,
+              )
+            ],
+          ),
+          constraints: const BoxConstraints(maxHeight: 150),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  IconButton(
+                    icon: const Icon(Icons.delete),
+                    onPressed: onDelete,
+                    color: white,
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.edit),
+                    onPressed: onEdit,
+                    color: white,
+                  ),
+                ],
+              ),
+              Padding(
+                padding: const EdgeInsets.only(left: 20),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      "page: ${noteModel.pageNum}",
+                      style: TextStyle(
+                          fontSize: 15,
+                          fontWeight: FontWeight.bold,
+                          color: white),
+                    ),
+                    Text(
+                      "Book title: ${noteModel.title}",
+                      style: TextStyle(
+                          fontSize: 15,
+                          fontWeight: FontWeight.bold,
+                          color: white),
+                    ),
+                    Text(
+                      noteModel.body ?? '',
+                      style: TextStyle(fontSize: 20, color: white),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

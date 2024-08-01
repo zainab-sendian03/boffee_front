@@ -1,17 +1,18 @@
 import 'package:get_it/get_it.dart';
+import 'package:http/http.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 late SharedPreferences pref;
 
 
 
- String accestoken2="1|vvr1jtvKtKGp3651AToTZleiVKM6uJzHHeTSBufv";
+ //String accestoken2="1|vvr1jtvKtKGp3651AToTZleiVKM6uJzHHeTSBufv";
 getoptions() {
  
 String accestoken=  pref.getString("token") ??"";
   print(accestoken.toString());
     return {
-      "Accept": "application/json",
-      "Authorization": "Bearer $accestoken",
+      "Accept":"application/json",
+      "Authorization":"Bearer $accestoken",
       // "Language_Code":
       //     getIt.get<SharedPreferences>().getString("lan")
       // ! Must Be From SharedPrefeneces
@@ -26,6 +27,7 @@ String accestoken=  pref.getString("token") ??"";
     return {
       "accept": "application/json",
       "authorization": "Bearer $accestoken",
+      "Content-Type":"application/json"
       // "Language_Code":
       //     getIt.get<SharedPreferences>().getString("lan")
       // ! Must Be From SharedPrefeneces

@@ -1,6 +1,8 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:device_preview/device_preview.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:input_slider/input_slider.dart';
@@ -28,7 +30,14 @@ void main() async {
       supportedLocales: [Locale('en'), Locale('ar')],
       path: 'asset/translate', // <-- change the path of the translation files
       fallbackLocale: Locale('en'),
-      child: MyApp()));
+      child: 
+      //DevicePreview(
+       // enabled: !kReleaseMode,
+       // builder:(context)=>
+         MyApp()
+       //  )
+         )
+         );
 }
 
 class MyApp extends StatelessWidget {
@@ -53,9 +62,12 @@ class MyApp extends StatelessWidget {
       ],
       child: Builder(builder: (context) {
         return MaterialApp(
+       //    useInheritedMediaQuery: true,
             localizationsDelegates: context.localizationDelegates,
             supportedLocales: context.supportedLocales,
-            locale: context.locale,
+            locale: context.locale ,
+            //?? 
+            //  DevicePreview.locale(context),
             debugShowCheckedModeBanner: false,
              theme: context.watch<ThemeProvider>().themedata,
             home: AppScaffold(child: CorePage()));

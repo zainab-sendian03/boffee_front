@@ -27,10 +27,11 @@ class QuetsPage extends StatelessWidget {
         listener: (context, state) {
           if (state is SuccessGetPost_state) {
             // state.posts.length;
-            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-              content: Text("Get Data"),
-              backgroundColor: Light_Brown,
-            ));
+            print("(state is SuccessGetPost_state");
+            // ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            //   content: Text("Get Data"),
+            //   backgroundColor: Light_Brown,
+            // ));
           }
         },
         builder: (context, state) {
@@ -58,7 +59,7 @@ class QuetsPage extends StatelessWidget {
                                 child: Row(
                                   children: [
                                     Text(
-                                      state.posts[index].user_name,
+                                      state.posts[index].user_name!,
                                       style: TextStyle(
                                           fontSize: 18,
                                           fontWeight: FontWeight.w500),
@@ -106,22 +107,42 @@ class QuetsPage extends StatelessWidget {
                                           ),
                                         )),
                                     IconButton(
-                                      onPressed: () {
-                                        // Future<ResultModel> res =
-                                        //     add_post_tofav_ser(
-                                        //         getIt<SharedPreferences>()
-                                        //             .getInt("post_id")!);
-                                        // print("success");
+                                      onPressed: () async {
+                                        //   print("--------------${state.posts[index].id.toString()}");
+                                        // ResultModel res =
+                                        //    await add_post_tofav_ser(
+                                        //         state.posts[index].id!)
+
+                                        //         as successModel;
+                                        // print("--------------${state.posts[index].id.toString()}");
                                         // if (res is ErroeModel) {
                                         //   print("error in ui Like");
-                                          
-                                        // } 
+
+                                        // }
                                         // else if(res is ExceptionModel){
                                         //   print("exception in ui Like");
                                         // }
                                         // else {
                                         //   print("success in ui like");
                                         // }
+
+                                        print(
+                                            "--------------${getIt<SharedPreferences>().getInt('post_id')!}");
+                                        ResultModel res =
+                                            await add_post_tofav_ser(
+                                                //1
+                                                getIt<SharedPreferences>()
+                                                    .getInt('post_id')!);
+
+                                        print(
+                                            "--------------${state.posts[index].id.toString()}");
+                                        if (res is ErrorModel) {
+                                          print("error in ui Like");
+                                        } else if (res is ExceptionModel) {
+                                          print("exception in ui Like");
+                                        } else {
+                                          print("success in ui like");
+                                        }
                                       },
                                       icon: Icon(
                                         Icons.favorite_border,
@@ -144,10 +165,10 @@ class QuetsPage extends StatelessWidget {
               ],
             );
           } else if (state is ErorrGetpost_state) {
-            //  print("Error in else if");
+            print("Error in else if");
             return Center(child: CircularProgressIndicator());
           } else {
-            //   print("Excep in else ");
+            print("Excep in else ");
             return Center(child: CircularProgressIndicator());
           }
         },

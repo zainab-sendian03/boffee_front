@@ -11,7 +11,7 @@ abstract class categories{
   Dio dio=Dio();
   String baseUrl='${BaseUrl}types';
   late Response response;
-  Future<List<ResultModel>> getAllCategories();
+  Future<List<ResultModel>>getAllCategories();
   Future<ResultModel> getOnecategory();
   createUser( CategoryModel);
   DeletUser(int id);

@@ -1,92 +1,3 @@
-// import 'dart:io';
-
-// import 'package:flutter/material.dart';
-
-// import 'package:flutter_bloc/flutter_bloc.dart';
-// import 'package:userboffee/Core/Models/post_model.dart';
-// import 'package:userboffee/Core/constants/colors.dart';
-// import 'package:userboffee/Core/constants/components.dart';
-// import 'package:userboffee/Core/service/real/qutes_ser.dart';
-// import 'package:userboffee/feature/getbooks/bloc/books_bloc.dart';
-// import 'package:userboffee/feature/getpost/bloc/getpost_bloc.dart';
-
-// class BookUi extends StatelessWidget {
-//   BookUi({super.key});
-//   TextEditingController body_controller = TextEditingController();
-//   @override
-//   Widget build(BuildContext context) {
-//     return 
-    
-//     BlocProvider(
-//       create: (context) => BooksBloc()..add(GettingBooks()),
-//       child: Builder(builder: (context) {
-//         return BlocBuilder<BooksBloc, BooksState>(
-//           builder: (context, state) {
-//             print("before if in get books");
-//             if (state is SuccessGetBook_state) {
-//               print("state is SuccessGetBook_state in ui");
-//               return Column(
-//                 children: [
-                 
-             
-//                   BlocListener<BooksBloc, BooksState>(
-//                     listener: (context, state) {
-//                       // TODO: implement listener
-//                       if (state is SuccessGetBook_state) {
-//                         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-//                           content: Text("Get Data"),
-//                           backgroundColor: Light_Brown,
-//                         ));
-//                       }
-//                     },
-//                     child: Expanded(
-//                       child: GridView.builder(
-//                         itemCount: state.Books.length,
-//                         itemBuilder: (context, int index) {
-//                           return Card(
-//                             child: Container(
-                              
-//                               child: Column(children: [
-//                                Container(decoration: BoxDecoration(image: DecorationImage(image: AssetImage(state.Books[index].cover))),),
-//                               Text(state.Books[index].title),
-//                             // File(state.Books[index].file)
-//                               ],),
-                               
-                               
-//                                ),
-//                           );
-//                         }, gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-//                           crossAxisCount: 2),
-//                       ),
-//                     ),
-//                   )
-//                 ],
-//               );
-//             } else if (state is ErorrGetBooks_state) {
-//               print("Error in else if in ui books");
-//               return CircularProgressIndicator();
-//             } else {
-//                print("Excep in else in ui books ");
-//               return CircularProgressIndicator();
-//             }
-//           },
-//         );
-//       }),
-//     );
-//   }
-// }
-
-
-
-
-
-
-
-
-
-
-
-
 import 'package:dio/dio.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/foundation.dart';
@@ -96,10 +7,14 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
 
 import 'package:userboffee/Core/Models/basic_model.dart';
+import 'package:userboffee/Core/Models/book_model.dart';
+import 'package:userboffee/Core/Models/bookmodel_maya.dart';
 import 'package:userboffee/Core/Models/category.dart';
+import 'package:userboffee/Core/Models/d_withFile.dart';
 import 'package:userboffee/Core/Models/detial_model.dart';
 import 'package:userboffee/Core/constants/colors.dart';
 import 'package:userboffee/Core/constants/linksapi.dart';
+import 'package:userboffee/Core/service/mostReading.dart';
 import 'package:userboffee/Core/service/real/get_type.dart';
 import 'package:userboffee/Core/service/real/service_category.dart';
 import 'package:userboffee/views/baises_screen/Details.dart';
@@ -114,7 +29,7 @@ class BookUi extends StatefulWidget {
   State<BookUi> createState() => _BookUiState();
 }
 
-String tokenize = '';
+String tokenize ='';
 
 class _BookUiState extends State<BookUi> {
   ValueNotifier<int> indexOfType = ValueNotifier(1);
@@ -168,77 +83,88 @@ class _BookUiState extends State<BookUi> {
                   ),
                 ),
                 Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
                     Padding(
-                      padding: const EdgeInsets.only(left: 20),
-                      child: Align(
-                        alignment: Alignment.centerLeft,
-                        child: Text(
-                          'Most reading'.tr(),
-                          style:
-                              TextStyle(fontSize: 23, color: Color(0xFF5D3F2E)),
-                        ).tr(),
-                      ),
+                      padding: const EdgeInsets.all(3),
+                      child: Text(
+                        'Most reading'.tr(),
+                        style:
+                            TextStyle(fontSize: 23, color: Color(0xFF5D3F2E)),
+                      ).tr(),
                     )
                   ],
                 ),
-                Flexible(
-                  child: ListView.builder(
-                    scrollDirection: Axis.horizontal,
-                    itemCount: 4,
-                    itemBuilder: (BuildContext context, int index) {
-                      return Padding(
-                        padding: const EdgeInsets.only(
-                          top: 10,
-                          left: 15,
-                          right: 10,
-                        ),
-                        child: GestureDetector(
-                          onTap: () {
-                            Navigator.push(
+                FutureBuilder(
+                  future: mostreading(),
+                  builder: ( context,  snapshot) { 
+                    if (snapshot.hasData) {
+                      ListofEverything<Bookmodel> resList=snapshot.data as ListofEverything<Bookmodel> ;
+                     return  Expanded(
+                    child: ListView.builder(
+                      scrollDirection: Axis.horizontal,
+                      itemCount: 
+                      resList.listresult.length,
+                      itemBuilder: (BuildContext context, int index) {
+                        return Padding(
+                          padding: const EdgeInsets.only(
+                            top: 10,
+                            left: 15,
+                            right: 10,
+                          ),
+                          child: InkWell(
+                            onTap: (){
+                              Navigator.push(
                               context,
                               MaterialPageRoute(
                                 builder: (context) => BookDetailsPage(
-                                  detailModel: DetailModel(
+                                    detail_File: Detail_withFile(
+                                  file: DetailModel(
                                     id: 2,
                                     title: 'title',
                                     author_name: 'author_name',
                                     description: 'description',
                                     cover: 'cover',
                                     total_pages: 23,
+                                    file: '',
                                   ),
-                                ),
+                                  shelfId: 0,
+                                )),
                               ),
                             );
-                          },
-                          child: Container(
-                            width: 220,
-                            // height: 100,
-                            color: medium_Brown,
+                            },
+                            child: Container(
+                              width: 220,
+                              // height: 100,
+                             // color: medium_Brown,
+                             decoration: BoxDecoration(image: DecorationImage(image: NetworkImage(linkservername+resList.listresult[index].cover))),
+                            ),
                           ),
-                        ),
-                      );
-                    },
-                  ),
+                        );
+                      },
+                    ),
+                  );
+                    } else {
+                      return Center(child: CircularProgressIndicator());
+                    }
+                   },
+                 
                 ),
                 Column(
-                  //mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
                     Padding(
                       padding: const EdgeInsets.only(left: 20),
                       child: Builder(builder: (context) {
-                        return Align(
-                          alignment: Alignment.bottomLeft,
-                          child: Padding(
-                            padding: const EdgeInsets.only(bottom: 15, top: 20),
-                            child: Text(
-                              'Categories'.tr(),
-                              style: TextStyle(
-                                  // fontFamily: 'Imprima',
-                                  fontSize: 23,
-                                  color: Color(0xFF5D3F2E)),
-                            ).tr(),
-                          ),
+                        return Padding(
+                          padding: const EdgeInsets.only(bottom: 15, top: 20),
+                          child: Text(
+                            'Categories'.tr(),
+                            style: TextStyle(
+                                // fontFamily: 'Imprima',
+                                fontSize: 23,
+                                color: Color(0xFF5D3F2E)),
+                          ).tr(),
                         );
                       }),
                     ),
@@ -286,8 +212,8 @@ class _BookUiState extends State<BookUi> {
                                     gridDelegate:
                                         SliverGridDelegateWithFixedCrossAxisCount(
                                             crossAxisCount: 2,
-                                            mainAxisSpacing: 8,
-                                            crossAxisSpacing: 8),
+                                            mainAxisSpacing: 11,
+                                            crossAxisSpacing: 11),
                                     itemCount: temp.length,
                                     itemBuilder: (context, index) => Padding(
                                       padding: const EdgeInsets.only(top: 8),
@@ -347,8 +273,7 @@ class _BookUiState extends State<BookUi> {
                                                     MaterialPageRoute(
                                                       builder: (context) =>
                                                           BookDetailsPage(
-                                                              detailModel:
-                                                                  temp[index]),
+                                                             detail_File:  Detail_withFile(file:  temp[index]),),
                                                     ));
                                                 print(temp[index]);
                                               },
@@ -358,7 +283,7 @@ class _BookUiState extends State<BookUi> {
                                                 decoration: BoxDecoration(
                                                   image: DecorationImage(
                                                       image: NetworkImage(
-                                                       "$linkservername/" +
+                                                       "$linkservername" +
                                                             temp[index]
                                                                 .cover
                                                                 .toString(),

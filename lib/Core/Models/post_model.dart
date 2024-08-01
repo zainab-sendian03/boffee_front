@@ -5,19 +5,24 @@ import 'package:userboffee/Core/Models/basic_model.dart';
 
 class PostModel extends ResultModel {
   String body;
-  String user_name;
+  String? user_name;
+  int? id;
   PostModel({
     required this.body,
-    required this.user_name,
+    this.user_name,
+    this.id,
   });
+  
 
   PostModel copyWith({
     String? body,
     String? user_name,
+    int? id,
   }) {
     return PostModel(
       body: body ?? this.body,
       user_name: user_name ?? this.user_name,
+      id: id ?? this.id,
     );
   }
 
@@ -25,6 +30,7 @@ class PostModel extends ResultModel {
     return <String, dynamic>{
       'body': body,
       'user_name': user_name,
+      'id': id,
     };
   }
 
@@ -32,6 +38,7 @@ class PostModel extends ResultModel {
     return PostModel(
       body: map['body'] as String,
       user_name: map['user_name'] as String,
+      id: map['id'] as int,
     );
   }
 
@@ -40,7 +47,7 @@ class PostModel extends ResultModel {
   factory PostModel.fromJson(String source) => PostModel.fromMap(json.decode(source) as Map<String, dynamic>);
 
   @override
-  String toString() => 'ShowPostModel(body: $body, user_name: $user_name)';
+  String toString() => 'PostModel(body: $body, user_name: $user_name, id: $id)';
 
   @override
   bool operator ==(covariant PostModel other) {
@@ -48,9 +55,10 @@ class PostModel extends ResultModel {
   
     return 
       other.body == body &&
-      other.user_name == user_name;
+      other.user_name == user_name &&
+      other.id == id;
   }
 
   @override
-  int get hashCode => body.hashCode ^ user_name.hashCode;
+  int get hashCode => body.hashCode ^ user_name.hashCode ^ id.hashCode;
 }

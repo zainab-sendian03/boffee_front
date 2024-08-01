@@ -1,10 +1,11 @@
 import 'dart:convert';
 
 class BookModel {
-  num id;
+  int id;
   String title;
   String cover;
   String author_name;
+
   BookModel({
     required this.id,
     required this.title,
@@ -13,7 +14,7 @@ class BookModel {
   });
 
   BookModel copyWith({
-    num? id,
+    int? id,
     String? title,
     String? cover,
     String? author_name,
@@ -28,12 +29,12 @@ class BookModel {
 
   Map<String, dynamic> toMap() {
     final result = <String, dynamic>{};
-  
+
     result.addAll({'id': id});
     result.addAll({'title': title});
     result.addAll({'cover': cover});
     result.addAll({'author_name': author_name});
-  
+
     return result;
   }
 
@@ -48,7 +49,8 @@ class BookModel {
 
   String toJson() => json.encode(toMap());
 
-  factory BookModel.fromJson(String source) => BookModel.fromMap(json.decode(source));
+  factory BookModel.fromJson(String source) =>
+      BookModel.fromMap(json.decode(source));
 
   @override
   String toString() {
@@ -58,20 +60,16 @@ class BookModel {
   @override
   bool operator ==(Object other) {
     if (identical(this, other)) return true;
-  
+
     return other is BookModel &&
-      other.id == id &&
-      other.title == title &&
-      other.cover == cover &&
-      other.author_name == author_name;
+        other.id == id &&
+        other.title == title &&
+        other.cover == cover &&
+        other.author_name == author_name;
   }
 
   @override
   int get hashCode {
-    return id.hashCode ^
-      title.hashCode ^
-      cover.hashCode ^
-      author_name.hashCode;
+    return id.hashCode ^ title.hashCode ^ cover.hashCode ^ author_name.hashCode;
   }
-} 
-
+}

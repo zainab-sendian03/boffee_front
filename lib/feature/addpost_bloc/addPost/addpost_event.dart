@@ -5,7 +5,8 @@ part of 'addpost_bloc.dart';
 sealed class AddpostEvent {}
 
 class createpostEvent extends AddpostEvent {
-  PostModel post;  createpostEvent({
+  PostModel post;
+  createpostEvent({
     required this.post,
   });
- } 
+}

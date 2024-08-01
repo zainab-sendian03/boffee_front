@@ -16,6 +16,9 @@ import 'package:userboffee/views/baises_screen/Levels_Ui.dart';
 import 'package:userboffee/views/baises_screen/QuetsPage.dart';
 import 'package:userboffee/views/baises_screen/Shelves_Ui.dart';
 import 'package:userboffee/views/baises_screen/setting.dart';
+import 'package:userboffee/views/profile/my_post.dart';
+import 'package:userboffee/views/profile/myfavpost.dart';
+import 'package:userboffee/views/profile/profile.dart';
 
 class CorePage extends StatefulWidget {
   const CorePage({
@@ -56,6 +59,18 @@ class _CorePageState extends State<CorePage> {
                     return SettingUi();
                   }));
                 }
+                if (value == "value_Profile") {
+                  
+
+                   Navigator.of(context).push(MaterialPageRoute(
+                            builder: (context) => Profile(
+                                )));
+                  // Navigator.push(context, MaterialPageRoute(builder: (context) {
+                  //   return myfavPostUI();
+                    
+                  //   // myPostUi();
+                  // }));
+                }
                 if (value == "value_Contact") {
                   openemail();
                 }
@@ -63,10 +78,11 @@ class _CorePageState extends State<CorePage> {
                   bool res = await logout();
                   print("res logout");
                   if (res) {
-                     print("res logout is true");
-                    Navigator.push(context,MaterialPageRoute(builder: (context)=>signup()) );
+                    print("res logout is true");
+                    Navigator.push(context,
+                        MaterialPageRoute(builder: (context) => signup()));
                     pref.clear();
-                     print("\pref has cleared");
+                    print("\pref has cleared");
                   }
                 }
               },
@@ -89,6 +105,7 @@ class _CorePageState extends State<CorePage> {
                       value: "value_Setting",
                     ),
                     PopupMenuItem(
+                      
                       child: Row(
                         children: [
                           Icon(
@@ -154,9 +171,9 @@ class _CorePageState extends State<CorePage> {
             child: Icon(Icons.add_chart),
             label: 'Levels'.tr(),
           ),
-        ],    //context.watch<ThemeProvider>().newcolor,
+        ], //context.watch<ThemeProvider>().newcolor,
         color: context.watch<ThemeProvider>().newcolor,
-        buttonBackgroundColor: medium_Brown,
+        buttonBackgroundColor: context.watch<ThemeProvider>().newcolor,
         backgroundColor: no_color,
         animationCurve: Curves.linear,
         animationDuration: Duration(milliseconds: 600),
