@@ -8,6 +8,7 @@ class DetailModel {
   String cover;
   num total_pages;
   String file;
+  int points;
 
   DetailModel({
     required this.id,
@@ -17,22 +18,24 @@ class DetailModel {
     required this.cover,
     required this.file,
     required this.total_pages,
+    required this.points,
   });
 
-  DetailModel copyWith({
-    int? id,
-    String? title,
-    String? author_name,
-    String? description,
-    String? cover,
-    num? total_pages,
-  }) {
+  DetailModel copyWith(
+      {int? id,
+      String? title,
+      String? author_name,
+      String? description,
+      String? cover,
+      num? total_pages,
+      int? points}) {
     return DetailModel(
       id: id ?? this.id,
       title: title ?? this.title,
       author_name: author_name ?? this.author_name,
       description: description ?? this.description,
       cover: cover ?? this.cover,
+      points: points ?? this.points,
       total_pages: total_pages ?? this.total_pages,
       file: file,
     );
@@ -43,6 +46,7 @@ class DetailModel {
 
     result.addAll({'id': id});
     result.addAll({'title': title});
+    result.addAll({'points': points});
     result.addAll({'author_name': author_name});
     result.addAll({'description': description});
     result.addAll({'cover': cover});
@@ -58,6 +62,7 @@ class DetailModel {
       author_name: map['author_name'] ?? '',
       description: map['description'] ?? '',
       cover: map['cover'] ?? '',
+      points: map['points'] ?? '',
       total_pages: map['total_pages'] ?? '',
       file: map['file'],
     );

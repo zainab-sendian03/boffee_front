@@ -5,7 +5,7 @@ import 'package:flutter_application_test/views/auth/login.dart';
 import 'package:provider/provider.dart';
 import 'core/provider/CoinProvider.dart';
 
-String token = "3|NTO82H0HqEo4yqVYKOJHaAj0xMX7K7obtUFs7hte";
+String token = "21|6zbl7biscvtqSWABLYRESlajzavnJRiYvQqLow0G";
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();

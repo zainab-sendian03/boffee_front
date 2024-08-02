@@ -4,6 +4,7 @@ import 'package:animated_snack_bar/animated_snack_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_application_test/core/Models/d_withFile.dart';
 import 'package:flutter_application_test/core/Models/note_model.dart';
+import 'package:flutter_application_test/core/config/options.dart';
 import 'package:flutter_application_test/core/constants/linksapi.dart';
 import 'package:flutter_application_test/core/provider/Note_provider.dart';
 import 'package:flutter_application_test/core/service/real/crud.dart';
@@ -100,9 +101,7 @@ class _PDFviewerState extends State<PDFviewer> {
     try {
       var response = await http.get(
         Uri.parse(link_userDetails),
-        headers: {
-          "Authorization": "Bearer 2|STgNButQ5SKXCd6KFR8eMvLqZIw6PixLjocNMpzG",
-        },
+        headers: getoptions(),
       );
       print("Server response: ${response.body}");
 
@@ -136,11 +135,7 @@ class _PDFviewerState extends State<PDFviewer> {
       var response = await crud.postrequest(
         link_rating,
         body,
-        headers: {
-          "Accept": "application/json",
-          "Authorization": "Bearer 2|STgNButQ5SKXCd6KFR8eMvLqZIw6PixLjocNMpzG",
-          "Content-Type": "application/json",
-        },
+        headers: getoptions2(),
       );
       print("rating is: $ratingValue");
       print("id is: ${widget.detail_File.file!.id}");
@@ -177,10 +172,7 @@ class _PDFviewerState extends State<PDFviewer> {
       var response = await crud.postrequest(
         url,
         body,
-        headers: {
-          "Accept": "application/json",
-          "Authorization": "Bearer 2|STgNButQ5SKXCd6KFR8eMvLqZIw6PixLjocNMpzG",
-        },
+        headers: getoptions2(),
       );
       print("index page is: $indexPage");
       print("Response: $response");
@@ -191,7 +183,6 @@ class _PDFviewerState extends State<PDFviewer> {
           ...NoteProvider.notesNotifier.value,
           newNote
         ];
-
         AnimatedSnackBar(
           duration: Duration(milliseconds: 10),
           builder: (context) {
@@ -204,6 +195,8 @@ class _PDFviewerState extends State<PDFviewer> {
           },
         ).show(context);
         Navigator.pop(context);
+        notecontroller.clear();
+
         print("success note");
       } else {
         print("fail");
@@ -220,9 +213,7 @@ class _PDFviewerState extends State<PDFviewer> {
 
       var response = await http.get(
         Uri.parse("$link_enough/$bookId"),
-        headers: {
-          "Authorization": "Bearer 2|STgNButQ5SKXCd6KFR8eMvLqZIw6PixLjocNMpzG",
-        },
+        headers: getoptions(),
       );
       print("Server response: ${response.body}");
 
@@ -263,11 +254,7 @@ class _PDFviewerState extends State<PDFviewer> {
       var response = await crud.postrequest(
         url,
         body,
-        headers: {
-          "Accept": "application/json",
-          "Authorization": "Bearer 2|STgNButQ5SKXCd6KFR8eMvLqZIw6PixLjocNMpzG",
-          "Content-Type": "application/json",
-        },
+        headers: getoptions2(),
       );
 
       print("Index page is: $index");
@@ -337,7 +324,6 @@ class _PDFviewerState extends State<PDFviewer> {
               ElevatedButton(
                 onPressed: () {
                   add_Note();
-                  notecontroller.clear();
                 },
                 style: ElevatedButton.styleFrom(
                     backgroundColor: medium_Brown,

@@ -107,6 +107,7 @@ class _BookUiState extends State<BookUi> {
                                 builder: (context) => BookDetailsPage(
                                     detail_File: Detail_withFile(
                                   file: DetailModel(
+                                    points: 0,
                                     id: 2,
                                     title: 'title',
                                     author_name: 'author_name',
@@ -204,7 +205,7 @@ class _BookUiState extends State<BookUi> {
                                         children: [
                                           Container(
                                             width: 200,
-                                            height: 180,
+                                            height: 200,
                                             decoration: BoxDecoration(
                                               borderRadius:
                                                   BorderRadius.circular(10),
@@ -242,6 +243,32 @@ class _BookUiState extends State<BookUi> {
                                                   style: TextStyle(
                                                       fontSize: 15,
                                                       color: medium_Brown),
+                                                ),
+                                              ),
+                                              Padding(
+                                                padding: const EdgeInsets.only(
+                                                  left: 45,
+                                                ),
+                                                child: Row(
+                                                  children: [
+                                                    Text(
+                                                      "coffee beans: " +
+                                                          temp[index]
+                                                              .points
+                                                              .toString(),
+                                                      style: TextStyle(
+                                                          fontSize: 15,
+                                                          color: medium_Brown),
+                                                    ),
+                                                    SizedBox(
+                                                      width: 5,
+                                                    ),
+                                                    Image.asset(
+                                                      "asset/images/coin.png",
+                                                      scale: 5,
+                                                    ),
+                                                    const SizedBox(width: 4.0),
+                                                  ],
                                                 ),
                                               ),
                                             ]),

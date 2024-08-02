@@ -2,6 +2,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_application_test/core/config/options.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_application_test/core/Models/note_model.dart';
 import 'package:flutter_application_test/core/constants/colors.dart';
@@ -9,8 +10,6 @@ import 'package:flutter_application_test/core/constants/components.dart';
 import 'package:flutter_application_test/core/constants/linksapi.dart';
 import 'package:flutter_application_test/core/provider/Note_provider.dart';
 import 'package:flutter_application_test/core/service/real/crud.dart';
-
-import '../main.dart';
 
 class Profile extends StatefulWidget {
   const Profile({
@@ -89,11 +88,7 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
       var response = await crud.postrequest(
         url,
         body,
-        headers: {
-          "Accept": "application/json",
-          "Authorization": "Bearer 3|NTO82H0HqEo4yqVYKOJHaAj0xMX7K7obtUFs7hte",
-          "Content-Type": "application/json",
-        },
+        headers: getoptions2(),
       );
 
       print("index page is: ${note.pageNum}");
@@ -118,9 +113,8 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
 
   Future<Map<String, dynamic>> getNote() async {
     try {
-      var response = await crud.getrequest(link_showNote, headers: {
-        "Authorization": "Bearer $token",
-      });
+      var response =
+          await crud.getrequest(link_showNote, headers: getoptions());
 
       print("Server response: $response");
 
@@ -145,9 +139,7 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
     try {
       var response = await http.get(
         Uri.parse(link_userDetails),
-        headers: {
-          "Authorization": "Bearer 2|STgNButQ5SKXCd6KFR8eMvLqZIw6PixLjocNMpzG",
-        },
+        headers: getoptions(),
       );
       print("Server response: ${response.body}");
 

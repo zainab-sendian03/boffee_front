@@ -1,6 +1,8 @@
+import 'dart:convert';
 import 'package:animated_snack_bar/animated_snack_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_application_test/core/Models/d_withFile.dart';
+import 'package:flutter_application_test/core/config/options.dart';
 import 'package:flutter_application_test/core/constants/colors.dart';
 import 'package:flutter_application_test/core/constants/linksapi.dart';
 import 'package:flutter_application_test/core/service/real/crud.dart';
@@ -8,6 +10,7 @@ import 'package:flutter_application_test/views/AddComment.dart';
 import 'package:flutter_application_test/views/PDFviewer.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:http/http.dart' as http;
 
 class BookDetailsPage extends StatefulWidget {
   const BookDetailsPage({super.key, required this.detail_File});
@@ -20,8 +23,10 @@ class BookDetailsPage extends StatefulWidget {
 class _BookDetailsPageState extends State<BookDetailsPage>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
+  final Crud _crud = Crud();
   double avgRating = 0;
   bool isFirstTime = true;
+  int MyPoints = 0;
 
   Future<dynamic> alert_report(
       BuildContext context, TextEditingController noteCont) {
@@ -74,7 +79,6 @@ class _BookDetailsPageState extends State<BookDetailsPage>
         });
   }
 
-  final Crud _crud = Crud();
   Future<void> get_AVG_rating() async {
     try {
       final bookId = widget.detail_File.file!.id;
@@ -101,25 +105,54 @@ class _BookDetailsPageState extends State<BookDetailsPage>
 
   Future<void> checkFirstTime() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    bool _isFirstTime = prefs.getBool('isFirstTime') ?? true;
-    if (_isFirstTime) {
-      _showSnackBar();
+    bool isFirstTime = prefs.getBool('isFirstTime') ?? true;
+    if (isFirstTime) {
+      _showSnackBar("The book has been added to Reading shelf",
+          AnimatedSnackBarType.success);
       await prefs.setBool('isFirstTime', false);
     }
   }
 
-  void _showSnackBar() {
+  void _showSnackBar(String msg, AnimatedSnackBarType type) {
     AnimatedSnackBar(
-      duration: Duration(milliseconds: 10),
+      duration: const Duration(seconds: 8),
       builder: (context) {
         return MaterialAnimatedSnackBar(
-          messageText: "The book has been added to Reading shelf",
-          type: AnimatedSnackBarType.success,
+          messageText: msg,
+          type: type,
           foregroundColor: Colors.white,
           backgroundColor: medium_Brown,
         );
       },
     ).show(context);
+  }
+
+  Future<void> fetchUserId() async {
+    try {
+      var response = await http.get(
+        Uri.parse(link_userDetails),
+        headers: getoptions(),
+      );
+      print("Server response: ${response.body}");
+
+      if (response.statusCode == 200) {
+        var responseBody = json.decode(response.body);
+        if (responseBody is Map<String, dynamic> &&
+            responseBody['success'] == true) {
+          setState(() {
+            MyPoints = responseBody['data']['my_points'] ?? 0;
+            print("User_id: $MyPoints");
+          });
+        } else {
+          print('Failed to fetch User id');
+        }
+      } else {
+        print('Failed to fetch User id');
+      }
+    } catch (e) {
+      print(e);
+      print('An error occurred');
+    }
   }
 
   @override
@@ -128,6 +161,7 @@ class _BookDetailsPageState extends State<BookDetailsPage>
     super.initState();
     get_AVG_rating();
     checkFirstTime();
+    fetchUserId();
   }
 
 //,required this.detailModel
@@ -283,19 +317,26 @@ class _BookDetailsPageState extends State<BookDetailsPage>
                                           Colors.brown),
                                 ),
                                 onPressed: () {
-                                  Navigator.of(context).push(
-                                    MaterialPageRoute(
-                                      builder: (context) => PDFviewer(
-                                        detail_File: widget.detail_File,
+                                  int bookPonits =
+                                      widget.detail_File.file!.points;
+                                  if (bookPonits <= MyPoints) {
+                                    Navigator.of(context).push(
+                                      MaterialPageRoute(
+                                        builder: (context) => PDFviewer(
+                                          detail_File: widget.detail_File,
+                                        ),
                                       ),
-                                    ),
-                                  );
-                                  print(
-                                      "path:${widget.detail_File.file!.file}");
-                                  print(
-                                      "title:${widget.detail_File.file!.title}");
-                                  print(
-                                      "pages:${widget.detail_File.file!.total_pages}");
+                                    );
+                                    print(
+                                        "path:${widget.detail_File.file!.file}");
+                                    _showSnackBar(
+                                        "The book has been opened successfully",
+                                        AnimatedSnackBarType.success);
+                                  } else {
+                                    _showSnackBar(
+                                        "You don't have enough coffee beans to open this book.\nEarn more beans by reading more books and then try again",
+                                        AnimatedSnackBarType.error);
+                                  }
                                 },
                                 child: Text(
                                   'Read now',

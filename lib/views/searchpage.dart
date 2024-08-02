@@ -64,6 +64,7 @@ class _searchpageState extends State<searchpage> {
                                           builder: (context) => BookDetailsPage(
                                                 detail_File: Detail_withFile(
                                                     file: DetailModel(
+                                                      points: 0,
                                                       id: temp[index].id,
                                                       title: temp[index].title,
                                                       author_name: temp[index]
