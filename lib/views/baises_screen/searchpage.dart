@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:userboffee/Core/Models/bookmodel_maya.dart';
 import 'package:userboffee/Core/Models/d_withFile.dart';
-import 'package:userboffee/Core/constants/colors.dart';
 import 'package:userboffee/Core/provider/Theme_provider.dart';
 import 'package:userboffee/Core/service/real/search_service.dart';
 import 'package:userboffee/views/baises_screen/BooksUi.dart';
@@ -77,6 +76,7 @@ class _searchpageState extends State<searchpage> {
                                                           .toString(),
                                                       total_pages: 20,
                                                       file: '',
+                                                      points: 0,
                                                     ),
                                                     shelfId: 0),
                                               )));

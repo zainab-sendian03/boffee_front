@@ -2,9 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:userboffee/Core.dart';
 import 'package:userboffee/Core/config/options.dart';
 import 'package:userboffee/views/firstpages/pageview.dart';
-
 import 'dart:async';
-
 import '../../core/constants/colors.dart';
 import '../../core/constants/images.dart';
 
@@ -49,7 +47,7 @@ class _SplashScreenState extends State<SplashScreen>
   void dispose() {
     //! maryam has update this magic
     if (mounted) _animationController.dispose();
-   if (mounted) super.dispose();
+    if (mounted) super.dispose();
   }
 
   @override

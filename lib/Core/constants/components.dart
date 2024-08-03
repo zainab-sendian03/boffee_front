@@ -11,7 +11,6 @@ import 'package:userboffee/Core/Models/post_model.dart';
 import 'package:userboffee/Core/constants/colors.dart';
 import 'package:userboffee/Core/constants/functions/validInput.dart';
 import 'package:userboffee/Core/provider/Theme_provider.dart';
-import 'package:userboffee/Core/service/real/qutes_ser.dart';
 import 'package:userboffee/feature/addpost_bloc/addPost/addpost_bloc.dart';
 import 'package:userboffee/feature/getpost/bloc/getpost_bloc.dart';
 
@@ -25,7 +24,7 @@ class ColorContainer extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       margin: EdgeInsets.all(7),
-      width: MediaQuery.of(context).size.width*0.1,
+      width: MediaQuery.of(context).size.width * 0.1,
       height: 40,
       decoration: BoxDecoration(
         color: color,
@@ -47,7 +46,8 @@ class LanguageContainer extends StatelessWidget {
       width: 200,
       height: 30,
       decoration: BoxDecoration(
-          color: context.watch<ThemeProvider>().newcolor, borderRadius: BorderRadius.circular(5)),
+          color: context.watch<ThemeProvider>().newcolor,
+          borderRadius: BorderRadius.circular(5)),
       child: Text(
         text,
         textAlign: TextAlign.center,
@@ -114,6 +114,7 @@ class SearchContainer extends StatelessWidget {
         ),
         child: TextFormField(
           onTap: () {
+            // ignore: unused_local_variable
             BuildContext? dialogContext;
             showDialog(
                 context: context,
@@ -125,10 +126,12 @@ class SearchContainer extends StatelessWidget {
                         backgroundColor: biege,
                         content: BlocListener<AddpostBloc, AddpostState>(
                           listener: (context, state) {
-                          if (state is Succuess_createpostState) {
-                            Navigator.pop(context);
-                            context.read<GetpostBloc>().add(GettingPostEvent());
-                          }
+                            if (state is Succuess_createpostState) {
+                              Navigator.pop(context);
+                              context
+                                  .read<GetpostBloc>()
+                                  .add(GettingPostEvent());
+                            }
                           },
                           child: Container(
                             height: 290,
@@ -165,8 +168,9 @@ class SearchContainer extends StatelessWidget {
                                         context.read<AddpostBloc>().add(
                                               createpostEvent(
                                                 post: PostModel(
-                                                    body: body_controller.text,
-                                                    user_name: "maryam",),
+                                                  body: body_controller.text,
+                                                  user_name: "maryam",
+                                                ),
                                               ),
                                             );
 
@@ -370,6 +374,7 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
     );
   }
 }
+
 class CardNote extends StatelessWidget {
   final NoteModel noteModel;
   final void Function()? onDelete;
@@ -385,11 +390,11 @@ class CardNote extends StatelessWidget {
   Color getColor(int colorCode) {
     switch (colorCode) {
       case 1:
-        return const Color(0xFF87986A);
+        return green;
       case 2:
-        return const Color(0xFF92A1C3);
+        return babyblue;
       case 3:
-        return const Color(0xFFF3A0AD);
+        return rose;
       default:
         return Colors.grey;
     }
@@ -412,52 +417,55 @@ class CardNote extends StatelessWidget {
               )
             ],
           ),
-          constraints: const BoxConstraints(maxHeight: 150),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  IconButton(
-                    icon: const Icon(Icons.delete),
-                    onPressed: onDelete,
-                    color: white,
-                  ),
-                  IconButton(
-                    icon: const Icon(Icons.edit),
-                    onPressed: onEdit,
-                    color: white,
-                  ),
-                ],
-              ),
-              Padding(
-                padding: const EdgeInsets.only(left: 20),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+          constraints: const BoxConstraints(maxHeight: 160),
+          child: Padding(
+            padding: const EdgeInsets.only(left: 10, right: 10),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
                   children: [
-                    Text(
-                      "page: ${noteModel.pageNum}",
-                      style: TextStyle(
-                          fontSize: 15,
-                          fontWeight: FontWeight.bold,
-                          color: white),
+                    IconButton(
+                      icon: const Icon(Icons.delete),
+                      onPressed: onDelete,
+                      color: white,
                     ),
-                    Text(
-                      "Book title: ${noteModel.title}",
-                      style: TextStyle(
-                          fontSize: 15,
-                          fontWeight: FontWeight.bold,
-                          color: white),
-                    ),
-                    Text(
-                      noteModel.body ?? '',
-                      style: TextStyle(fontSize: 20, color: white),
+                    IconButton(
+                      icon: const Icon(Icons.edit),
+                      onPressed: onEdit,
+                      color: white,
                     ),
                   ],
                 ),
-              ),
-            ],
+                Padding(
+                  padding: const EdgeInsets.only(left: 20),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        "Page:".tr() + "${noteModel.pageNum}",
+                        style: TextStyle(
+                            fontSize: 15,
+                            fontWeight: FontWeight.bold,
+                            color: white),
+                      ),
+                      Text(
+                        "Book title:".tr() + " ${noteModel.title}",
+                        style: TextStyle(
+                            fontSize: 15,
+                            fontWeight: FontWeight.bold,
+                            color: white),
+                      ),
+                      Text(
+                        noteModel.body ?? '',
+                        style: TextStyle(fontSize: 20, color: white),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),

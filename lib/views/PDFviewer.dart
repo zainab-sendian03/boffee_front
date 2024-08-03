@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'package:animated_snack_bar/animated_snack_bar.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:retry/retry.dart';
@@ -19,9 +20,9 @@ import 'package:userboffee/views/baises_screen/Details.dart';
 
 class PDFviewer extends StatefulWidget {
   const PDFviewer({
-    Key? key,
+    super.key,
     required this.detail_File,
-  }) : super(key: key);
+  });
   final Detail_withFile detail_File;
 
   @override
@@ -44,7 +45,7 @@ class _PDFviewerState extends State<PDFviewer> {
   @override
   void initState() {
     super.initState();
-    //fetchUserId();
+    fetchUserId();
     fetchShelfId().then((_) {
       _initializePDFView();
     });
@@ -99,33 +100,35 @@ class _PDFviewerState extends State<PDFviewer> {
         'lastFile_${widget.detail_File.file!.id}', widget.detail_File.file!.id);
   }
 
-  // Future<void> fetchUserId() async {
-  //   try {
-  //     var response = await http.get(
-  //       Uri.parse(link_userDetails),
-  //       headers: getoptions(),
-  //     ) .timeout(Duration(seconds: 30));
-  //     print("Server response: ${response.body}");
+  Future<void> fetchUserId() async {
+    try {
+      var response = await http
+          .get(
+            Uri.parse(link_userDetails),
+            headers: getoptions(),
+          )
+          .timeout(const Duration(seconds: 30));
+      print("Server response: ${response.body}");
 
-  //     if (response.statusCode == 200) {
-  //       var responseBody = json.decode(response.body);
-  //       if (responseBody is Map<String, dynamic> &&
-  //           responseBody['success'] == true) {
-  //         setState(() {
-  //           userId = responseBody['data']['id'];
-  //           print("User_id: $userId");
-  //         });
-  //       } else {
-  //         print('Failed to fetch User id');
-  //       }
-  //     } else {
-  //       print('Failed to fetch User id');
-  //     }
-  //   } catch (e) {
-  //     print(e);
-  //     print('An error occurred');
-  //   }
-  // }
+      if (response.statusCode == 200) {
+        var responseBody = json.decode(response.body);
+        if (responseBody is Map<String, dynamic> &&
+            responseBody['success'] == true) {
+          setState(() {
+            userId = responseBody['data']['id'];
+            print("User_id: $userId");
+          });
+        } else {
+          print('Failed to fetch User id');
+        }
+      } else {
+        print('Failed to fetch User id');
+      }
+    } catch (e) {
+      print(e);
+      print('An error occurred');
+    }
+  }
 
   Future<void> add_Rate() async {
     try {
@@ -174,7 +177,7 @@ class _PDFviewerState extends State<PDFviewer> {
       var response = await crud.postrequest(
         url,
         body,
-        headers: getoptions(),
+        headers: getoptions2(),
       );
       print("index page is: $indexPage");
       print("Response: $response");
@@ -187,10 +190,10 @@ class _PDFviewerState extends State<PDFviewer> {
         ];
 
         AnimatedSnackBar(
-          duration: Duration(milliseconds: 10),
+          duration: const Duration(seconds: 3),
           builder: (context) {
             return MaterialAnimatedSnackBar(
-              messageText: "The note has been added to your profile",
+              messageText: "The note has been added to your profile".tr(),
               type: AnimatedSnackBarType.success,
               foregroundColor: Colors.white,
               backgroundColor: medium_Brown,
@@ -198,6 +201,7 @@ class _PDFviewerState extends State<PDFviewer> {
           },
         ).show(context);
         Navigator.pop(context);
+        notecontroller.clear();
         print("success note");
       } else {
         print("fail");
@@ -209,16 +213,19 @@ class _PDFviewerState extends State<PDFviewer> {
   }
 
   Future<void> fetchShelfId() async {
-      final r = RetryOptions(maxAttempts: 3); // Retry up to 3 times
+    // ignore: unused_local_variable
+    const r = RetryOptions(maxAttempts: 3);
     try {
-
       final bookId = widget.detail_File.file!.id;
 
-      var response = await http.get(
-        Uri.parse("$link_enough/$bookId"),
-        headers: getoptions(),
-       
-      ) .timeout(Duration(seconds: 30), );
+      var response = await http
+          .get(
+            Uri.parse("$link_enough/$bookId"),
+            headers: getoptions(),
+          )
+          .timeout(
+            const Duration(seconds: 30),
+          );
       print("Server response: ${response.body}");
 
       if (response.statusCode == 200) {
@@ -236,7 +243,9 @@ class _PDFviewerState extends State<PDFviewer> {
         print('Failed to fetch User Details');
       }
     } catch (e) {
-       retryIf: (e) => e is SocketException || e is TimeoutException;
+      // ignore: unused_label
+      retryIf:
+      (e) => e is SocketException || e is TimeoutException;
       print(e);
       print('An error occurred');
     }
@@ -300,10 +309,10 @@ class _PDFviewerState extends State<PDFviewer> {
           showCursor: false,
           maxLines: 10,
           controller: notecontroller,
-          decoration: const InputDecoration(
+          decoration: InputDecoration(
               border: InputBorder.none,
-              hintText: "add your note....",
-              hintStyle: TextStyle(color: Color(0XFFA5A5A5))),
+              hintText: "add your note....".tr(),
+              hintStyle: const TextStyle(color: Color(0XFFA5A5A5))),
         ),
       ),
       actions: <Widget>[
@@ -315,10 +324,10 @@ class _PDFviewerState extends State<PDFviewer> {
               DropdownButton<int>(
                 dropdownColor: const Color(0xFFFFF8F1),
                 value: selectedColor,
-                items: const [
-                  DropdownMenuItem(value: 1, child: Text("Green")),
-                  DropdownMenuItem(value: 2, child: Text("Blue")),
-                  DropdownMenuItem(value: 3, child: Text("Pink")),
+                items: [
+                  DropdownMenuItem(value: 1, child: Text("Green".tr())),
+                  DropdownMenuItem(value: 2, child: Text("Blue".tr())),
+                  DropdownMenuItem(value: 3, child: Text("Pink".tr())),
                 ],
                 onChanged: (value) {
                   setState(() {
@@ -329,7 +338,6 @@ class _PDFviewerState extends State<PDFviewer> {
               ElevatedButton(
                 onPressed: () {
                   add_Note();
-                  notecontroller.clear();
                 },
                 style: ElevatedButton.styleFrom(
                     backgroundColor: medium_Brown,
@@ -337,8 +345,8 @@ class _PDFviewerState extends State<PDFviewer> {
                         borderRadius: BorderRadius.circular(25)),
                     padding: const EdgeInsets.only(
                         left: 25, right: 25, top: 10, bottom: 10)),
-                child: const Text("Add",
-                    style: TextStyle(
+                child: Text("Add".tr(),
+                    style: const TextStyle(
                       fontSize: 14,
                       color: Colors.white,
                     )),
@@ -374,7 +382,7 @@ class _PDFviewerState extends State<PDFviewer> {
                   ),
                   const SizedBox(height: 12),
                   Text(
-                    'Congratulations!',
+                    'Congratulations!'.tr(),
                     style: TextStyle(
                       fontWeight: FontWeight.w400,
                       color: medium_Brown,
@@ -382,19 +390,20 @@ class _PDFviewerState extends State<PDFviewer> {
                     ),
                   ),
                   const SizedBox(height: 12),
-                  const Text(
-                    'You have read this book completely and obtained 5 coins.',
+                  Text(
+                    'You have read this book completely and obtained 5 coffee beans.'
+                        .tr(),
                     textAlign: TextAlign.center,
-                    style: TextStyle(
+                    style: const TextStyle(
                       fontWeight: FontWeight.w400,
                       color: Colors.black,
                       fontSize: 15,
                     ),
                   ),
                   const SizedBox(height: 10),
-                  const Text(
-                    'What is your rate for this book?',
-                    style: TextStyle(
+                  Text(
+                    'What is your rate for this book?'.tr(),
+                    style: const TextStyle(
                       fontWeight: FontWeight.w400,
                       color: Colors.black,
                       fontSize: 25,
@@ -421,7 +430,7 @@ class _PDFviewerState extends State<PDFviewer> {
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    'Your rating: $ratingValue',
+                    '${'Your rating:'.tr()}$ratingValue',
                     style: const TextStyle(
                       fontSize: 16,
                       color: Colors.grey,
@@ -441,9 +450,10 @@ class _PDFviewerState extends State<PDFviewer> {
                           borderRadius: BorderRadius.circular(30),
                         ),
                       ),
-                      child: const Text(
-                        'Submit',
-                        style: TextStyle(color: Colors.white, fontSize: 23),
+                      child: Text(
+                        'Submit'.tr(),
+                        style:
+                            const TextStyle(color: Colors.white, fontSize: 23),
                       ),
                     ),
                   ),
@@ -461,15 +471,16 @@ class _PDFviewerState extends State<PDFviewer> {
     double percent = ((100 * indexPage) / widget.detail_File.file!.total_pages);
     String finalPercent = percent.toStringAsFixed(0);
     //const String baseUrl = "http://10.0.2.2:8000";
-     String baseUrl = "http://$ip_local:8000";
+    String baseUrl = "http://10.0.2.2:8000";
     final String filePath = widget.detail_File.file!.file;
     final String pdfUrl = "$baseUrl$filePath";
-    print("!!!:"+filePath);
+    print("!!!:$filePath");
     print("+++++++++the pdfUrl: $pdfUrl");
     print(Exception().toString());
-    
+
     //print(widget.detail_File.file!.file.toString());
     return Scaffold(
+        resizeToAvoidBottomInset: false,
         appBar: AppBar(
           backgroundColor: insidbook_color,
           title: Text(widget.detail_File.file!.title),
@@ -511,7 +522,7 @@ class _PDFviewerState extends State<PDFviewer> {
               return Column(
                 children: [
                   SizedBox(
-                    height: MediaQuery.of(context).size.height*0.60,
+                    height: MediaQuery.of(context).size.height * 0.698,
                     child: SfPdfViewer.network(
                       enableDocumentLinkAnnotation: true,
                       pdfUrl,
@@ -535,7 +546,7 @@ class _PDFviewerState extends State<PDFviewer> {
                           SnackBar(
                             backgroundColor: const Color(0xFFFFF8F1),
                             content: Text(
-                                "Failed to load PDF: ${details.description}",
+                                "${"Failed to load PDF:".tr()} ${details.description}",
                                 style: const TextStyle(
                                   fontSize: 14,
                                   color: Colors.black,
@@ -549,7 +560,7 @@ class _PDFviewerState extends State<PDFviewer> {
                     padding: const EdgeInsets.only(top: 8),
                     child: Container(
                       width: double.infinity,
-                      height:MediaQuery.of(context).size.height*0.2,
+                      height: MediaQuery.of(context).size.height * 0.2,
                       decoration: BoxDecoration(color: insidbook_color),
                       child: Column(
                         children: [
@@ -667,28 +678,32 @@ class _PDFviewerState extends State<PDFviewer> {
                               ),
                             ),
                           ),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Padding(
-                                padding: const EdgeInsets.only(left: 40),
-                                child: Text(
-                                  "Page ${indexPage}/${widget.detail_File.file!.total_pages}",
-                                  style: TextStyle(fontSize: 15, color: white),
-                                ),
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.only(right: 35),
-                                child: Text(
-                                  "Completed $finalPercent%",
-                                  style: TextStyle(
-                                    fontSize: 15,
-                                    color: dark_Brown,
-                                    fontWeight: FontWeight.bold,
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.only(left: 40),
+                                  child: Text(
+                                    "${"Page".tr()} $indexPage/${widget.detail_File.file!.total_pages}",
+                                    style:
+                                        TextStyle(fontSize: 15, color: white),
                                   ),
                                 ),
-                              ),
-                            ],
+                                Padding(
+                                  padding: const EdgeInsets.only(right: 35),
+                                  child: Text(
+                                    "${"Completed ".tr()}$finalPercent%",
+                                    style: TextStyle(
+                                      fontSize: 15,
+                                      color: dark_Brown,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
                         ],
                       ),

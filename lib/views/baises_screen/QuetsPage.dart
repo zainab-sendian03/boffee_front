@@ -1,22 +1,17 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:userboffee/Core/Models/basic_model.dart';
-import 'package:userboffee/Core/Models/error.dart';
-import 'package:userboffee/Core/Models/post_model.dart';
 import 'package:userboffee/Core/config/options.dart';
-import 'package:userboffee/Core/constants/colors.dart';
 import 'package:userboffee/Core/constants/components.dart';
 import 'package:userboffee/Core/service/real/qutes_ser.dart';
 import 'package:userboffee/feature/getpost/bloc/getpost_bloc.dart';
 
 //num counter=0;
 class QuetsPage extends StatelessWidget {
-  QuetsPage({super.key});
+  const QuetsPage({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -40,14 +35,14 @@ class QuetsPage extends StatelessWidget {
             print("-----------------");
             return Column(
               children: [
-                SearchContainer(),
+                const SearchContainer(),
                 Expanded(
                   child: ListView.builder(
                     itemCount: state.posts.length,
                     itemBuilder: (context, int index) {
                       return Padding(
                         padding: const EdgeInsets.all(8.0),
-                        child: Container(
+                        child: SizedBox(
                           //  height: 200,
                           width: double.infinity,
                           //  height:100 ,
@@ -60,7 +55,7 @@ class QuetsPage extends StatelessWidget {
                                   children: [
                                     Text(
                                       state.posts[index].user_name!,
-                                      style: TextStyle(
+                                      style: const TextStyle(
                                           fontSize: 18,
                                           fontWeight: FontWeight.w500),
                                     ),
@@ -69,7 +64,7 @@ class QuetsPage extends StatelessWidget {
                               ),
                               Row(
                                 children: [
-                                  Container(
+                                  SizedBox(
                                     width:
                                         MediaQuery.of(context).size.width * 0.7,
                                     child: Text(
@@ -91,17 +86,12 @@ class QuetsPage extends StatelessWidget {
                                             right: 2, left: 2),
                                         child: IconButton(
                                           onPressed: () async {
-                                            final urlPreview =
+                                            const urlPreview =
                                                 "https://www.youtube.com/watch?v=CNUBhb_cM6E";
                                             await Share.share(
-                                                "Boofee App\nحمل تطبيق بوفي الان وشاركنا اقتباس أحببته" +
-                                                    "\n"
-                                                        "( " +
-                                                    state.posts[index].body +
-                                                    ")" +
-                                                    "\n$urlPreview");
+                                                "Boofee App\nحمل تطبيق بوفي الان وشاركنا اقتباس أحببته\n( ${state.posts[index].body})\n$urlPreview");
                                           },
-                                          icon: Icon(
+                                          icon: const Icon(
                                             Icons.share_rounded,
                                             size: 18,
                                           ),
@@ -144,7 +134,7 @@ class QuetsPage extends StatelessWidget {
                                           print("success in ui like");
                                         }
                                       },
-                                      icon: Icon(
+                                      icon: const Icon(
                                         Icons.favorite_border,
                                         size: 18,
                                       ),
@@ -152,7 +142,7 @@ class QuetsPage extends StatelessWidget {
                                   ],
                                 ),
                               ),
-                              Divider(
+                              const Divider(
                                 color: Color.fromARGB(255, 209, 209, 209),
                               )
                             ],
@@ -166,10 +156,10 @@ class QuetsPage extends StatelessWidget {
             );
           } else if (state is ErorrGetpost_state) {
             print("Error in else if");
-            return Center(child: CircularProgressIndicator());
+            return const Center(child: CircularProgressIndicator());
           } else {
             print("Excep in else ");
-            return Center(child: CircularProgressIndicator());
+            return const Center(child: CircularProgressIndicator());
           }
         },
       );

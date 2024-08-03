@@ -1,14 +1,7 @@
-import 'package:dio/dio.dart';
 import 'package:easy_localization/easy_localization.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/rendering.dart';
-import 'package:flutter/widgets.dart';
-
 import 'package:userboffee/Core/Models/basic_model.dart';
 import 'package:userboffee/Core/Models/book_model.dart';
-import 'package:userboffee/Core/Models/bookmodel_maya.dart';
 import 'package:userboffee/Core/Models/category.dart';
 import 'package:userboffee/Core/Models/d_withFile.dart';
 import 'package:userboffee/Core/Models/detial_model.dart';
@@ -29,7 +22,7 @@ class BookUi extends StatefulWidget {
   State<BookUi> createState() => _BookUiState();
 }
 
-String tokenize ='';
+String tokenize = '';
 
 class _BookUiState extends State<BookUi> {
   ValueNotifier<int> indexOfType = ValueNotifier(1);
@@ -59,7 +52,7 @@ class _BookUiState extends State<BookUi> {
                         Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => searchpage(),
+                              builder: (context) => const searchpage(),
                             ));
                       },
                       decoration: InputDecoration(
@@ -89,69 +82,73 @@ class _BookUiState extends State<BookUi> {
                       padding: const EdgeInsets.all(3),
                       child: Text(
                         'Most reading'.tr(),
-                        style:
-                            TextStyle(fontSize: 23, color: Color(0xFF5D3F2E)),
+                        style: const TextStyle(
+                            fontSize: 23, color: Color(0xFF5D3F2E)),
                       ).tr(),
                     )
                   ],
                 ),
                 FutureBuilder(
                   future: mostreading(),
-                  builder: ( context,  snapshot) { 
+                  builder: (context, snapshot) {
                     if (snapshot.hasData) {
-                      ListofEverything<Bookmodel> resList=snapshot.data as ListofEverything<Bookmodel> ;
-                     return  Expanded(
-                    child: ListView.builder(
-                      scrollDirection: Axis.horizontal,
-                      itemCount: 
-                      resList.listresult.length,
-                      itemBuilder: (BuildContext context, int index) {
-                        return Padding(
-                          padding: const EdgeInsets.only(
-                            top: 10,
-                            left: 15,
-                            right: 10,
-                          ),
-                          child: InkWell(
-                            onTap: (){
-                              Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => BookDetailsPage(
-                                    detail_File: Detail_withFile(
-                                  file: DetailModel(
-                                    id: 2,
-                                    title: 'title',
-                                    author_name: 'author_name',
-                                    description: 'description',
-                                    cover: 'cover',
-                                    total_pages: 23,
-                                    file: '',
-                                  ),
-                                  shelfId: 0,
-                                )),
+                      ListofEverything<Bookmodel> resList =
+                          snapshot.data as ListofEverything<Bookmodel>;
+                      return Expanded(
+                        child: ListView.builder(
+                          scrollDirection: Axis.horizontal,
+                          itemCount: resList.listresult.length,
+                          itemBuilder: (BuildContext context, int index) {
+                            return Padding(
+                              padding: const EdgeInsets.only(
+                                top: 10,
+                                left: 15,
+                                right: 10,
+                              ),
+                              child: InkWell(
+                                onTap: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => BookDetailsPage(
+                                          detail_File: Detail_withFile(
+                                        file: DetailModel(
+                                          id: 2,
+                                          title: 'title',
+                                          author_name: 'author_name',
+                                          description: 'description',
+                                          cover: 'cover',
+                                          total_pages: 23,
+                                          file: '',
+                                          points: 0,
+                                        ),
+                                        shelfId: 0,
+                                      )),
+                                    ),
+                                  );
+                                },
+                                child: Container(
+                                  width: 220,
+                                  // height: 100,
+                                  // color: medium_Brown,
+                                  decoration: BoxDecoration(
+                                      image: DecorationImage(
+                                          image: NetworkImage(linkservername +
+                                              resList
+                                                  .listresult[index].cover))),
+                                ),
                               ),
                             );
-                            },
-                            child: Container(
-                              width: 220,
-                              // height: 100,
-                             // color: medium_Brown,
-                             decoration: BoxDecoration(image: DecorationImage(image: NetworkImage(linkservername+resList.listresult[index].cover))),
-                            ),
-                          ),
-                        );
-                      },
-                    ),
-                  );
+                          },
+                        ),
+                      );
                     } else {
-                      return Center(child: CircularProgressIndicator());
+                      return const Center(child: CircularProgressIndicator());
                     }
-                   },
-                 
+                  },
                 ),
                 Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
                     Padding(
                       padding: const EdgeInsets.only(left: 20),
@@ -160,7 +157,7 @@ class _BookUiState extends State<BookUi> {
                           padding: const EdgeInsets.only(bottom: 15, top: 20),
                           child: Text(
                             'Categories'.tr(),
-                            style: TextStyle(
+                            style: const TextStyle(
                                 // fontFamily: 'Imprima',
                                 fontSize: 23,
                                 color: Color(0xFF5D3F2E)),
@@ -188,7 +185,7 @@ class _BookUiState extends State<BookUi> {
                         (index) => Tab(
                           child: Text(
                             temp[index].name.toString(),
-                            style: TextStyle(fontSize: 18),
+                            style: const TextStyle(fontSize: 18),
                           ).tr(),
                         ),
                       ),
@@ -210,7 +207,7 @@ class _BookUiState extends State<BookUi> {
                                   6,
                                   (index) => GridView.builder(
                                     gridDelegate:
-                                        SliverGridDelegateWithFixedCrossAxisCount(
+                                        const SliverGridDelegateWithFixedCrossAxisCount(
                                             crossAxisCount: 2,
                                             mainAxisSpacing: 11,
                                             crossAxisSpacing: 11),
@@ -220,6 +217,23 @@ class _BookUiState extends State<BookUi> {
                                       child: Stack(
                                         children: [
                                           Container(
+                                            width: 200,
+                                            height: 200,
+                                            decoration: BoxDecoration(
+                                              borderRadius:
+                                                  BorderRadius.circular(10),
+                                              color: white,
+                                              border: Border.all(
+                                                color: medium_Brown,
+                                              ),
+                                              boxShadow: [
+                                                BoxShadow(
+                                                  color: Light_Brown,
+                                                  offset: const Offset(0, 1),
+                                                  blurRadius: 10,
+                                                )
+                                              ],
+                                            ),
                                             child: Column(children: [
                                               Padding(
                                                 padding: const EdgeInsets.only(
@@ -244,24 +258,33 @@ class _BookUiState extends State<BookUi> {
                                                       color: medium_Brown),
                                                 ).tr(),
                                               ),
-                                            ]),
-                                            width: 200,
-                                            height: 180,
-                                            decoration: BoxDecoration(
-                                              borderRadius:
-                                                  BorderRadius.circular(10),
-                                              color: white,
-                                              border: Border.all(
-                                                color: medium_Brown,
+                                              Padding(
+                                                padding: const EdgeInsets.only(
+                                                  left: 45,
+                                                ),
+                                                child: Row(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment.center,
+                                                  children: [
+                                                    Text(
+                                                      "coffee beans:".tr() +
+                                                          " ${temp[index].points}",
+                                                      style: TextStyle(
+                                                          fontSize: 15,
+                                                          color: medium_Brown),
+                                                    ),
+                                                    const SizedBox(
+                                                      width: 5,
+                                                    ),
+                                                    Image.asset(
+                                                      "asset/images/coin.png",
+                                                      scale: 5,
+                                                    ),
+                                                    const SizedBox(width: 4.0),
+                                                  ],
+                                                ),
                                               ),
-                                              boxShadow: [
-                                                BoxShadow(
-                                                  color: Light_Brown,
-                                                  offset: const Offset(0, 1),
-                                                  blurRadius: 10,
-                                                )
-                                              ],
-                                            ),
+                                            ]),
                                           ),
                                           Padding(
                                             padding: const EdgeInsets.only(
@@ -273,7 +296,11 @@ class _BookUiState extends State<BookUi> {
                                                     MaterialPageRoute(
                                                       builder: (context) =>
                                                           BookDetailsPage(
-                                                             detail_File:  Detail_withFile(file:  temp[index]),),
+                                                        detail_File:
+                                                            Detail_withFile(
+                                                                file: temp[
+                                                                    index]),
+                                                      ),
                                                     ));
                                                 print(temp[index]);
                                               },
@@ -283,10 +310,7 @@ class _BookUiState extends State<BookUi> {
                                                 decoration: BoxDecoration(
                                                   image: DecorationImage(
                                                       image: NetworkImage(
-                                                       "$linkservername" +
-                                                            temp[index]
-                                                                .cover
-                                                                .toString(),
+                                                        "$linkservername${temp[index].cover}",
                                                       ),
                                                       fit: BoxFit.fill),
                                                   borderRadius:
@@ -302,7 +326,7 @@ class _BookUiState extends State<BookUi> {
                                   ),
                                 ));
                               } else {
-                                return CircularProgressIndicator();
+                                return const CircularProgressIndicator();
                               }
                             }),
                       );
@@ -310,7 +334,7 @@ class _BookUiState extends State<BookUi> {
               ]),
             );
           } else {
-            return Center(
+            return const Center(
               child: CircularProgressIndicator(),
             );
           }

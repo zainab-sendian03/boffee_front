@@ -16,8 +16,7 @@ import 'package:userboffee/views/baises_screen/Levels_Ui.dart';
 import 'package:userboffee/views/baises_screen/QuetsPage.dart';
 import 'package:userboffee/views/baises_screen/Shelves_Ui.dart';
 import 'package:userboffee/views/baises_screen/setting.dart';
-import 'package:userboffee/views/profile/my_post.dart';
-import 'package:userboffee/views/profile/myfavpost.dart';
+
 import 'package:userboffee/views/profile/profile.dart';
 
 class CorePage extends StatefulWidget {
@@ -60,14 +59,11 @@ class _CorePageState extends State<CorePage> {
                   }));
                 }
                 if (value == "value_Profile") {
-                  
-
-                   Navigator.of(context).push(MaterialPageRoute(
-                            builder: (context) => Profile(
-                                )));
+                  Navigator.of(context)
+                      .push(MaterialPageRoute(builder: (context) => Profile()));
                   // Navigator.push(context, MaterialPageRoute(builder: (context) {
                   //   return myfavPostUI();
-                    
+
                   //   // myPostUi();
                   // }));
                 }
@@ -105,7 +101,6 @@ class _CorePageState extends State<CorePage> {
                       value: "value_Setting",
                     ),
                     PopupMenuItem(
-                      
                       child: Row(
                         children: [
                           Icon(

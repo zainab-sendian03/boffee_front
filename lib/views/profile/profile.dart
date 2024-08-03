@@ -16,8 +16,6 @@ import 'package:userboffee/Core/service/real/crud.dart';
 import 'package:userboffee/views/profile/my_post.dart';
 import 'package:userboffee/views/profile/myfavpost.dart';
 
-
-
 class Profile extends StatefulWidget {
   const Profile({
     Key? key,
@@ -53,9 +51,9 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
           showCursor: false,
           maxLines: 10,
           controller: notecontroller,
-          decoration: const InputDecoration(
+          decoration: InputDecoration(
               border: InputBorder.none,
-              hintText: "add your note....",
+              hintText: "add your note....".tr(),
               hintStyle: TextStyle(color: Color(0XFFA5A5A5))),
         ),
       ),
@@ -72,7 +70,7 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
                     borderRadius: BorderRadius.circular(25)),
                 padding: const EdgeInsets.only(
                     left: 25, right: 25, top: 10, bottom: 10)),
-            child: Text(noteToEdit == null ? "Add" : "Edit",
+            child: Text(noteToEdit == null ? "Add".tr() : "Edit".tr(),
                 style: const TextStyle(
                   fontSize: 14,
                   color: Colors.white,
@@ -92,11 +90,7 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
         "body": notecontroller.text,
         "book_id": note.bookId,
       };
-      var response = await crud.postrequest(
-        url,
-        body,
-        headers: getoptions2()
-      );
+      var response = await crud.postrequest(url, body, headers: getoptions2());
 
       print("index page is: ${note.pageNum}");
       print("Response: $response");
@@ -120,7 +114,8 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
 
   Future<Map<String, dynamic>> getNote() async {
     try {
-      var response = await crud.getrequest(link_showNote, headers: getoptions());
+      var response =
+          await crud.getrequest(link_showNote, headers: getoptions());
 
       print("Server response: $response");
 
@@ -143,10 +138,8 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
 
   Future<Map<String, dynamic>> getUserDetails() async {
     try {
-      var response = await http.get(
-        Uri.parse(link_userDetails),
-        headers:getoptions()
-      );
+      var response =
+          await http.get(Uri.parse(link_userDetails), headers: getoptions());
       print("Server response: ${response.body}");
 
       if (response.statusCode == 200) {
@@ -251,7 +244,7 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
                                           color: dark_Brown,
                                         ),
                                       ),
-                                       SizedBox(height: 10.0),
+                                      SizedBox(height: 10.0),
                                       Text(
                                         user['gender'],
                                         style: TextStyle(
@@ -309,7 +302,7 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
               labelColor: Colors.brown,
               isScrollable: true,
               controller: _tabController,
-              tabs:  [
+              tabs: [
                 Tab(
                   child: Text(
                     'My quotes',
@@ -341,7 +334,7 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
             child: TabBarView(
               controller: _tabController,
               children: [
-               myPostUi(), // "My quotes"
+                myPostUi(), // "My quotes"
                 myfavPostUI(), // "Favourite quotes"
                 buildPlaceholderTab(), //  "Favourite book"
                 buildNotesTab(), // "My notes"
@@ -360,12 +353,12 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
           scrollDirection: Axis.vertical,
           children: <Widget>[
             Padding(
-              padding:  EdgeInsets.only(left: 30, right: 30, top: 30),
+              padding: EdgeInsets.only(left: 30, right: 30, top: 30),
               child: Container(
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(10),
-                  boxShadow:  [
+                  boxShadow: [
                     BoxShadow(
                       color: Colors.brown,
                       offset: Offset(0, 5),
@@ -390,7 +383,7 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
           valueListenable: NoteProvider.notesNotifier,
           builder: (context, notesData, child) {
             if (notesData.isEmpty) {
-              return  Center(child: Text('No notes available'));
+              return Center(child: Text('No notes available'.tr()));
             }
             return ListView.builder(
               itemCount: notesData.length,

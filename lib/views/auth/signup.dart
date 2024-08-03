@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:userboffee/Core/constants/components.dart';
 import 'package:userboffee/Core/constants/linksapi.dart';
@@ -23,28 +24,50 @@ class _signupState extends State<signup> {
 
   bool male = false;
   bool female = true;
+  bool isLoading = false;
+
   final Crud _crud = Crud();
   signUp() async {
+    setState(() {
+      isLoading = true;
+    });
+
     if (formstats.currentState!.validate()) {
       int genderId = male ? 1 : 2;
-      var response = await _crud.postrequest(linksignup, {
-        "user_name": username.text,
-        "email": email.text,
-        "password": password.text,
-        "password confirmation": confirmpass.text,
-        "age": age.text,
-        "gendre_id": genderId.toString(),
+      var response = await _crud.postrequest(
+        linksignup,
+        {
+          "user_name": username.text,
+          "email": email.text,
+          "password": password.text,
+          "password_confirmation": confirmpass.text,
+          "age": age.text,
+          "gendre_id": genderId.toString(),
+        },
+        headers: {
+          "Accept": "application/json",
+          "Content-Type": "application/json",
+        },
+      );
+      setState(() {
+        isLoading = false;
       });
       if (response is Map && response['success'] == true) {
         Navigator.of(context).push(
           MaterialPageRoute(builder: (context) => const login()),
         );
-      } else if (confirmpass.text != password.text) {
-        alert(formstats.currentContext!,
-            "Password does not match. Please re-type again.", "Wrong", "Close");
+      } else if (response is Map &&
+          response['errors'] != null &&
+          response['errors']['password'] != null) {
+        alert(formstats.currentContext!, response['errors']['password'][0],
+            "Error".tr(), "Close".tr());
       } else {
         print("fail signup");
       }
+    } else {
+      setState(() {
+        isLoading = false;
+      });
     }
   }
 
@@ -62,14 +85,14 @@ class _signupState extends State<signup> {
             ),
             Padding(
                 padding: const EdgeInsets.only(top: 80, left: 20),
-                child: Text("Welcome to boffee",
+                child: Text("Welcome to boffee".tr(),
                     style: TextStyle(
                         fontSize: 30,
                         color: medium_Brown,
                         fontWeight: FontWeight.bold))),
             Padding(
                 padding: const EdgeInsets.only(top: 120, left: 70),
-                child: Text("let's create an account",
+                child: Text("let's create an account".tr(),
                     style: TextStyle(
                         fontSize: 25,
                         color: medium_Brown,
@@ -89,7 +112,7 @@ class _signupState extends State<signup> {
                             controller: username,
                             min: 3,
                             max: 8,
-                            hintText: "User name",
+                            hintText: "user_name".tr(),
                           )),
                           const SizedBox(
                             width: 10,
@@ -100,14 +123,14 @@ class _signupState extends State<signup> {
                             controller: age,
                             min: 1,
                             max: 2,
-                            hintText: "Age",
+                            hintText: "Age".tr(),
                           )),
                         ]),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Text(
-                              "Gender",
+                              "Gender".tr(),
                               style: TextStyle(
                                   color: dark_Brown,
                                   fontSize: 19,
@@ -131,7 +154,7 @@ class _signupState extends State<signup> {
                                   });
                                 }),
                             Text(
-                              "Male",
+                              "Male".tr(),
                               style: TextStyle(fontSize: 17, color: dark_Brown),
                             ),
                             const SizedBox(
@@ -151,7 +174,7 @@ class _signupState extends State<signup> {
                                   });
                                 }),
                             Text(
-                              "Female",
+                              "female".tr(),
                               style: TextStyle(fontSize: 17, color: dark_Brown),
                             ),
                           ],
@@ -164,7 +187,7 @@ class _signupState extends State<signup> {
                           controller: email,
                           min: 12,
                           max: 20,
-                          hintText: "E-mail",
+                          hintText: "E-mail".tr(),
                         ),
                         const SizedBox(
                           height: 20,
@@ -174,7 +197,7 @@ class _signupState extends State<signup> {
                           controller: password,
                           min: 8,
                           max: 20,
-                          hintText: "Password",
+                          hintText: "Password".tr(),
                         ),
                         const SizedBox(
                           height: 20,
@@ -184,7 +207,7 @@ class _signupState extends State<signup> {
                           controller: confirmpass,
                           min: 8,
                           max: 20,
-                          hintText: "Confirm Password",
+                          hintText: "Confirm Password".tr(),
                         ),
                         const SizedBox(
                           height: 40,
@@ -200,7 +223,7 @@ class _signupState extends State<signup> {
                               padding: const EdgeInsets.only(
                                   left: 40, right: 40, top: 15, bottom: 15)),
                           child: Text(
-                            "Sign Up",
+                            "SignUp".tr(),
                             style: TextStyle(fontSize: 15, color: white),
                           ),
                         ),
@@ -208,7 +231,7 @@ class _signupState extends State<signup> {
                             padding: const EdgeInsets.only(top: 25, left: 55),
                             child: Row(
                               children: [
-                                Text("Already a member?",
+                                Text("Already a member?".tr(),
                                     style: TextStyle(
                                       fontSize: 17,
                                       fontWeight: FontWeight.w300,
@@ -222,7 +245,7 @@ class _signupState extends State<signup> {
                                     );
                                   },
                                   child: Text(
-                                    "Login",
+                                    "Login".tr(),
                                     style: TextStyle(
                                         fontSize: 18, color: dark_Brown),
                                   ),
@@ -231,6 +254,16 @@ class _signupState extends State<signup> {
                             ))
                       ])))
             ])),
+            if (isLoading)
+              Padding(
+                padding: EdgeInsets.only(top: 675),
+                child: Center(
+                  child: CircularProgressIndicator(
+                    backgroundColor: Light_Brown,
+                    color: dark_Brown,
+                  ),
+                ),
+              ),
           ],
         ));
   }

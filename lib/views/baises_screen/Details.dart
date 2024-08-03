@@ -1,18 +1,20 @@
+import 'dart:convert';
 
 import 'package:animated_snack_bar/animated_snack_bar.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:userboffee/Core/Models/d_withFile.dart';
+import 'package:userboffee/Core/config/options.dart';
 import 'package:userboffee/Core/constants/colors.dart';
 import 'package:userboffee/Core/constants/linksapi.dart';
 import 'package:userboffee/Core/provider/Theme_provider.dart';
 import 'package:userboffee/Core/service/real/crud.dart';
 import 'package:userboffee/views/AddComment.dart';
 import 'package:userboffee/views/PDFviewer.dart';
+import 'package:http/http.dart' as http;
 
 class BookDetailsPage extends StatefulWidget {
   const BookDetailsPage({super.key, required this.detail_File});
@@ -27,6 +29,7 @@ class _BookDetailsPageState extends State<BookDetailsPage>
   late TabController _tabController;
   double avgRating = 0;
   bool isFirstTime = true;
+  int MyPoints = 0;
 
   Future<dynamic> alert_report(
       BuildContext context, TextEditingController noteCont) {
@@ -106,25 +109,54 @@ class _BookDetailsPageState extends State<BookDetailsPage>
 
   Future<void> checkFirstTime() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    bool _isFirstTime = prefs.getBool('isFirstTime') ?? true;
-    if (_isFirstTime) {
-      _showSnackBar();
+    bool isFirstTime = prefs.getBool('isFirstTime') ?? true;
+    if (isFirstTime) {
+      _showSnackBar("The book has been added to Reading shelf",
+          AnimatedSnackBarType.success);
       await prefs.setBool('isFirstTime', false);
     }
   }
 
-  void _showSnackBar() {
+  void _showSnackBar(String msg, AnimatedSnackBarType type) {
     AnimatedSnackBar(
-      duration: Duration(milliseconds: 10),
+      duration: const Duration(seconds: 8),
       builder: (context) {
         return MaterialAnimatedSnackBar(
-          messageText: "The book has been added to Reading shelf",
-          type: AnimatedSnackBarType.success,
+          messageText: msg,
+          type: type,
           foregroundColor: Colors.white,
           backgroundColor: medium_Brown,
         );
       },
     ).show(context);
+  }
+
+  Future<void> fetchPoints() async {
+    try {
+      var response = await http.get(
+        Uri.parse(link_userDetails),
+        headers: getoptions(),
+      );
+      print("Server response: ${response.body}");
+
+      if (response.statusCode == 200) {
+        var responseBody = json.decode(response.body);
+        if (responseBody is Map<String, dynamic> &&
+            responseBody['success'] == true) {
+          setState(() {
+            MyPoints = responseBody['data']['my_points'] ?? 0;
+            print("User_points: $MyPoints");
+          });
+        } else {
+          print('Failed to fetch User points');
+        }
+      } else {
+        print('Failed to fetch User points');
+      }
+    } catch (e) {
+      print(e);
+      print('An error occurred');
+    }
   }
 
   @override
@@ -133,6 +165,7 @@ class _BookDetailsPageState extends State<BookDetailsPage>
     super.initState();
     get_AVG_rating();
     checkFirstTime();
+    fetchPoints();
   }
 
 //,required this.detailModel
@@ -163,7 +196,7 @@ class _BookDetailsPageState extends State<BookDetailsPage>
             size: 35,
           ),
           onPressed: () {
-            Navigator.pop(context);
+            Navigator.of(context).pop();
           },
         ),
       ),
@@ -182,7 +215,7 @@ class _BookDetailsPageState extends State<BookDetailsPage>
                   decoration: BoxDecoration(
                       image: DecorationImage(
                           image: NetworkImage(
-                            "http://$ip_local:8000${widget.detail_File.file!.cover}",
+                            "http://$ip_Zainab:8000${widget.detail_File.file!.cover}",
                           ),
                           fit: BoxFit.fill)),
                 ),
@@ -238,7 +271,7 @@ class _BookDetailsPageState extends State<BookDetailsPage>
               labelColor: Colors.brown,
               isScrollable: true,
               controller: _tabController,
-              tabs:  [
+              tabs: [
                 Tab(
                   child: Text(
                     'Info',
@@ -272,74 +305,90 @@ class _BookDetailsPageState extends State<BookDetailsPage>
                         style: const TextStyle(fontSize: 20),
                       )),
                     ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Padding(
-                            padding: const EdgeInsets.only(
-                                bottom: 70, top: 300, left: 20),
-                            child: SizedBox(
-                              width: 130,
-                              height: 50,
-                              child: ElevatedButton(
-                                style: ButtonStyle(
-                                  backgroundColor:
-                                      MaterialStateProperty.all<Color>(
-                                          Colors.brown),
-                                ),
-                                onPressed: () {
-                                  Navigator.of(context).push(
-                                    MaterialPageRoute(
-                                      builder: (context) => PDFviewer(
-                                        detail_File: widget.detail_File,
-                                      ),
+                    Padding(
+                      padding:
+                          const EdgeInsets.only(left: 10, right: 10, top: 20),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Padding(
+                              padding: const EdgeInsets.only(
+                                  bottom: 70, top: 300, left: 20),
+                              child: SizedBox(
+                                width: 130,
+                                height: 50,
+                                child: ElevatedButton(
+                                  style: ButtonStyle(
+                                    backgroundColor:
+                                        MaterialStateProperty.all<Color>(
+                                            Colors.brown),
+                                  ),
+                                  onPressed: () {
+                                    int bookPonits =
+                                        widget.detail_File.file!.points;
+                                    if (bookPonits <= MyPoints) {
+                                      Navigator.of(context).push(
+                                        MaterialPageRoute(
+                                          builder: (context) => PDFviewer(
+                                            detail_File: widget.detail_File,
+                                          ),
+                                        ),
+                                      );
+                                      print(
+                                          "path:${widget.detail_File.file!.file}");
+                                      _showSnackBar(
+                                          "The book was successfully opened and"
+                                                  .tr() +
+                                              "$bookPonits " +
+                                              "coffee beans were extracted"
+                                                  .tr(),
+                                          AnimatedSnackBarType.success);
+                                    } else {
+                                      _showSnackBar(
+                                          "You don't have enough coffee beans to open this book.\nEarn more beans by reading more books and then try again"
+                                              .tr(),
+                                          AnimatedSnackBarType.error);
+                                    }
+                                  },
+                                  child: Text(
+                                    'Read now',
+                                    style: TextStyle(
+                                      fontSize: 18,
+                                      color: white,
                                     ),
-                                  );
-                                  print(
-                                      "path:${widget.detail_File.file!.file}");
-                                  print(
-                                      "title:${widget.detail_File.file!.title}");
-                                  print(
-                                      "pages:${widget.detail_File.file!.total_pages}");
-                                },
-                                child: Text(
-                                  'Read now',
-                                  style: TextStyle(
-                                    fontSize: 18,
-                                    color: white,
-                                  ),
-                                ).tr(),
-                              ),
-                            )),
-                        Padding(
-                            padding: const EdgeInsets.only(
-                              top: 300,
-                              right: 20,
-                              bottom: 70,
-                            ),
-                            child: SizedBox(
-                              width: 130,
-                              height: 50,
-                              child: ElevatedButton(
-                                style: ButtonStyle(
-                                  backgroundColor:
-                                      MaterialStateProperty.all<Color>(
-                                          no_color),
-                                  elevation: MaterialStateProperty.all(0),
-                                  side: MaterialStateProperty.all(
-                                      const BorderSide(color: Colors.brown)),
+                                  ).tr(),
                                 ),
-                                onPressed: () {},
-                                child: Text(
-                                  'Read Later',
-                                  style: TextStyle(
-                                    fontSize: 16.8,
-                                    color: medium_Brown,
-                                  ),
-                                ).tr(),
+                              )),
+                          Padding(
+                              padding: const EdgeInsets.only(
+                                top: 300,
+                                right: 20,
+                                bottom: 70,
                               ),
-                            )),
-                      ],
+                              child: SizedBox(
+                                width: 130,
+                                height: 50,
+                                child: ElevatedButton(
+                                  style: ButtonStyle(
+                                    backgroundColor:
+                                        MaterialStateProperty.all<Color>(
+                                            no_color),
+                                    elevation: MaterialStateProperty.all(0),
+                                    side: MaterialStateProperty.all(
+                                        const BorderSide(color: Colors.brown)),
+                                  ),
+                                  onPressed: () {},
+                                  child: Text(
+                                    'Read Later',
+                                    style: TextStyle(
+                                      fontSize: 16.8,
+                                      color: medium_Brown,
+                                    ),
+                                  ).tr(),
+                                ),
+                              )),
+                        ],
+                      ),
                     ),
                     TextButton(
                       onPressed: () {

@@ -1,25 +1,13 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
-import 'package:connectivity_plus/connectivity_plus.dart';
-import 'package:device_preview/device_preview.dart';
 import 'package:easy_localization/easy_localization.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:input_slider/input_slider.dart';
-import 'package:input_slider/input_slider_form.dart';
 import 'package:provider/provider.dart';
-
-import 'package:userboffee/Core.dart';
 import 'package:userboffee/Core/config/network.dart';
 import 'package:userboffee/Core/config/options.dart';
-import 'package:userboffee/Core/constants/components.dart';
 import 'package:userboffee/Core/constants/images.dart';
-import 'package:userboffee/Core/provider/CoinProvider.dart';
 import 'package:userboffee/Core/provider/Theme_provider.dart';
 import 'package:userboffee/feature/getpost/bloc/getpost_bloc.dart';
-import 'package:userboffee/views/auth/signup.dart';
-import 'package:userboffee/views/baises_screen/QuetsPage.dart';
-import 'package:userboffee/views/baises_screen/setting.dart';
 import 'package:userboffee/views/firstpages/splash.dart';
 
 void main() async {
@@ -30,14 +18,13 @@ void main() async {
       supportedLocales: [Locale('en'), Locale('ar')],
       path: 'asset/translate', // <-- change the path of the translation files
       fallbackLocale: Locale('en'),
-      child: 
-      //DevicePreview(
-       // enabled: !kReleaseMode,
-       // builder:(context)=>
-         MyApp()
-       //  )
-         )
-         );
+      child:
+          //DevicePreview(
+          // enabled: !kReleaseMode,
+          // builder:(context)=>
+          MyApp()
+      //  )
+      ));
 }
 
 class MyApp extends StatelessWidget {
@@ -48,10 +35,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(
             create: (context) => ThemeProvider()..initTheme()),
         ChangeNotifierProvider(
-            create: (context ) =>ThemeProvider()..IniColortheme()),
-        ChangeNotifierProvider(
-          create: (context) => CoinProvider(),
-        ),
+            create: (context) => ThemeProvider()..IniColortheme()),
         BlocProvider(
           create: (context) => GetpostBloc(),
         ),
@@ -62,15 +46,15 @@ class MyApp extends StatelessWidget {
       ],
       child: Builder(builder: (context) {
         return MaterialApp(
-       //    useInheritedMediaQuery: true,
+            //    useInheritedMediaQuery: true,
             localizationsDelegates: context.localizationDelegates,
             supportedLocales: context.supportedLocales,
-            locale: context.locale ,
-            //?? 
+            locale: context.locale,
+            //??
             //  DevicePreview.locale(context),
             debugShowCheckedModeBanner: false,
-             theme: context.watch<ThemeProvider>().themedata,
-            home: AppScaffold(child: CorePage()));
+            theme: context.watch<ThemeProvider>().themedata,
+            home: AppScaffold(child: SplashScreen()));
       }),
     );
   }
