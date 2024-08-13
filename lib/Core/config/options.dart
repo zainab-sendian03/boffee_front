@@ -10,6 +10,8 @@ getoptions() {
   return {
     "Accept": "application/json",
     "Authorization": "Bearer $accestoken",
+    "Connection": "Keep-Alive",
+    "Keep-Alive": "timeout=5, max=1000"
     // "Language_Code":
     //     getIt.get<SharedPreferences>().getString("lan")
     // ! Must Be From SharedPrefeneces

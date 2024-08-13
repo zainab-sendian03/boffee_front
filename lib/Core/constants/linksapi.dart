@@ -4,10 +4,16 @@ String BaseUrl = "http://$ip_Zainab:8000/api/";
 String ip_Zainab = "10.0.2.2";
 String ip_local = "localhost";
 String ip_maryam = "192.168.137.120";
+
 //auth
 String linksignup = "$linkservername/api/register";
 String linklogin = "$linkservername/api/login";
 String link_userDetails = "$linkservername/api/user/show";
+
+//reset password
+String link_Email = "$linkservername/api/password/email";
+String link_checkCode = "$linkservername/api/password/code/check";
+String link_Reset = "$linkservername/api/password/reset";
 
 //rating
 String link_rating = "$linkservername/api/rate";

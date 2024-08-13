@@ -6,13 +6,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:userboffee/Core.dart';
 import 'package:userboffee/Core/Models/d_withFile.dart';
 import 'package:userboffee/Core/config/options.dart';
 import 'package:userboffee/Core/constants/colors.dart';
 import 'package:userboffee/Core/constants/linksapi.dart';
 import 'package:userboffee/Core/provider/Theme_provider.dart';
 import 'package:userboffee/Core/service/real/crud.dart';
-import 'package:userboffee/views/AddComment.dart';
+import 'package:userboffee/views/profile/AddComment.dart';
 import 'package:userboffee/views/PDFviewer.dart';
 import 'package:http/http.dart' as http;
 
@@ -107,16 +108,6 @@ class _BookDetailsPageState extends State<BookDetailsPage>
     }
   }
 
-  Future<void> checkFirstTime() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    bool isFirstTime = prefs.getBool('isFirstTime') ?? true;
-    if (isFirstTime) {
-      _showSnackBar("The book has been added to Reading shelf",
-          AnimatedSnackBarType.success);
-      await prefs.setBool('isFirstTime', false);
-    }
-  }
-
   void _showSnackBar(String msg, AnimatedSnackBarType type) {
     AnimatedSnackBar(
       duration: const Duration(seconds: 8),
@@ -135,7 +126,7 @@ class _BookDetailsPageState extends State<BookDetailsPage>
     try {
       var response = await http.get(
         Uri.parse(link_userDetails),
-        headers: getoptions(),
+        headers: getoptions2(),
       );
       print("Server response: ${response.body}");
 
@@ -164,11 +155,19 @@ class _BookDetailsPageState extends State<BookDetailsPage>
     _tabController = TabController(length: 2, vsync: this);
     super.initState();
     get_AVG_rating();
-    checkFirstTime();
     fetchPoints();
   }
 
-//,required this.detailModel
+  Future<void> checkFirstTime() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    bool isFirstTime = prefs.getBool('isFirstTime') ?? true;
+    if (isFirstTime) {
+      _showSnackBar("The book has been added to Reading shelf".tr(),
+          AnimatedSnackBarType.success);
+      await prefs.setBool('isFirstTime', false);
+    }
+  }
+
   @override
   Widget build(
     BuildContext context,
@@ -177,7 +176,7 @@ class _BookDetailsPageState extends State<BookDetailsPage>
       appBar: AppBar(
         backgroundColor: context.watch<ThemeProvider>().newcolor,
         title: Text(
-          'Book Details',
+          'Book Details'.tr(),
           style: TextStyle(color: dark_Brown),
         ),
         actions: [
@@ -196,7 +195,9 @@ class _BookDetailsPageState extends State<BookDetailsPage>
             size: 35,
           ),
           onPressed: () {
-            Navigator.of(context).pop();
+            Navigator.of(context).push(
+              MaterialPageRoute(builder: (context) => const CorePage()),
+            );
           },
         ),
       ),
@@ -273,7 +274,7 @@ class _BookDetailsPageState extends State<BookDetailsPage>
               controller: _tabController,
               tabs: [
                 Tab(
-                  child: Text(
+                  child: const Text(
                     'Info',
                     style: TextStyle(fontSize: 18),
                   ).tr(),
@@ -283,7 +284,7 @@ class _BookDetailsPageState extends State<BookDetailsPage>
                   child: Tab(
                     child: Text(
                       'Reviews'.tr(),
-                      style: TextStyle(fontSize: 18),
+                      style: const TextStyle(fontSize: 18),
                     ),
                   ),
                 ),
@@ -307,7 +308,7 @@ class _BookDetailsPageState extends State<BookDetailsPage>
                     ),
                     Padding(
                       padding:
-                          const EdgeInsets.only(left: 10, right: 10, top: 20),
+                          const EdgeInsets.only(left: 10, right: 10, top: 50),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
@@ -337,11 +338,7 @@ class _BookDetailsPageState extends State<BookDetailsPage>
                                       print(
                                           "path:${widget.detail_File.file!.file}");
                                       _showSnackBar(
-                                          "The book was successfully opened and"
-                                                  .tr() +
-                                              "$bookPonits " +
-                                              "coffee beans were extracted"
-                                                  .tr(),
+                                          "${"The book has been added to Reading shelf and".tr()}$bookPonits ${"coffee beans were extracted".tr()}",
                                           AnimatedSnackBarType.success);
                                     } else {
                                       _showSnackBar(

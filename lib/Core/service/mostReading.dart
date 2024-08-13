@@ -5,7 +5,7 @@ import 'package:userboffee/Core/constants/linksapi.dart';
 
 Future<ResultModel> mostreading() async {
   Dio dio = Dio();
-  Response response = await dio.get(BaseUrl+"mostReading");
+  Response response = await dio.get(BaseUrl + "mostReading");
   try {
     if (response.statusCode == 200) {
       List<Bookmodel> most_reading_List = List.generate(

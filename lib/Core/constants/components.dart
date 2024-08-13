@@ -1,8 +1,6 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:lottie/lottie.dart';
 import 'package:userboffee/Core/Models/note_model.dart';
@@ -23,7 +21,7 @@ class ColorContainer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: EdgeInsets.all(7),
+      margin: const EdgeInsets.all(7),
       width: MediaQuery.of(context).size.width * 0.1,
       height: 40,
       decoration: BoxDecoration(
@@ -36,9 +34,9 @@ class ColorContainer extends StatelessWidget {
 
 class LanguageContainer extends StatelessWidget {
   const LanguageContainer({
-    Key? key,
+    super.key,
     required this.text,
-  }) : super(key: key);
+  });
   final String text;
   @override
   Widget build(BuildContext context) {
@@ -51,7 +49,7 @@ class LanguageContainer extends StatelessWidget {
       child: Text(
         text,
         textAlign: TextAlign.center,
-        style: TextStyle(fontWeight: FontWeight.w800, fontSize: 17),
+        style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 17),
       ).tr(),
     );
   }
@@ -63,7 +61,7 @@ class CircleIndecaterSwitch extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     try {
-      return CircularProgressIndicator();
+      return const CircularProgressIndicator();
     } catch (e) {
       //print(e.toString());
       return Lottie.network(
@@ -136,7 +134,7 @@ class SearchContainer extends StatelessWidget {
                           child: Container(
                             height: 290,
                             width: double.infinity,
-                            decoration: BoxDecoration(
+                            decoration: const BoxDecoration(
                                 // color: biege,
                                 ),
                             child: Column(
@@ -156,7 +154,7 @@ class SearchContainer extends StatelessWidget {
                                                       .tr())),
                                     )),
                                 Align(
-                                  alignment: Alignment(1, -0.5),
+                                  alignment: const Alignment(1, -0.5),
                                   // child: BlocListener<GetpostBloc, GetpostState>(
                                   //   listener: (context, state) {
                                   //   if(state is  SuccessGetPost_state){
@@ -184,11 +182,11 @@ class SearchContainer extends StatelessWidget {
                                         decoration: BoxDecoration(
                                           gradient: LinearGradient(
                                               colors: [
-                                                Color.fromARGB(
+                                                const Color.fromARGB(
                                                     255, 227, 222, 222),
-                                                Color.fromARGB(
+                                                const Color.fromARGB(
                                                     255, 182, 159, 152),
-                                                Color.fromARGB(
+                                                const Color.fromARGB(
                                                     255, 164, 138, 129),
                                                 medium_Brown
                                               ],
@@ -222,7 +220,7 @@ class SearchContainer extends StatelessWidget {
             hintStyle: const TextStyle(color: Color(0xFFA5A5A5)),
             prefixIcon: IconButton(
                 icon: const Icon(
-                  Icons.search,
+                  Icons.add,
                   color: Color(0xFF5D3F2E),
                 ),
                 onPressed: () {}),
@@ -307,7 +305,7 @@ class CustomTextFormField extends StatefulWidget {
   final void Function()? onTapIcon;
 
   const CustomTextFormField({
-    Key? key,
+    super.key,
     required this.hintText,
     required this.controller,
     required this.min,
@@ -315,7 +313,7 @@ class CustomTextFormField extends StatefulWidget {
     this.visPassword = true,
     this.showVisPasswordToggle = false,
     this.onTapIcon,
-  }) : super(key: key);
+  });
 
   @override
   _CustomTextFormFieldState createState() => _CustomTextFormFieldState();
@@ -377,16 +375,15 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
 
 class CardNote extends StatelessWidget {
   final NoteModel noteModel;
-  final void Function()? onDelete;
-  final void Function()? onEdit;
+  final VoidCallback onDelete;
+  final VoidCallback onEdit;
 
   const CardNote({
-    Key? key,
+    super.key,
     required this.noteModel,
     required this.onDelete,
     required this.onEdit,
-  }) : super(key: key);
-
+  });
   Color getColor(int colorCode) {
     switch (colorCode) {
       case 1:
@@ -411,61 +408,58 @@ class CardNote extends StatelessWidget {
             borderRadius: BorderRadius.circular(10),
             boxShadow: const [
               BoxShadow(
-                color: Colors.grey,
-                offset: Offset(0, 2),
+                color: Colors.brown,
+                offset: Offset(0, 5),
                 blurRadius: 10,
               )
             ],
           ),
-          constraints: const BoxConstraints(maxHeight: 160),
-          child: Padding(
-            padding: const EdgeInsets.only(left: 10, right: 10),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
+          constraints: const BoxConstraints(maxHeight: 150),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  IconButton(
+                    icon: const Icon(Icons.delete),
+                    onPressed: onDelete,
+                    color: white,
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.edit),
+                    onPressed: onEdit,
+                    color: white,
+                  ),
+                ],
+              ),
+              Padding(
+                padding: const EdgeInsets.only(left: 20),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    IconButton(
-                      icon: const Icon(Icons.delete),
-                      onPressed: onDelete,
-                      color: white,
+                    Text(
+                      "page: ${noteModel.pageNum}",
+                      style: TextStyle(
+                          fontSize: 15,
+                          fontWeight: FontWeight.bold,
+                          color: white),
                     ),
-                    IconButton(
-                      icon: const Icon(Icons.edit),
-                      onPressed: onEdit,
-                      color: white,
+                    Text(
+                      "Book title: ${noteModel.title}",
+                      style: TextStyle(
+                          fontSize: 15,
+                          fontWeight: FontWeight.bold,
+                          color: white),
+                    ),
+                    Text(
+                      "${"Content:".tr()} ${noteModel.body}",
+                      style: TextStyle(fontSize: 20, color: white),
                     ),
                   ],
                 ),
-                Padding(
-                  padding: const EdgeInsets.only(left: 20),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        "Page:".tr() + "${noteModel.pageNum}",
-                        style: TextStyle(
-                            fontSize: 15,
-                            fontWeight: FontWeight.bold,
-                            color: white),
-                      ),
-                      Text(
-                        "Book title:".tr() + " ${noteModel.title}",
-                        style: TextStyle(
-                            fontSize: 15,
-                            fontWeight: FontWeight.bold,
-                            color: white),
-                      ),
-                      Text(
-                        noteModel.body ?? '',
-                        style: TextStyle(fontSize: 20, color: white),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
       ),

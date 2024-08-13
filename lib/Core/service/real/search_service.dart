@@ -1,12 +1,13 @@
 import 'package:dio/dio.dart';
 import 'package:userboffee/Core/Models/bookmodel_maya.dart';
+import 'package:userboffee/Core/config/options.dart';
 import 'package:userboffee/Core/constants/linksapi.dart';
 
 abstract class Search {
   Dio dio = Dio();
 
   // getType(String name) {
-    String baseurl = "${BaseUrl}author";
+  String baseurl = "${BaseUrl}author";
   // }
 
   late Response response;
@@ -33,7 +34,7 @@ class Servicesearch extends Search {
   Future<List<BookModel>> PostAllBook(String name) async {
     try {
       response = await dio.post('${BaseUrl}author',
-          data: {'name': name});
+          options: Options(headers: getoptions()), data: {'name': name});
       if (response.statusCode == 200) {
         List<BookModel> book_model = List.generate(response.data['data'].length,
             (index) => BookModel.fromMap(response.data['data'][index]));
@@ -42,7 +43,7 @@ class Servicesearch extends Search {
       } else {
         return [];
       }
-    }on DioException catch (e) {
+    } on DioException catch (e) {
       print(e);
       return [];
     }

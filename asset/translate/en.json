@@ -42,7 +42,7 @@
     "Reading": "Reading",
     "add your note": "add your note",
     "add": "add",
-    "Page:": "Page",
+    "Page:": "Page:",
     "Completed ": "Completed ",
     "Book Details": "Book Details",
     "Cancle": "Cancle",
@@ -50,7 +50,7 @@
     "type": "type",
     "you will level up as you read more and more books\n then your coffee beans will increase":"you will level up as you read more and more books\n then your coffee beans will increase",
     "coffee beans:": "coffee beans:",
-    "The book was successfully opened and": "The book was successfully opened and",
+    "The book has been added to Reading shelf and": "The book has been added to Reading shelf and",
     "coffee beans were extracted" :"coffee beans were extracted",
     "You don't have enough coffee beans to open this book.\nEarn more beans by reading more books and then try again": "You don't have enough coffee beans to open this book.\nEarn more beans by reading more books and then try again",
     "Add" :"Add",
@@ -85,7 +85,18 @@
     "Error":"Error",
     "Close":"Close",
     "Your password or User name is incorrect or the account does not exist\nPlease try again!":"Your password or User name is incorrect or the account does not exist\nPlease try again!",
-    "Wrong":"Wrong"
-
+    "Wrong":"Wrong",
+    "Mail Address here": "Mail Address here",
+    "Enter the email address associated\n with your account":"Enter the email address associated\n with your account",
+    "Code":"Code",
+    "Please enter the 6 digit code that\n send to your account": "Please enter the 6 digit code that\n send to your account",
+    "Verify":"Verify",
+    "The selected email is invalid":"The selected email is invalid",
+    "The password confirmation does not match.":"The password confirmation does not match.",
+    "Reset Your Password":"Reset Your Password",
+    "Your new password must be\ndifferent from previously used\n password":"Your new password must be\ndifferent from previously used\n password",
+    "Done":"Done",
+    "Get your code":"Get your code",
+    "Content:":"Content:"
 
 }

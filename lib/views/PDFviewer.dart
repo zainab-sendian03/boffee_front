@@ -39,20 +39,11 @@ class _PDFviewerState extends State<PDFviewer> {
   double ratingValue = 0;
   String? shelfId;
   int? userId;
+  bool hasReachedLastPage = false;
   final Crud crud = Crud();
   GlobalKey x = GlobalKey();
 
-  @override
-  void initState() {
-    super.initState();
-    fetchUserId();
-    fetchShelfId().then((_) {
-      _initializePDFView();
-    });
-  }
-
   Future<void> _initializePDFView() async {
-    await Future.delayed(const Duration(seconds: 2));
     await _checkAndClearForNewUser();
     if (currentPdfFile != widget.detail_File.file!.file) {
       setState(() {
@@ -60,7 +51,10 @@ class _PDFviewerState extends State<PDFviewer> {
         currentPdfFile = widget.detail_File.file!.file;
       });
     }
-    await _loadLastPage();
+    await Future.wait([
+      _loadLastPage(),
+      _loadPDF(),
+    ]);
     print("PDFView initialization complete");
   }
 
@@ -183,11 +177,9 @@ class _PDFviewerState extends State<PDFviewer> {
       print("Response: $response");
 
       if (response is Map && response['success'] == true) {
-        NoteModel newNote = NoteModel.fromJson(response['data']);
-        NoteProvider.notesNotifier.value = [
-          ...NoteProvider.notesNotifier.value,
-          newNote
-        ];
+        var noteData = response['data'] as Map<String, dynamic>;
+        NoteModel note = NoteModel.fromJson(noteData);
+        NoteProvider.notesNotifier.value = [note];
 
         AnimatedSnackBar(
           duration: const Duration(seconds: 3),
@@ -227,6 +219,7 @@ class _PDFviewerState extends State<PDFviewer> {
             const Duration(seconds: 30),
           );
       print("Server response: ${response.body}");
+      print("bookID:$bookId");
 
       if (response.statusCode == 200) {
         var responseBody = json.decode(response.body);
@@ -253,7 +246,8 @@ class _PDFviewerState extends State<PDFviewer> {
 
   update_progress() async {
     try {
-      print("----------------------------------------------");
+      // ignore: unused_local_variable
+      const r = RetryOptions(maxAttempts: 3);
       if (shelfId == null) {
         print("Shelf ID is null. Cannot update progress.");
         return;
@@ -285,6 +279,8 @@ class _PDFviewerState extends State<PDFviewer> {
         print("Unexpected response format: $response");
       }
     } catch (e) {
+      // ignore: unused_label
+      retryIf:
       print("ERROR: $e");
 
       if (e is HttpException) {
@@ -294,6 +290,22 @@ class _PDFviewerState extends State<PDFviewer> {
       } else {
         print("Unknown error: $e");
       }
+    }
+  }
+
+  Future<void> _loadPDF() async {
+    const r = RetryOptions(maxAttempts: 3);
+    try {
+      final pdfUrl = Uri.parse(
+          "http://10.0.2.2:8000/${Uri.encodeComponent(widget.detail_File.file!.file)}");
+
+      await r.retry(
+        () => http.get(pdfUrl).timeout(const Duration(seconds: 30)),
+        retryIf: (e) => e is SocketException || e is TimeoutException,
+      );
+    } catch (e) {
+      print("Failed to load PDF: $e");
+      throw Exception("Failed to load PDF");
     }
   }
 
@@ -470,15 +482,10 @@ class _PDFviewerState extends State<PDFviewer> {
   Widget build(BuildContext context) {
     double percent = ((100 * indexPage) / widget.detail_File.file!.total_pages);
     String finalPercent = percent.toStringAsFixed(0);
-    //const String baseUrl = "http://10.0.2.2:8000";
-    String baseUrl = "http://10.0.2.2:8000";
-    final String filePath = widget.detail_File.file!.file;
-    final String pdfUrl = "$baseUrl$filePath";
-    print("!!!:$filePath");
-    print("+++++++++the pdfUrl: $pdfUrl");
-    print(Exception().toString());
+    final String pdfUrl =
+        "http://10.0.2.2:8000${widget.detail_File.file!.file}";
+    print("the pdfUrl: $pdfUrl");
 
-    //print(widget.detail_File.file!.file.toString());
     return Scaffold(
         resizeToAvoidBottomInset: false,
         appBar: AppBar(
@@ -521,41 +528,32 @@ class _PDFviewerState extends State<PDFviewer> {
             builder: (context, snapshot) {
               return Column(
                 children: [
-                  SizedBox(
-                    height: MediaQuery.of(context).size.height * 0.698,
-                    child: SfPdfViewer.network(
-                      enableDocumentLinkAnnotation: true,
-                      pdfUrl,
-                      controller: _pdfViewerController,
-                      canShowScrollHead: false,
-                      pageSpacing: 2,
-                      onTextSelectionChanged:
-                          (PdfTextSelectionChangedDetails details) {
-                        if (details.selectedText != null) {
-                          print(details.selectedText);
-                        }
-                      },
-                      onPageChanged: (details) {
-                        _savePageIndex(details.newPageNumber);
-                        print('$indexPage');
-                      },
-                      initialScrollOffset: const Offset(10, 10),
-                      onDocumentLoadFailed: (details) {
-                        print("Failed to load PDF: ${details.description}");
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            backgroundColor: const Color(0xFFFFF8F1),
-                            content: Text(
-                                "${"Failed to load PDF:".tr()} ${details.description}",
-                                style: const TextStyle(
-                                  fontSize: 14,
-                                  color: Colors.black,
-                                )),
+                  FutureBuilder(
+                      future: _loadPDF(),
+                      builder: (context, snapshot) {
+                        return SizedBox(
+                          height: MediaQuery.of(context).size.height * 0.698,
+                          child: SfPdfViewer.network(
+                            canShowScrollHead: false,
+                            pdfUrl,
+                            controller: _pdfViewerController,
+                            onDocumentLoaded:
+                                (PdfDocumentLoadedDetails details) {
+                              _pdfViewerController.jumpToPage(indexPage);
+                            },
+                            onPageChanged: (PdfPageChangedDetails details) {
+                              setState(() {
+                                indexPage = details.newPageNumber;
+                              });
+                              _savePageIndex(indexPage);
+                            },
+                            onDocumentLoadFailed:
+                                (PdfDocumentLoadFailedDetails details) {
+                              print("Document Load Failed: ${details.error}");
+                            },
                           ),
                         );
-                      },
-                    ),
-                  ),
+                      }),
                   Padding(
                     padding: const EdgeInsets.only(top: 8),
                     child: Container(
@@ -613,14 +611,21 @@ class _PDFviewerState extends State<PDFviewer> {
                                         print("$indexPage");
                                       });
                                       await update_progress();
+                                    } else {
+                                      if (!hasReachedLastPage) {
+                                        setState(() {
+                                          hasReachedLastPage = true;
+                                        });
+                                      }
                                     }
-                                    if (indexPage ==
-                                        widget.detail_File.file!.total_pages) {
+                                    if (hasReachedLastPage &&
+                                        indexPage ==
+                                            widget.detail_File.file!
+                                                .total_pages) {
                                       SnackBar snackBar = snakB(context);
                                       ScaffoldMessenger.of(context)
                                           .showSnackBar(snackBar);
                                     }
-                                    await update_progress();
                                   },
                                   style: ElevatedButton.styleFrom(
                                     backgroundColor: medium_Brown,
@@ -634,9 +639,7 @@ class _PDFviewerState extends State<PDFviewer> {
                                   ),
                                   child: Icon(
                                     indexPage <
-                                            widget.detail_File.file!
-                                                    .total_pages -
-                                                1
+                                            widget.detail_File.file!.total_pages
                                         ? Icons.arrow_forward_ios
                                         : Icons.done,
                                     color: white,
@@ -686,7 +689,7 @@ class _PDFviewerState extends State<PDFviewer> {
                                 Padding(
                                   padding: const EdgeInsets.only(left: 40),
                                   child: Text(
-                                    "${"Page".tr()} $indexPage/${widget.detail_File.file!.total_pages}",
+                                    "${"Page:".tr()} $indexPage/${widget.detail_File.file!.total_pages}",
                                     style:
                                         TextStyle(fontSize: 15, color: white),
                                   ),
@@ -694,7 +697,7 @@ class _PDFviewerState extends State<PDFviewer> {
                                 Padding(
                                   padding: const EdgeInsets.only(right: 35),
                                   child: Text(
-                                    "${"Completed ".tr()}$finalPercent%",
+                                    "${"Completed ".tr()} $finalPercent%",
                                     style: TextStyle(
                                       fontSize: 15,
                                       color: dark_Brown,

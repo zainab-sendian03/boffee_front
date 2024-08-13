@@ -63,9 +63,10 @@ class _loginState extends State<login> {
         } else {
           alert(
               formstats.currentContext!,
-              "Your password or User name is incorrect or the account does not exist\nPlease try again!",
-              "Wrong",
-              "Close");
+              "Your password or User name is incorrect or the account does not exist\nPlease try again!"
+                  .tr(),
+              "Wrong".tr(),
+              "Close".tr());
         }
       } catch (e) {
         print("ERROR $e");
@@ -115,7 +116,7 @@ class _loginState extends State<login> {
                           hintText: "user_name".tr(),
                           controller: user_name,
                           min: 3,
-                          max: 10,
+                          max: 20,
                           visPassword: false,
                         ),
                         const SizedBox(
@@ -162,7 +163,8 @@ class _loginState extends State<login> {
                           ),
                         ),
                         Padding(
-                            padding: const EdgeInsets.only(top: 45, left: 30),
+                            padding: const EdgeInsets.only(
+                                top: 45, left: 30, right: 10),
                             child: Row(
                               children: [
                                 Text("Don’t have an account?".tr(),

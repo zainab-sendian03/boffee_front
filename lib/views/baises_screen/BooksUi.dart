@@ -218,7 +218,7 @@ class _BookUiState extends State<BookUi> {
                                         children: [
                                           Container(
                                             width: 200,
-                                            height: 200,
+                                            height: 220,
                                             decoration: BoxDecoration(
                                               borderRadius:
                                                   BorderRadius.circular(10),
@@ -234,57 +234,77 @@ class _BookUiState extends State<BookUi> {
                                                 )
                                               ],
                                             ),
-                                            child: Column(children: [
-                                              Padding(
-                                                padding: const EdgeInsets.only(
-                                                    left: 10, top: 115),
-                                                child: Text(
-                                                  temp[index].title.toString(),
-                                                  style: TextStyle(
-                                                      fontSize: 14,
-                                                      color: dark_Brown),
-                                                ).tr(),
-                                              ),
-                                              Padding(
-                                                padding: const EdgeInsets.only(
-                                                  left: 10,
-                                                ),
-                                                child: Text(
-                                                  temp[index]
-                                                      .author_name
-                                                      .toString(),
-                                                  style: TextStyle(
-                                                      fontSize: 15,
-                                                      color: medium_Brown),
-                                                ).tr(),
-                                              ),
-                                              Padding(
-                                                padding: const EdgeInsets.only(
-                                                  left: 45,
-                                                ),
-                                                child: Row(
+                                            child: Padding(
+                                              padding: const EdgeInsets.only(
+                                                  right: 5),
+                                              child: Column(
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.center,
                                                   mainAxisAlignment:
                                                       MainAxisAlignment.center,
                                                   children: [
-                                                    Text(
-                                                      "coffee beans:".tr() +
-                                                          " ${temp[index].points}",
-                                                      style: TextStyle(
-                                                          fontSize: 15,
-                                                          color: medium_Brown),
+                                                    Padding(
+                                                      padding:
+                                                          const EdgeInsets.only(
+                                                              top: 115),
+                                                      child: Text(
+                                                        temp[index]
+                                                            .title
+                                                            .toString(),
+                                                        style: TextStyle(
+                                                            fontSize: 14,
+                                                            color: dark_Brown),
+                                                        overflow: TextOverflow
+                                                            .ellipsis,
+                                                      ).tr(),
                                                     ),
-                                                    const SizedBox(
-                                                      width: 5,
+                                                    Padding(
+                                                      padding:
+                                                          const EdgeInsets.only(
+                                                        left: 45,
+                                                      ),
+                                                      child: Text(
+                                                        temp[index]
+                                                            .author_name
+                                                            .toString(),
+                                                        style: TextStyle(
+                                                            fontSize: 15,
+                                                            color:
+                                                                medium_Brown),
+                                                        overflow: TextOverflow
+                                                            .ellipsis,
+                                                      ).tr(),
                                                     ),
-                                                    Image.asset(
-                                                      "asset/images/coin.png",
-                                                      scale: 5,
+                                                    Padding(
+                                                      padding:
+                                                          const EdgeInsets.only(
+                                                              left: 40),
+                                                      child: Row(
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .center,
+                                                        children: [
+                                                          Text(
+                                                            "${"coffee beans:".tr()} ${temp[index].points}",
+                                                            style: TextStyle(
+                                                                fontSize: 15,
+                                                                color:
+                                                                    medium_Brown),
+                                                          ),
+                                                          const SizedBox(
+                                                            width: 5,
+                                                          ),
+                                                          Image.asset(
+                                                            "asset/images/coin.png",
+                                                            scale: 5,
+                                                          ),
+                                                          const SizedBox(
+                                                              width: 4.0),
+                                                        ],
+                                                      ),
                                                     ),
-                                                    const SizedBox(width: 4.0),
-                                                  ],
-                                                ),
-                                              ),
-                                            ]),
+                                                  ]),
+                                            ),
                                           ),
                                           Padding(
                                             padding: const EdgeInsets.only(

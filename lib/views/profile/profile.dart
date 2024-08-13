@@ -18,8 +18,8 @@ import 'package:userboffee/views/profile/myfavpost.dart';
 
 class Profile extends StatefulWidget {
   const Profile({
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   @override
   State<Profile> createState() => _ProfileState();
@@ -54,7 +54,7 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
           decoration: InputDecoration(
               border: InputBorder.none,
               hintText: "add your note....".tr(),
-              hintStyle: TextStyle(color: Color(0XFFA5A5A5))),
+              hintStyle: const TextStyle(color: Color(0XFFA5A5A5))),
         ),
       ),
       actions: <Widget>[
@@ -112,27 +112,20 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
     }
   }
 
-  Future<Map<String, dynamic>> getNote() async {
-    try {
-      var response =
-          await crud.getrequest(link_showNote, headers: getoptions());
+  Future<List<NoteModel>> getNotes() async {
+    final response =
+        await http.get(Uri.parse(link_showNote), headers: getoptions());
 
-      print("Server response: $response");
-
-      if (response is Map<String, dynamic> && response['success'] == true) {
-        return response;
+    if (response.statusCode == 200) {
+      final responseData = json.decode(response.body);
+      if (responseData['success']) {
+        final notesJson = responseData['data'] as List;
+        return notesJson.map((json) => NoteModel.fromJson(json)).toList();
       } else {
-        return {
-          'success': false,
-          'message': 'Failed to fetch Notes',
-        };
+        throw Exception('Failed to load notes');
       }
-    } catch (e) {
-      print(e);
-      return {
-        'success': false,
-        'message': 'An error occurred',
-      };
+    } else {
+      throw Exception('Failed to load notes');
     }
   }
 
@@ -218,7 +211,7 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
                                         left: 20, right: 10, bottom: 65),
                                     child: CircleAvatar(
                                       radius: 45,
-                                      backgroundColor: Color(0xFF41C9D2),
+                                      backgroundColor: const Color(0xFF41C9D2),
                                       child: Text(
                                         user['user_name'][0].toUpperCase(),
                                         style: const TextStyle(
@@ -244,7 +237,7 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
                                           color: dark_Brown,
                                         ),
                                       ),
-                                      SizedBox(height: 10.0),
+                                      const SizedBox(height: 10.0),
                                       Text(
                                         user['gender'],
                                         style: TextStyle(
@@ -304,25 +297,25 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
               controller: _tabController,
               tabs: [
                 Tab(
-                  child: Text(
+                  child: const Text(
                     'My quotes',
                     style: TextStyle(fontSize: 18),
                   ).tr(),
                 ),
                 Tab(
-                  child: Text(
+                  child: const Text(
                     'Favourite quotes',
                     style: TextStyle(fontSize: 18),
                   ).tr(),
                 ),
                 Tab(
-                  child: Text(
+                  child: const Text(
                     'Favourite book',
                     style: TextStyle(fontSize: 18),
                   ).tr(),
                 ),
                 Tab(
-                  child: Text(
+                  child: const Text(
                     'My notes',
                     style: TextStyle(fontSize: 18),
                   ).tr(),
@@ -353,12 +346,12 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
           scrollDirection: Axis.vertical,
           children: <Widget>[
             Padding(
-              padding: EdgeInsets.only(left: 30, right: 30, top: 30),
+              padding: const EdgeInsets.only(left: 30, right: 30, top: 30),
               child: Container(
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(10),
-                  boxShadow: [
+                  boxShadow: const [
                     BoxShadow(
                       color: Colors.brown,
                       offset: Offset(0, 5),
@@ -377,39 +370,41 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
   }
 
   Widget buildNotesTab() {
-    return Stack(
-      children: [
-        ValueListenableBuilder<List<NoteModel>>(
-          valueListenable: NoteProvider.notesNotifier,
-          builder: (context, notesData, child) {
-            if (notesData.isEmpty) {
-              return Center(child: Text('No notes available'.tr()));
-            }
-            return ListView.builder(
-              itemCount: notesData.length,
-              shrinkWrap: true,
-              itemBuilder: (context, i) {
-                return CardNote(
-                  noteModel: notesData[i],
-                  onDelete: () {
-                    NoteProvider.notesNotifier.value =
-                        List.from(NoteProvider.notesNotifier.value)
-                          ..removeAt(i);
-                  },
-                  onEdit: () {
-                    showDialog(
-                      context: context,
-                      builder: (BuildContext context) {
-                        return _alertDialog(context, noteToEdit: notesData[i]);
-                      },
-                    );
-                  },
-                );
-              },
-            );
-          },
-        ),
-      ],
+    return FutureBuilder<List<NoteModel>>(
+      future: getNotes(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return Center(child: CircularProgressIndicator(color: dark_Brown));
+        } else if (snapshot.hasError) {
+          return Center(child: Text('Error: ${snapshot.error}'));
+        } else if (snapshot.hasData) {
+          List<NoteModel> notesData = snapshot.data ?? [];
+          if (notesData.isEmpty) {
+            return Center(child: Text('No notes available'.tr()));
+          }
+          return ListView.builder(
+            itemCount: notesData.length,
+            itemBuilder: (context, i) {
+              return CardNote(
+                noteModel: notesData[i],
+                onDelete: () {
+                  // Handle delete
+                },
+                onEdit: () {
+                  showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return _alertDialog(context, noteToEdit: notesData[i]);
+                    },
+                  );
+                },
+              );
+            },
+          );
+        } else {
+          return Center(child: Text('No notes available'.tr()));
+        }
+      },
     );
   }
 }
