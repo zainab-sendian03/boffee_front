@@ -3,11 +3,13 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:provider/provider.dart';
+import 'package:userboffee/Core.dart';
 import 'package:userboffee/Core/config/network.dart';
 import 'package:userboffee/Core/config/options.dart';
 import 'package:userboffee/Core/constants/images.dart';
 import 'package:userboffee/Core/provider/Theme_provider.dart';
 import 'package:userboffee/feature/getpost/bloc/getpost_bloc.dart';
+import 'package:userboffee/views/auth/signup.dart';
 import 'package:userboffee/views/firstpages/splash.dart';
 
 void main() async {
@@ -54,7 +56,7 @@ class MyApp extends StatelessWidget {
             //  DevicePreview.locale(context),
             debugShowCheckedModeBanner: false,
             theme: context.watch<ThemeProvider>().themedata,
-            home: AppScaffold(child: SplashScreen()));
+            home: AppScaffold(child: CorePage()));
       }),
     );
   }

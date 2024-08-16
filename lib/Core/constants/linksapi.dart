@@ -1,5 +1,5 @@
-String linkservername = "http://$ip_Zainab:8000";
-String BaseUrl = "http://$ip_Zainab:8000/api/";
+String linkservername = "http://$ip_local:8000";
+String BaseUrl = "http://$ip_local:8000/api/";
 
 String ip_Zainab = "10.0.2.2";
 String ip_local = "localhost";

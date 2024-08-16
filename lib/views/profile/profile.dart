@@ -5,6 +5,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:http/http.dart' as http;
+import 'package:userboffee/Core/Models/favourite_model.dart';
 import 'package:userboffee/Core/Models/note_model.dart';
 import 'package:userboffee/Core/config/options.dart';
 import 'package:userboffee/Core/constants/colors.dart';
@@ -12,6 +13,7 @@ import 'package:userboffee/Core/constants/components.dart';
 import 'package:userboffee/Core/constants/linksapi.dart';
 import 'package:userboffee/Core/provider/Note_provider.dart';
 import 'package:userboffee/Core/provider/Theme_provider.dart';
+import 'package:userboffee/Core/service/real/Favourite_service.dart';
 import 'package:userboffee/Core/service/real/crud.dart';
 import 'package:userboffee/views/profile/my_post.dart';
 import 'package:userboffee/views/profile/myfavpost.dart';
@@ -62,7 +64,7 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
           padding: const EdgeInsets.only(top: 50),
           child: ElevatedButton(
             onPressed: () async {
-              await Edit_Note(noteToEdit!);
+              await Edit_Note(noteToEdit!, context);
             },
             style: ElevatedButton.styleFrom(
                 backgroundColor: medium_Brown,
@@ -81,7 +83,7 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
     );
   }
 
-  Edit_Note(NoteModel note) async {
+  Edit_Note(NoteModel note, BuildContext context) async {
     try {
       final url = "$link_EditNote/${note.id}";
 
@@ -294,40 +296,42 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
           ),
           Container(
             color: context.watch<ThemeProvider>().newcolor,
-            child: TabBar(
-              tabAlignment: TabAlignment.start,
-              indicatorSize: TabBarIndicatorSize.label,
-              indicatorColor: Colors.brown,
-              unselectedLabelColor: Colors.grey,
-              labelColor: Colors.brown,
-              isScrollable: true,
-              controller: _tabController,
-              tabs: [
-                Tab(
-                  child: Text(
-                    'My quotes',
-                    style: TextStyle(fontSize: 18),
-                  ).tr(),
-                ),
-                Tab(
-                  child: Text(
-                    'Favourite quotes',
-                    style: TextStyle(fontSize: 18),
-                  ).tr(),
-                ),
-                Tab(
-                  child: Text(
-                    'Favourite book',
-                    style: TextStyle(fontSize: 18),
-                  ).tr(),
-                ),
-                Tab(
-                  child: Text(
-                    'My notes',
-                    style: TextStyle(fontSize: 18),
-                  ).tr(),
-                ),
-              ],
+            child: Expanded(
+              child: TabBar(
+                tabAlignment: TabAlignment.start,
+                indicatorSize: TabBarIndicatorSize.label,
+                indicatorColor: Colors.brown,
+                unselectedLabelColor: Colors.grey,
+                labelColor: Colors.brown,
+                isScrollable: true,
+                controller: _tabController,
+                tabs: [
+                  Tab(
+                    child: Text(
+                      'My quotes',
+                      style: TextStyle(fontSize: 18),
+                    ).tr(),
+                  ),
+                  Tab(
+                    child: Text(
+                      'Favourite quotes',
+                      style: TextStyle(fontSize: 18),
+                    ).tr(),
+                  ),
+                  Tab(
+                    child: Text(
+                      'Favourite book',
+                      style: TextStyle(fontSize: 18),
+                    ).tr(),
+                  ),
+                  Tab(
+                    child: Text(
+                      'My notes',
+                      style: TextStyle(fontSize: 18),
+                    ).tr(),
+                  ),
+                ],
+              ),
             ),
           ),
           Expanded(
@@ -336,8 +340,8 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
               children: [
                 myPostUi(), // "My quotes"
                 myfavPostUI(), // "Favourite quotes"
-                buildPlaceholderTab(), //  "Favourite book"
-                buildNotesTab(), // "My notes"
+                buildFavouriteTab(), // "My notes"
+                buildNotesTab(),
               ],
             ),
           ),
@@ -412,4 +416,67 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
       ],
     );
   }
+}
+
+Widget buildFavouriteTab() {
+  return Flexible(
+    child: FutureBuilder(
+      future: FavouriteService().getAllFavouritebooks(),
+      builder: (context, snapshot) {
+        if (snapshot.hasData) {
+         
+          List<FavouriteMODEL> fav = snapshot.data as List<FavouriteMODEL>;
+          return GridView.builder(
+            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 1, mainAxisSpacing: 8, crossAxisSpacing: 8),
+            itemCount: fav.length,
+            itemBuilder: (context, index) => Padding(
+              padding: EdgeInsets.only(left: 30, right: 30, top: 30),
+              child: Stack(
+                children: [
+                  Container(
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(10),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.brown,
+                          offset: Offset(0, 5),
+                          blurRadius: 10,
+                        )
+                      ],
+                    ),
+                    height: 100,
+                    width: 20,
+                    child: Padding(
+                      padding: const EdgeInsets.only(left: 15, top: 35),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            fav[index].title.toString(),
+                            style: const TextStyle(
+                                fontSize: 24.0, fontWeight: FontWeight.bold),
+                          ),
+                          const SizedBox(height: 10.0),
+                          Text(
+                            fav[index].author_name.toString(),
+                            style: const TextStyle(
+                                fontSize: 24.0, fontWeight: FontWeight.bold),
+                          ),
+                        ],
+
+                        ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          );
+        } else {
+          return Center(child: CircularProgressIndicator());
+        }
+      },
+    ),
+  );
 }

@@ -11,7 +11,7 @@ class myfavPostUI extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => FavpostsBloc()..add(ShowFavPost_Event()),
+      create: (context) => FavpostsBloc(),
       child: BlocConsumer<FavpostsBloc, FavpostsState>(
         listener: (context, state) {
           // TODO: implement listener
