@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:userboffee/Core.dart';
 import 'package:userboffee/Core/config/options.dart';
-import 'package:userboffee/views/firstpages/pageview.dart';
+import 'package:userboffee/views/firstpages/onboarding.dart';
 import 'dart:async';
 import '../../core/constants/colors.dart';
 import '../../core/constants/images.dart';

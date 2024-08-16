@@ -1,7 +1,6 @@
-
 import 'package:flutter/material.dart';
-
 import 'package:page_view_dot_indicator/page_view_dot_indicator.dart';
+
 import 'package:userboffee/Core/Models/OnBoardingModel.dart';
 import 'package:userboffee/views/firstpages/welcome.dart';
 import '../../core/constants/colors.dart';
@@ -101,9 +100,7 @@ class _OnBoardingState extends State<OnBoarding> {
                     currentIn = val;
                   });
                 },
-
-
-),
+              ),
             ),
             PageViewDotIndicator(
               size: const Size(25, 6),
@@ -121,7 +118,7 @@ class _OnBoardingState extends State<OnBoarding> {
               ),
             ),
             Padding(
-              padding: const EdgeInsets.only(top: 650, left: 330),
+              padding: const EdgeInsets.only(top: 630, left: 290),
               child: TextButton(
                 onPressed: () {
                   if (currentIn < 2)
@@ -148,7 +145,7 @@ class _OnBoardingState extends State<OnBoarding> {
               ),
             ),
             Padding(
-              padding: const EdgeInsets.only(bottom: 780, left: 300),
+              padding: const EdgeInsets.only(bottom: 720, left: 270),
               child: TextButton(
                   onPressed: () {
                     Navigator.of(context).push(

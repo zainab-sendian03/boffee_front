@@ -209,7 +209,7 @@ class _BookUiState extends State<BookUi> {
                                     gridDelegate:
                                         const SliverGridDelegateWithFixedCrossAxisCount(
                                             crossAxisCount: 2,
-                                            mainAxisSpacing: 11,
+                                            mainAxisSpacing: 15,
                                             crossAxisSpacing: 11),
                                     itemCount: temp.length,
                                     itemBuilder: (context, index) => Padding(
@@ -218,7 +218,7 @@ class _BookUiState extends State<BookUi> {
                                         children: [
                                           Container(
                                             width: 200,
-                                            height: 220,
+                                            height: 200,
                                             decoration: BoxDecoration(
                                               borderRadius:
                                                   BorderRadius.circular(10),
@@ -246,7 +246,7 @@ class _BookUiState extends State<BookUi> {
                                                     Padding(
                                                       padding:
                                                           const EdgeInsets.only(
-                                                              top: 115),
+                                                              top: 105),
                                                       child: Text(
                                                         temp[index]
                                                             .title
@@ -287,7 +287,7 @@ class _BookUiState extends State<BookUi> {
                                                           Text(
                                                             "${"coffee beans:".tr()} ${temp[index].points}",
                                                             style: TextStyle(
-                                                                fontSize: 15,
+                                                                fontSize: 14,
                                                                 color:
                                                                     medium_Brown),
                                                           ),
@@ -325,8 +325,8 @@ class _BookUiState extends State<BookUi> {
                                                 print(temp[index]);
                                               },
                                               child: Container(
-                                                height: 110,
-                                                width: 180,
+                                                height: 103,
+                                                width: 170,
                                                 decoration: BoxDecoration(
                                                   image: DecorationImage(
                                                       image: NetworkImage(

@@ -28,55 +28,49 @@ environment:
 # the latest version available on pub.dev. To see which dependencies have newer
 # versions available, run `flutter pub outdated`.
 dependencies:
-  flutter:
-    sdk: flutter
-
-
-  # The following adds the Cupertino Icons font to your application.
-  # Use with the CupertinoIcons class for iOS style icons.
+  animated_snack_bar: ^0.4.0
+  animated_text_kit: ^4.2.2
+  cloud_firestore: ^4.10.0
+  connectivity_plus: ^6.0.3
   cupertino_icons: ^1.0.6
   curved_labeled_navigation_bar: ^2.0.2
-  lottie: ^3.1.2
-  input_slider: ^0.3.1
-  flutter_bloc: ^8.1.6
+  device_preview: ^1.1.0
   dio: ^5.4.3+1
-  get_it: ^7.7.0
-  shared_preferences: ^2.2.3
-  provider: ^6.1.2
-  level_map: ^0.2.0
-  animated_text_kit: ^4.2.2
+  easy_localization: ^3.0.7
   easy_splash_screen: ^1.0.4
   file_picker: ^8.0.5
+  firebase_core: ^2.15.0
+  firebase_messaging: ^14.7.7
+  firebase_storage: ^11.1.0
+  flutter:
+    sdk: flutter
+  flutter_bloc: ^8.1.6
+  flutter_local_notifications: ^17.2.2
   flutter_pdfview: ^1.3.2
   flutter_rating_bar: ^4.0.1
+  get_it: ^7.7.0
   http: ^1.2.1
+  input_slider: ^0.3.1
+  level_map: ^0.2.0
+  lottie: ^3.1.2
   page_view_dot_indicator: ^2.3.0
   path: ^1.9.0
   path_provider: ^2.1.3
-  syncfusion_flutter_pdfviewer: ^23.1.4
-  url_launcher: ^6.3.0
-  easy_localization: ^3.0.7
-  universal_io: ^2.2.2
-  share_plus: ^9.0.0
-  connectivity_plus: ^6.0.3
-  device_preview: ^1.1.0
-  animated_snack_bar: ^0.4.0
+  provider: ^6.1.2
   retry: ^3.1.2
+  share_plus: ^9.0.0
+  shared_preferences: ^2.2.3
+  syncfusion_flutter_pdfviewer: ^23.1.4
+  universal_io: ^2.2.2
+  url_launcher: ^6.3.0
 
 dev_dependencies:
+  flutter_lints: ^3.0.0
   flutter_test:
     sdk: flutter
 
-  # The "flutter_lints" package below contains a set of recommended lints to
-  # encourage good coding practices. The lint set provided by the package is
-  # activated in the `analysis_options.yaml` file located at the root of your
-  # package. See that file for information about deactivating specific lint
-  # rules and activating additional ones.
-  flutter_lints: ^3.0.0
-
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
-
 # The following section is specific to Flutter packages.
 flutter:
 
@@ -101,13 +95,10 @@ flutter:
     - asset/translate/
     - asset/images/nointernet.png
   #   - images/a_dot_ham.jpeg
-
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
-
   # For details regarding adding assets from package dependencies, see
   # https://flutter.dev/assets-and-images/#from-packages
-
   # To add custom fonts to your application, add a fonts section here,
   # in this "flutter" section. Each entry in this list should have a
   # "family" key with the font family name, and a "fonts" key with a
@@ -123,6 +114,5 @@ flutter:
       fonts:
         - asset: asset/fonts/OpenSans-Regular.ttf
           weight: 700
-  #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/custom-fonts/#from-packages

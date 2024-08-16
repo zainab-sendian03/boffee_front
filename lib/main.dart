@@ -1,5 +1,6 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:easy_localization/easy_localization.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:provider/provider.dart';
@@ -7,6 +8,7 @@ import 'package:userboffee/Core/config/network.dart';
 import 'package:userboffee/Core/config/options.dart';
 import 'package:userboffee/Core/constants/images.dart';
 import 'package:userboffee/Core/provider/Theme_provider.dart';
+import 'package:userboffee/Core/service/notification.dart';
 import 'package:userboffee/feature/getpost/bloc/getpost_bloc.dart';
 import 'package:userboffee/views/auth/signup.dart';
 import 'package:userboffee/views/firstpages/splash.dart';
@@ -14,6 +16,8 @@ import 'package:userboffee/views/firstpages/splash.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await EasyLocalization.ensureInitialized();
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
   Setup();
   runApp(EasyLocalization(
       supportedLocales: [Locale('en'), Locale('ar')],
@@ -52,10 +56,10 @@ class MyApp extends StatelessWidget {
             supportedLocales: context.supportedLocales,
             locale: context.locale,
             //??
-            //  DevicePreview.locale(context),
+            //  DevicePreview.locale(context),+
             debugShowCheckedModeBanner: false,
             theme: context.watch<ThemeProvider>().themedata,
-            home: AppScaffold(child: signup()));
+            home: AppScaffold(child: SplashScreen()));
       }),
     );
   }

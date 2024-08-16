@@ -1,9 +1,13 @@
 String linkservername = "http://$ip_Zainab:8000";
-String BaseUrl = "http://$ip_Zainab:8000/api/";
+String link_server00 = "https://boffee10.serv00.net";
 
-String ip_Zainab = "10.0.2.2";
+String BaseUrl = "http://$ip_Zainab:8000/api/";
+String basseurl_server = "https://boffee10.serv00.net/api/";
+
+String ip_Zainab = "192.168.61.16";
 String ip_local = "localhost";
 String ip_maryam = "192.168.137.120";
+String ip_server = "boffee10.serv00.net";
 
 //auth
 String linksignup = "$linkservername/api/register";
@@ -23,6 +27,7 @@ String link_AVGrating = "$linkservername/api/avg";
 String link_storeNote = "$linkservername/api/note";
 String link_EditNote = "$linkservername/api/update";
 String link_showNote = "$linkservername/api/notes";
+String link_DeleteNote = "$linkservername/api/note";
 
 //book
 String link_progress = "$linkservername/api/shelf";

@@ -1,4 +1,5 @@
 import 'package:easy_localization/easy_localization.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:userboffee/Core.dart';
 import 'package:userboffee/Core/config/options.dart';
@@ -22,11 +23,17 @@ class _loginState extends State<login> {
   final password = TextEditingController();
   bool passwordVisible = true;
   bool isLoading = false;
-
+  String? myDevicetoken;
   final Crud _crud = Crud();
   GlobalKey<FormState> formstats = GlobalKey();
   late final String? Function(String?) valid;
 // String accesToken = getit.get<SharedPreferences>().getString('token') ?? '';
+  getToken() async {
+    myDevicetoken = await FirebaseMessaging.instance.getToken();
+    print("------------------------------------------------------");
+    print("token: $myDevicetoken");
+  }
+
   logIn() async {
     setState(() {
       isLoading = true;
@@ -38,6 +45,7 @@ class _loginState extends State<login> {
           {
             "user_name": user_name.text,
             "password": password.text,
+            "fcm_token": myDevicetoken
           },
           headers: {
             "Accept": "application/json",
@@ -63,7 +71,7 @@ class _loginState extends State<login> {
         } else {
           alert(
               formstats.currentContext!,
-              "Your password or User name is incorrect or the account does not exist\nPlease try again!"
+              "Your password or User name is incorrect or the account does not exist-nPlease try again!"
                   .tr(),
               "Wrong".tr(),
               "Close".tr());
@@ -76,6 +84,12 @@ class _loginState extends State<login> {
         isLoading = false;
       });
     }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    getToken();
   }
 
   @override
@@ -137,7 +151,7 @@ class _loginState extends State<login> {
                               );
                             },
                             child: Padding(
-                              padding: EdgeInsets.only(left: 157, bottom: 10),
+                              padding: EdgeInsets.only(left: 130, bottom: 10),
                               child: Text(
                                 "Forget password?".tr(),
                                 style:
@@ -164,7 +178,9 @@ class _loginState extends State<login> {
                         ),
                         Padding(
                             padding: const EdgeInsets.only(
-                                top: 45, left: 30, right: 10),
+                              top: 30,
+                              left: 30,
+                            ),
                             child: Row(
                               children: [
                                 Text("Don’t have an account?".tr(),
@@ -191,14 +207,20 @@ class _loginState extends State<login> {
                       ])))
             ])),
             if (isLoading)
-              Padding(
-                padding: EdgeInsets.only(top: 675),
-                child: Center(
-                  child: CircularProgressIndicator(
-                    backgroundColor: Light_Brown,
-                    color: dark_Brown,
+              Stack(
+                children: [
+                  Container(
+                    height: double.infinity,
+                    width: double.infinity,
+                    decoration: BoxDecoration(color: black.withOpacity(0.5)),
                   ),
-                ),
+                  Center(
+                    child: CircularProgressIndicator(
+                      backgroundColor: medium_Brown,
+                      color: insidbook_color,
+                    ),
+                  ),
+                ],
               ),
           ],
         ));

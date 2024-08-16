@@ -55,7 +55,6 @@ class _PDFviewerState extends State<PDFviewer> {
       _loadLastPage(),
       _loadPDF(),
     ]);
-    print("PDFView initialization complete");
   }
 
   Future<void> _checkAndClearForNewUser() async {
@@ -254,7 +253,7 @@ class _PDFviewerState extends State<PDFviewer> {
       }
       final url = "$link_progress/$shelfId";
 
-      print("Shelf ID: $shelfId");
+      print("-------------------------Shelf ID: $shelfId");
       int index = indexPage + 1;
       Map<String, dynamic> body = {
         "progress": index,
@@ -297,7 +296,7 @@ class _PDFviewerState extends State<PDFviewer> {
     const r = RetryOptions(maxAttempts: 3);
     try {
       final pdfUrl = Uri.parse(
-          "http://10.0.2.2:8000/${Uri.encodeComponent(widget.detail_File.file!.file)}");
+          "http://$ip_Zainab:8000/${Uri.encodeComponent(widget.detail_File.file!.file)}");
 
       await r.retry(
         () => http.get(pdfUrl).timeout(const Duration(seconds: 30)),
@@ -479,12 +478,17 @@ class _PDFviewerState extends State<PDFviewer> {
   }
 
   @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     double percent = ((100 * indexPage) / widget.detail_File.file!.total_pages);
     String finalPercent = percent.toStringAsFixed(0);
     final String pdfUrl =
-        "http://10.0.2.2:8000${widget.detail_File.file!.file}";
-    print("the pdfUrl: $pdfUrl");
+        "http://$ip_Zainab:8000${widget.detail_File.file!.file}";
 
     return Scaffold(
         resizeToAvoidBottomInset: false,
@@ -499,6 +503,7 @@ class _PDFviewerState extends State<PDFviewer> {
             ),
             onPressed: () {
               Navigator.pop(context);
+              dispose();
             },
           ),
           actions: [
@@ -528,37 +533,32 @@ class _PDFviewerState extends State<PDFviewer> {
             builder: (context, snapshot) {
               return Column(
                 children: [
-                  FutureBuilder(
-                      future: _loadPDF(),
-                      builder: (context, snapshot) {
-                        return SizedBox(
-                          height: MediaQuery.of(context).size.height * 0.698,
-                          child: SfPdfViewer.network(
-                            canShowScrollHead: false,
-                            pdfUrl,
-                            controller: _pdfViewerController,
-                            onDocumentLoaded:
-                                (PdfDocumentLoadedDetails details) {
-                              _pdfViewerController.jumpToPage(indexPage);
-                            },
-                            onPageChanged: (PdfPageChangedDetails details) {
-                              setState(() {
-                                indexPage = details.newPageNumber;
-                              });
-                              _savePageIndex(indexPage);
-                            },
-                            onDocumentLoadFailed:
-                                (PdfDocumentLoadFailedDetails details) {
-                              print("Document Load Failed: ${details.error}");
-                            },
-                          ),
-                        );
-                      }),
+                  SizedBox(
+                    height: MediaQuery.of(context).size.height * 0.65,
+                    child: SfPdfViewer.network(
+                      canShowScrollHead: false,
+                      pdfUrl,
+                      controller: _pdfViewerController,
+                      onDocumentLoaded: (PdfDocumentLoadedDetails details) {
+                        _pdfViewerController.jumpToPage(indexPage);
+                      },
+                      onPageChanged: (PdfPageChangedDetails details) {
+                        setState(() {
+                          indexPage = details.newPageNumber;
+                        });
+                        _savePageIndex(indexPage);
+                      },
+                      onDocumentLoadFailed:
+                          (PdfDocumentLoadFailedDetails details) {
+                        print("Document Load Failed: ${details.error}");
+                      },
+                    ),
+                  ),
                   Padding(
-                    padding: const EdgeInsets.only(top: 8),
+                    padding: const EdgeInsets.only(top: 2),
                     child: Container(
                       width: double.infinity,
-                      height: MediaQuery.of(context).size.height * 0.2,
+                      height: MediaQuery.of(context).size.height * 0.2227,
                       decoration: BoxDecoration(color: insidbook_color),
                       child: Column(
                         children: [
@@ -584,10 +584,10 @@ class _PDFviewerState extends State<PDFviewer> {
                                     backgroundColor: medium_Brown,
                                     shape: const CircleBorder(),
                                     padding: const EdgeInsets.only(
-                                      left: 10,
-                                      right: 10,
-                                      top: 15,
-                                      bottom: 15,
+                                      left: 5,
+                                      right: 5,
+                                      top: 10,
+                                      bottom: 10,
                                     ),
                                   ),
                                   child: Icon(
@@ -631,10 +631,10 @@ class _PDFviewerState extends State<PDFviewer> {
                                     backgroundColor: medium_Brown,
                                     shape: const CircleBorder(),
                                     padding: const EdgeInsets.only(
-                                      left: 10,
-                                      right: 10,
-                                      top: 15,
-                                      bottom: 15,
+                                      left: 5,
+                                      right: 5,
+                                      top: 10,
+                                      bottom: 10,
                                     ),
                                   ),
                                   child: Icon(
@@ -648,41 +648,45 @@ class _PDFviewerState extends State<PDFviewer> {
                               ),
                             ],
                           ),
-                          Center(
-                            child: SliderTheme(
-                              data: SliderTheme.of(context).copyWith(
-                                trackHeight: 3.0,
-                                thumbShape: const RoundSliderThumbShape(
-                                    enabledThumbRadius: 6.0),
-                                overlayShape: const RoundSliderOverlayShape(
-                                    overlayRadius: 24.0),
-                              ),
-                              child: Slider(
-                                autofocus: true,
-                                activeColor: medium_Brown,
-                                inactiveColor: white,
-                                value: indexPage.toDouble().clamp(
-                                    1.0,
-                                    (widget.detail_File.file!.total_pages)
-                                        .toDouble()),
-                                min: 0,
-                                max: (widget.detail_File.file!.total_pages)
-                                    .toDouble(),
-                                divisions: (widget
-                                    .detail_File.file!.total_pages) as int,
-                                onChanged: (double value) async {
-                                  setState(() {
-                                    indexPage = value.toInt();
-                                    _pdfViewerController.jumpToPage(indexPage);
-                                    _savePageIndex(indexPage);
-                                  });
-                                  await update_progress();
-                                },
+                          Padding(
+                            padding: const EdgeInsets.only(bottom: 20),
+                            child: Center(
+                              child: SliderTheme(
+                                data: SliderTheme.of(context).copyWith(
+                                  trackHeight: 3.0,
+                                  thumbShape: const RoundSliderThumbShape(
+                                      enabledThumbRadius: 6.0),
+                                  overlayShape: const RoundSliderOverlayShape(
+                                      overlayRadius: 24.0),
+                                ),
+                                child: Slider(
+                                  autofocus: true,
+                                  activeColor: medium_Brown,
+                                  inactiveColor: white,
+                                  value: indexPage.toDouble().clamp(
+                                      1.0,
+                                      (widget.detail_File.file!.total_pages)
+                                          .toDouble()),
+                                  min: 0,
+                                  max: (widget.detail_File.file!.total_pages)
+                                      .toDouble(),
+                                  divisions: (widget
+                                      .detail_File.file!.total_pages) as int,
+                                  onChanged: (double value) async {
+                                    setState(() {
+                                      indexPage = value.toInt();
+                                      _pdfViewerController
+                                          .jumpToPage(indexPage);
+                                      _savePageIndex(indexPage);
+                                    });
+                                    await update_progress();
+                                  },
+                                ),
                               ),
                             ),
                           ),
                           Padding(
-                            padding: const EdgeInsets.all(8.0),
+                            padding: const EdgeInsets.only(bottom: 30),
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [

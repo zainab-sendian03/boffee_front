@@ -6,8 +6,8 @@ import 'package:userboffee/feature/getbooks/ser_get_books.dart';
 
 Dio dio = Dio();
 Future<ResultModel> getLevel() async {
-  Response response =
-      await dio.get("${BaseUrl}level", options: Options(headers: getoptions2()));
+  Response response = await dio.get("${BaseUrl}level",
+      options: Options(headers: getoptions2()));
   try {
     if (response.statusCode == 200) {
       print(response.data.toString());
@@ -17,10 +17,12 @@ Future<ResultModel> getLevel() async {
       //     (index) =>
       //         ImageLevelModel(image:["image"][""] , ratio: [][])
       // );
-              //.fromMap(response.data["data"][index]));
+      //.fromMap(response.data["data"][index]));
       //  ListofEverything(listresult: responselist);
 
-      return ImageLevelModel(image: response.data["data"]["image"], ratio: response.data["data"]["ratio"]);
+      return ImageLevelModel(
+          image: response.data["data"]["image"],
+          ratio: response.data["data"]["ratio"]);
     } else {
       print("error in level service");
       return ErrorModel();

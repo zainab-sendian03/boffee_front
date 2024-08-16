@@ -2,9 +2,10 @@ import 'package:dio/dio.dart';
 import 'package:userboffee/Core/config/options.dart';
 import 'package:userboffee/Core/constants/linksapi.dart';
 
-Dio dio=Dio();
+Dio dio = Dio();
 Future<bool> logout() async {
-  Response response = await dio.post("${BaseUrl}logout",options: Options(headers: getoptions()));
+  Response response = await dio.post("${BaseUrl}logout",
+      options: Options(headers: getoptions()));
 
   try {
     print("try in logout");

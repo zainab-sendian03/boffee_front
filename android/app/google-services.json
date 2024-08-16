@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "317910526163",
+    "project_id": "notification-57e5c",
+    "storage_bucket": "notification-57e5c.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:317910526163:android:3da7800d79c50c8c95cc26",
+        "android_client_info": {
+          "package_name": "com.example.userboffee"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCflK2cNzWXt8gprxuB85Ut6Tjuj-YgvCw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -209,7 +209,7 @@ class _BookDetailsPageState extends State<BookDetailsPage>
             children: <Widget>[
               // صورة الكتاب
               Padding(
-                padding: const EdgeInsets.only(left: 20, right: 10, top: 28),
+                padding: const EdgeInsets.only(left: 15, right: 10, top: 28),
                 child: Container(
                   height: 200,
                   width: 150,
@@ -222,7 +222,7 @@ class _BookDetailsPageState extends State<BookDetailsPage>
                 ),
               ),
               Padding(
-                padding: const EdgeInsets.only(left: 15, top: 35),
+                padding: const EdgeInsets.only(left: 7, top: 35),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
@@ -234,7 +234,9 @@ class _BookDetailsPageState extends State<BookDetailsPage>
                     const SizedBox(height: 10.0),
                     Text(
                       widget.detail_File.file!.author_name.toString(),
-                      style: const TextStyle(fontSize: 18.0),
+                      style: const TextStyle(
+                        fontSize: 17.0,
+                      ),
                     ),
                     const SizedBox(height: 10.0),
                     Text(
@@ -242,10 +244,6 @@ class _BookDetailsPageState extends State<BookDetailsPage>
                       style: const TextStyle(fontSize: 18.0),
                     ),
                     const SizedBox(height: 10.0),
-                    const Text(
-                      'type',
-                      style: TextStyle(fontSize: 18.0),
-                    ),
                     const SizedBox(height: 10.0),
                     RatingBarIndicator(
                       rating: avgRating,
@@ -297,14 +295,18 @@ class _BookDetailsPageState extends State<BookDetailsPage>
               children: [
                 Stack(
                   children: [
-                    Padding(
-                      padding: const EdgeInsets.only(
-                          bottom: 135, left: 25, right: 25),
-                      child: Center(
-                          child: Text(
-                        widget.detail_File.file!.description.toString(),
-                        style: const TextStyle(fontSize: 20),
-                      )),
+                    Column(
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.only(
+                              bottom: 135, left: 25, right: 25),
+                          child: Center(
+                              child: Text(
+                            widget.detail_File.file!.description.toString(),
+                            style: const TextStyle(fontSize: 20),
+                          )),
+                        ),
+                      ],
                     ),
                     Padding(
                       padding:
@@ -314,7 +316,7 @@ class _BookDetailsPageState extends State<BookDetailsPage>
                         children: [
                           Padding(
                               padding: const EdgeInsets.only(
-                                  bottom: 70, top: 300, left: 20),
+                                  bottom: 70, top: 230, left: 10),
                               child: SizedBox(
                                 width: 130,
                                 height: 50,
@@ -338,7 +340,7 @@ class _BookDetailsPageState extends State<BookDetailsPage>
                                       print(
                                           "path:${widget.detail_File.file!.file}");
                                       _showSnackBar(
-                                          "${"The book has been added to Reading shelf and".tr()}$bookPonits ${"coffee beans were extracted".tr()}",
+                                          "${"The book has been added to Reading shelf and".tr()} $bookPonits${"coffee beans were extracted".tr()}",
                                           AnimatedSnackBarType.success);
                                     } else {
                                       _showSnackBar(
@@ -358,8 +360,8 @@ class _BookDetailsPageState extends State<BookDetailsPage>
                               )),
                           Padding(
                               padding: const EdgeInsets.only(
-                                top: 300,
-                                right: 20,
+                                top: 230,
+                                right: 10,
                                 bottom: 70,
                               ),
                               child: SizedBox(
@@ -387,17 +389,20 @@ class _BookDetailsPageState extends State<BookDetailsPage>
                         ],
                       ),
                     ),
-                    TextButton(
-                      onPressed: () {
-                        alert_report(context, TextEditingController());
-                      },
-                      child: const Text(
-                        'Report',
-                        style: TextStyle(
-                          fontSize: 18,
-                          color: Colors.grey,
-                        ),
-                      ).tr(),
+                    Padding(
+                      padding: const EdgeInsets.only(top: 330, left: 40),
+                      child: TextButton(
+                        onPressed: () {
+                          alert_report(context, TextEditingController());
+                        },
+                        child: const Text(
+                          'Report',
+                          style: TextStyle(
+                            fontSize: 18,
+                            color: Colors.grey,
+                          ),
+                        ).tr(),
+                      ),
                     ),
                   ],
                 ),

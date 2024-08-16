@@ -161,6 +161,22 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
     }
   }
 
+  Future<bool> deleteNote(NoteModel note) async {
+    final url = "$link_DeleteNote/${note.id}";
+    try {
+      var response = await http.delete(Uri.parse(url), headers: getoptions());
+      if (response.statusCode == 200) {
+        return true;
+      } else {
+        print("Failed to delete note: ${response}");
+        return false;
+      }
+    } catch (e) {
+      print("Error deleting note: $e");
+      return false;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -387,9 +403,6 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
             itemBuilder: (context, i) {
               return CardNote(
                 noteModel: notesData[i],
-                onDelete: () {
-                  // Handle delete
-                },
                 onEdit: () {
                   showDialog(
                     context: context,
@@ -397,6 +410,14 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
                       return _alertDialog(context, noteToEdit: notesData[i]);
                     },
                   );
+                },
+                onDelete: () async {
+                  bool success = await deleteNote(notesData[i]);
+                  if (success) {
+                    setState(() {
+                      notesData.removeAt(i);
+                    });
+                  }
                 },
               );
             },

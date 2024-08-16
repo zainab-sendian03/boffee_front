@@ -1,4 +1,5 @@
 import 'package:easy_localization/easy_localization.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:userboffee/Core/config/options.dart';
 import 'package:userboffee/Core/constants/components.dart';
@@ -23,6 +24,7 @@ class _signupState extends State<signup> {
   final email = TextEditingController();
   final confirmpass = TextEditingController();
   GlobalKey<FormState> formstats = GlobalKey();
+  String? myDevicetoken;
 
   bool male = false;
   bool female = true;
@@ -32,6 +34,11 @@ class _signupState extends State<signup> {
   final Crud _crud = Crud();
 
   bool isLoading = false;
+  getToken() async {
+    myDevicetoken = await FirebaseMessaging.instance.getToken();
+    print("------------------------------------------------------");
+    print("token: $myDevicetoken");
+  }
 
   signUp() async {
     setState(() {
@@ -51,13 +58,15 @@ class _signupState extends State<signup> {
           "password_confirmation": confirmpass.text,
           "age": age.text,
           "gendre_id": genderId.toString(),
-          "lang": language
+          "lang": language,
+          "fcm_token": myDevicetoken
         },
         headers: {
           "Accept": "application/json",
           "Content-Type": "application/json",
         },
       );
+      print(myDevicetoken);
       setState(() {
         isLoading = false;
       });
@@ -69,8 +78,11 @@ class _signupState extends State<signup> {
       } else if (response is Map &&
           response['errors'] != null &&
           response['errors']['password'] != null) {
-        alert(formstats.currentContext!, response['errors']['password'][0],
-            "Error".tr(), "Close".tr());
+        alert(
+            formstats.currentContext!,
+            "The password confirmation does not match.".tr(),
+            "Error".tr(),
+            "Close".tr());
       } else {
         print("fail signup");
       }
@@ -79,6 +91,12 @@ class _signupState extends State<signup> {
         isLoading = false;
       });
     }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    getToken();
   }
 
   @override
@@ -290,7 +308,9 @@ class _signupState extends State<signup> {
                     Center(
                       child: Padding(
                           padding: const EdgeInsets.only(
-                              top: 25, left: 20, right: 60),
+                            top: 25,
+                            left: 40,
+                          ),
                           child: Row(
                             children: [
                               Text("Already a member?".tr(),
@@ -321,14 +341,20 @@ class _signupState extends State<signup> {
             )
           ])),
           if (isLoading)
-            Padding(
-              padding: EdgeInsets.only(top: 700),
-              child: Center(
-                child: CircularProgressIndicator(
-                  backgroundColor: Light_Brown,
-                  color: dark_Brown,
+            Stack(
+              children: [
+                Container(
+                  height: double.infinity,
+                  width: double.infinity,
+                  decoration: BoxDecoration(color: black.withOpacity(0.5)),
                 ),
-              ),
+                Center(
+                  child: CircularProgressIndicator(
+                    backgroundColor: Light_Brown,
+                    color: dark_Brown,
+                  ),
+                ),
+              ],
             ),
         ]));
   }
