@@ -371,7 +371,7 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
   }
 
   Widget buildFavouriteTab() {
-    return FutureBuilder(
+    return FutureBuilder<List<FavouriteMODEL>>(
         future: FavouriteService().getAllFavouritebooks(),
         builder: (context, snapshot) {
           if (snapshot.hasData) {

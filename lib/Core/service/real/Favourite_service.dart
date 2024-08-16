@@ -1,6 +1,5 @@
 import 'package:dio/dio.dart';
 import 'package:userboffee/Core/Models/favourite_model.dart';
-import 'package:userboffee/Core/config/options.dart';
 import 'package:userboffee/Core/constants/linksapi.dart';
 
 abstract class Favourite {
@@ -29,20 +28,20 @@ class FavouriteService extends Favourite {
   @override
   Future<List<FavouriteMODEL>> getAllFavouritebooks() async {
     try {
-      response =
-          await dio.get(baseurl, options: Options(headers: getoptions2()));
-      print(response);
-      if (response.statusCode == 200) {
-        List<FavouriteMODEL> fav_model = List.generate(
-            response.data['data'].length,
-            (index) => FavouriteMODEL.fromMap(response.data['data'][index]));
-        print("sdfg" + response.data);
+      response = await dio.get(baseurl);
+      print("Response Data: ${response.data}");
+
+      if (response.statusCode == 200 && response.data['data'] != null) {
+        List<FavouriteMODEL> fav_model = (response.data['data'] as List)
+            .map((item) => FavouriteMODEL.fromMap(item))
+            .toList();
         return fav_model;
       } else {
-        print("fail---");
+        print("Failed to fetch favorite books");
         return [];
       }
     } catch (e) {
+      print("Error: $e");
       return [];
     }
   }

@@ -73,9 +73,8 @@ class _BookDetailsPageState extends State<BookDetailsPage>
                     ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(content: Text("Please enter new report")));
                   }
-                  style:
                   ElevatedButton.styleFrom(
-                    backgroundColor: Colors.brown,
+                    backgroundColor: medium_Brown,
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(25)),
                   );
