@@ -5,6 +5,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:http/http.dart' as http;
+import 'package:userboffee/Core/Models/favourite_model.dart';
 import 'package:userboffee/Core/Models/note_model.dart';
 import 'package:userboffee/Core/config/options.dart';
 import 'package:userboffee/Core/constants/colors.dart';
@@ -12,6 +13,7 @@ import 'package:userboffee/Core/constants/components.dart';
 import 'package:userboffee/Core/constants/linksapi.dart';
 import 'package:userboffee/Core/provider/Note_provider.dart';
 import 'package:userboffee/Core/provider/Theme_provider.dart';
+import 'package:userboffee/Core/service/real/Favourite_service.dart';
 import 'package:userboffee/Core/service/real/crud.dart';
 import 'package:userboffee/views/profile/my_post.dart';
 import 'package:userboffee/views/profile/myfavpost.dart';
@@ -168,7 +170,7 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
       if (response.statusCode == 200) {
         return true;
       } else {
-        print("Failed to delete note: ${response}");
+        print("Failed to delete note: $response");
         return false;
       }
     } catch (e) {
@@ -216,10 +218,23 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
                       return Padding(
                         padding: const EdgeInsets.only(left: 15, top: 30),
                         child: user == null
-                            ? Center(
-                                child: CircularProgressIndicator(
-                                color: dark_Brown,
-                              ))
+                            ? Column(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    children: [
+                                      Center(
+                                          child: CircularProgressIndicator(
+                                        color: dark_Brown,
+                                      )),
+                                    ],
+                                  ),
+                                ],
+                              )
                             : Row(
                                 children: [
                                   Padding(
@@ -345,7 +360,7 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
               children: [
                 myPostUi(), // "My quotes"
                 myfavPostUI(), // "Favourite quotes"
-                buildPlaceholderTab(), //  "Favourite book"
+                buildFavouriteTab(), //  "Favourite book"
                 buildNotesTab(), // "My notes"
               ],
             ),
@@ -355,34 +370,62 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
     );
   }
 
-  Widget buildPlaceholderTab() {
-    return Stack(
-      children: [
-        ListView(
-          scrollDirection: Axis.vertical,
-          children: <Widget>[
-            Padding(
-              padding: const EdgeInsets.only(left: 30, right: 30, top: 30),
-              child: Container(
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(10),
-                  boxShadow: const [
-                    BoxShadow(
-                      color: Colors.brown,
-                      offset: Offset(0, 5),
-                      blurRadius: 10,
-                    )
+  Widget buildFavouriteTab() {
+    return FutureBuilder(
+        future: FavouriteService().getAllFavouritebooks(),
+        builder: (context, snapshot) {
+          if (snapshot.hasData) {
+            List<FavouriteMODEL> fav = snapshot.data as List<FavouriteMODEL>;
+            return GridView.builder(
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 1, mainAxisSpacing: 8, crossAxisSpacing: 8),
+              itemCount: fav.length,
+              itemBuilder: (context, index) => Padding(
+                padding: const EdgeInsets.only(left: 30, right: 30, top: 30),
+                child: Stack(
+                  children: [
+                    Container(
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(10),
+                        boxShadow: const [
+                          BoxShadow(
+                            color: Colors.brown,
+                            offset: Offset(0, 5),
+                            blurRadius: 10,
+                          )
+                        ],
+                      ),
+                      height: 100,
+                      width: 20,
+                      child: Padding(
+                        padding: const EdgeInsets.only(left: 15, top: 35),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              fav[index].title.toString(),
+                              style: const TextStyle(
+                                  fontSize: 24.0, fontWeight: FontWeight.bold),
+                            ),
+                            const SizedBox(height: 10.0),
+                            Text(
+                              fav[index].author_name.toString(),
+                              style: const TextStyle(
+                                  fontSize: 24.0, fontWeight: FontWeight.bold),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
                   ],
                 ),
-                height: 140,
-                width: 20,
               ),
-            ),
-          ],
-        ),
-      ],
-    );
+            );
+          } else {
+            return const Center(child: CircularProgressIndicator());
+          }
+        });
   }
 
   Widget buildNotesTab() {

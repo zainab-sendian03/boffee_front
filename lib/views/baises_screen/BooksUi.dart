@@ -79,7 +79,7 @@ class _BookUiState extends State<BookUi> {
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
                     Padding(
-                      padding: const EdgeInsets.all(3),
+                      padding: const EdgeInsets.only(left: 10),
                       child: Text(
                         'Most reading'.tr(),
                         style: const TextStyle(
@@ -154,7 +154,7 @@ class _BookUiState extends State<BookUi> {
                       padding: const EdgeInsets.only(left: 20),
                       child: Builder(builder: (context) {
                         return Padding(
-                          padding: const EdgeInsets.only(bottom: 15, top: 20),
+                          padding: const EdgeInsets.only(bottom: 15, top: 10),
                           child: Text(
                             'Categories'.tr(),
                             style: const TextStyle(

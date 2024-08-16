@@ -35,11 +35,7 @@ class ServeShelf extends ReadingService {
   Future<List<ReadingModel>> getAllBook(String key) async {
     try {
       response = await dio.post(baseurl,
-          data: {'status': 'reading'},
-          options: Options(headers: {
-            "Authorization": "Bearer $token",
-            "Language_Code": getIt.get<SharedPreferences>().getString("lan")
-          }));
+          data: {'status': 'reading'}, options: Options(headers: getoptions()));
       if (response.statusCode == 200) {
         List<ReadingModel> reading = List.generate(response.data.length,
             (index) => ReadingModel.fromMap(response.data[index]));

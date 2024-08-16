@@ -1,18 +1,23 @@
 import 'dart:convert';
 
 import 'package:animated_snack_bar/animated_snack_bar.dart';
+import 'package:dio/dio.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:userboffee/Core.dart';
+import 'package:userboffee/Core/Models/basic_model.dart';
 import 'package:userboffee/Core/Models/d_withFile.dart';
+import 'package:userboffee/Core/Models/reviwe.dart';
 import 'package:userboffee/Core/config/options.dart';
 import 'package:userboffee/Core/constants/colors.dart';
 import 'package:userboffee/Core/constants/linksapi.dart';
 import 'package:userboffee/Core/provider/Theme_provider.dart';
 import 'package:userboffee/Core/service/real/crud.dart';
+import 'package:userboffee/Core/service/real/getallrevuwe.dart';
+import 'package:userboffee/Core/service/reporrt.dart';
 import 'package:userboffee/views/profile/AddComment.dart';
 import 'package:userboffee/views/PDFviewer.dart';
 import 'package:http/http.dart' as http;
@@ -31,6 +36,7 @@ class _BookDetailsPageState extends State<BookDetailsPage>
   double avgRating = 0;
   bool isFirstTime = true;
   int MyPoints = 0;
+  bool isReviwe = true;
 
   Future<dynamic> alert_report(
       BuildContext context, TextEditingController noteCont) {
@@ -58,12 +64,22 @@ class _BookDetailsPageState extends State<BookDetailsPage>
             ),
             actions: <Widget>[
               ElevatedButton(
-                onPressed: () => Navigator.pop(context),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.brown,
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(25)),
-                ),
+                onPressed: () async {
+                  ResultModel resultModel = await ServiceReport().postAllReport(
+                      noteCont.text, widget.detail_File.shelfId.toString());
+                  if (resultModel is successModel) {
+                    Navigator.pop(context);
+                  } else {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text("Please enter new report")));
+                  }
+                  style:
+                  ElevatedButton.styleFrom(
+                    backgroundColor: Colors.brown,
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(25)),
+                  );
+                },
                 child: const Text("Send",
                     style: TextStyle(
                       fontSize: 17,
@@ -82,6 +98,9 @@ class _BookDetailsPageState extends State<BookDetailsPage>
           );
         });
   }
+
+  bool isFav = true;
+  int bookId = 0;
 
   final Crud _crud = Crud();
   Future<void> get_AVG_rating() async {
@@ -182,9 +201,39 @@ class _BookDetailsPageState extends State<BookDetailsPage>
         actions: [
           IconButton(
             color: white,
-            icon: const Icon(Icons.favorite_outline),
-            onPressed: () {
-              // اضف هنا الاكشن الذي تريده عند الضغط على أيقونة المفضلة
+            icon: Icon(
+              Icons.favorite_outline,
+              // color: isFav ? Colors.red :Colors.white ,
+            ),
+            onPressed: () async {
+              var headers = getoptions();
+              if (isFav) {
+                try {
+                  await Dio().post("http://$ip_Zainab:8000/api/add/3",
+                      options: Options(headers: headers));
+
+                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                    content: Text("Success"),
+                    backgroundColor: Colors.green,
+                  ));
+                } catch (e) {
+                  ScaffoldMessenger.of(context)
+                      .showSnackBar(SnackBar(content: Text("Failed")));
+                }
+              } else {
+                try {
+                  await Dio().post("http://$ip_Zainab:8000/api/remove/3",
+                      options: Options(headers: headers));
+
+                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                    content: Text("Success"),
+                    backgroundColor: Colors.green,
+                  ));
+                } catch (e) {
+                  ScaffoldMessenger.of(context)
+                      .showSnackBar(SnackBar(content: Text("Failed")));
+                }
+              }
             },
           ),
         ],
@@ -408,33 +457,61 @@ class _BookDetailsPageState extends State<BookDetailsPage>
                 ),
                 Stack(
                   children: [
-                    ListView(
-                      scrollDirection: Axis.vertical,
-                      children: <Widget>[
-                        Padding(
-                          padding: const EdgeInsets.only(
-                              left: 30, right: 30, top: 30),
-                          child: Container(
-                            decoration: BoxDecoration(
-                                color: offwhite,
-                                borderRadius: BorderRadius.circular(10),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Light_Brown,
-                                    offset: const Offset(0, 5),
-                                    blurRadius: 10,
-                                    // spreadRadius: 10,
-                                  )
-                                ]),
-                            height: 140,
-                            width: 20,
-                          ),
-                        ),
-                      ],
-                    ),
-                    const AddComment()
+                    FutureBuilder<List<ReviweModel>>(
+                        future: CommentService().getAllComment(),
+                        builder: (context, snapshot) {
+                          if (snapshot.hasData) {
+                            List<ReviweModel> comment =
+                                snapshot.data as List<ReviweModel>;
+                            return ListView.builder(
+                              itemCount: comment.length,
+                              itemBuilder: (context, int index) {
+                                return (index + 1 != comment.length)
+                                    ? Expanded(
+                                        child: Padding(
+                                        padding: const EdgeInsets.only(
+                                            left: 30, right: 30, top: 30),
+                                        child: Container(
+                                          decoration: BoxDecoration(
+                                              color: offwhite,
+                                              borderRadius:
+                                                  BorderRadius.circular(10),
+                                              boxShadow: [
+                                                BoxShadow(
+                                                  color: Light_Brown,
+                                                  offset: const Offset(0, 5),
+                                                  blurRadius: 10,
+                                                  // spreadRadius: 10,
+                                                )
+                                              ]),
+                                          height: 140,
+                                          width: 20,
+                                          child: Column(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.start,
+                                            children: [
+                                              Text(
+                                                comment[index].body,
+                                                style: const TextStyle(
+                                                    fontSize: 20,
+                                                    fontWeight:
+                                                        FontWeight.bold),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ))
+                                    : AddComment(id: bookId);
+                              },
+                            );
+                            print('yeeeesss');
+                          } else {
+                            print('nooo');
+                            return Center(child: CircularProgressIndicator());
+                          }
+                        }),
                   ],
-                ),
+                )
               ],
             ),
           ),

@@ -155,19 +155,21 @@ class _GetCodeState extends State<GetCode> {
             ),
           ),
           if (isLoading)
-            Center(
-              child: Padding(
-                padding: const EdgeInsets.only(
-                  top: 400,
+            Stack(
+              children: [
+                Container(
+                  height: double.infinity,
+                  width: double.infinity,
+                  decoration: BoxDecoration(color: black.withOpacity(0.5)),
                 ),
-                child: Center(
+                Center(
                   child: CircularProgressIndicator(
-                    backgroundColor: Light_Brown,
-                    color: dark_Brown,
+                    backgroundColor: medium_Brown,
+                    color: insidbook_color,
                   ),
                 ),
-              ),
-            )
+              ],
+            ),
         ],
       ),
     );

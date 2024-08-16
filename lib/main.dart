@@ -3,36 +3,111 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:provider/provider.dart';
+import 'package:timezone/timezone.dart' as tz;
+import 'package:timezone/data/latest.dart' as tz;
 import 'package:userboffee/Core/config/network.dart';
 import 'package:userboffee/Core/config/options.dart';
 import 'package:userboffee/Core/constants/images.dart';
 import 'package:userboffee/Core/provider/Theme_provider.dart';
-import 'package:userboffee/Core/service/notification.dart';
 import 'package:userboffee/feature/getpost/bloc/getpost_bloc.dart';
-import 'package:userboffee/views/auth/signup.dart';
 import 'package:userboffee/views/firstpages/splash.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await EasyLocalization.ensureInitialized();
   WidgetsFlutterBinding.ensureInitialized();
+  tz.initializeTimeZones();
   await Firebase.initializeApp();
   Setup();
   runApp(EasyLocalization(
-      supportedLocales: [Locale('en'), Locale('ar')],
+      supportedLocales: const [Locale('en'), Locale('ar')],
       path: 'asset/translate', // <-- change the path of the translation files
-      fallbackLocale: Locale('en'),
+      fallbackLocale: const Locale('en'),
       child:
           //DevicePreview(
           // enabled: !kReleaseMode,
           // builder:(context)=>
-          MyApp()
+          const MyApp()
       //  )
       ));
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
+  const MyApp({super.key});
+
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  late FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;
+  @override
+  void initState() {
+    super.initState();
+
+    flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
+
+    const AndroidInitializationSettings initializationSettingsAndroid =
+        AndroidInitializationSettings('@mipmap/ic_launcher');
+    const InitializationSettings initializationSettings =
+        InitializationSettings(android: initializationSettingsAndroid);
+
+    flutterLocalNotificationsPlugin.initialize(initializationSettings);
+    // جدولة الإشعار اليومي
+    _scheduleDailyNotification();
+    requestPermissions();
+  }
+
+  Future<void> _scheduleDailyNotification() async {
+    final tz.TZDateTime scheduledDate = _nextInstanceOfTime(18, 28);
+    print('Scheduling notification for: $scheduledDate');
+
+    const NotificationDetails platformChannelSpecifics = NotificationDetails(
+      android: AndroidNotificationDetails(
+        'daily_reading_channel',
+        'Daily Reading',
+        channelDescription: 'Reminder to read daily',
+        importance: Importance.max,
+        priority: Priority.high,
+      ),
+    );
+
+    await flutterLocalNotificationsPlugin.zonedSchedule(
+      0,
+      'وقت القراءة اليومية',
+      'لا تنسَ قراءة كتابك اليومي!',
+      scheduledDate,
+      platformChannelSpecifics,
+      androidAllowWhileIdle: true,
+      uiLocalNotificationDateInterpretation:
+          UILocalNotificationDateInterpretation.wallClockTime,
+      matchDateTimeComponents: DateTimeComponents.time,
+    );
+  }
+
+  tz.TZDateTime _nextInstanceOfTime(int hour, int minute) {
+    final tz.TZDateTime now = tz.TZDateTime.now(tz.local);
+    tz.TZDateTime scheduledDate =
+        tz.TZDateTime(tz.local, now.year, now.month, now.day, hour, minute);
+    if (scheduledDate.isBefore(now)) {
+      scheduledDate = scheduledDate.add(const Duration(days: 1));
+    }
+    print('Scheduled time: $scheduledDate');
+
+    return scheduledDate;
+  }
+
+  void requestPermissions() async {
+    final bool result = await flutterLocalNotificationsPlugin
+            .resolvePlatformSpecificImplementation<
+                AndroidFlutterLocalNotificationsPlugin>()
+            ?.requestPermission() ??
+        false;
+    print('Permission granted: $result');
+  }
+
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
@@ -59,7 +134,7 @@ class MyApp extends StatelessWidget {
             //  DevicePreview.locale(context),+
             debugShowCheckedModeBanner: false,
             theme: context.watch<ThemeProvider>().themedata,
-            home: AppScaffold(child: SplashScreen()));
+            home: const AppScaffold(child: SplashScreen()));
       }),
     );
   }
@@ -68,9 +143,9 @@ class MyApp extends StatelessWidget {
 class AppScaffold extends StatelessWidget {
   final Widget child;
   const AppScaffold({
-    Key? key,
+    super.key,
     required this.child,
-  }) : super(key: key);
+  });
   @override
   Widget build(BuildContext context) {
     // TODO: implement build

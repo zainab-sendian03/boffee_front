@@ -1,15 +1,9 @@
-import 'dart:ui';
-import 'package:easy_localization/easy_localization.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
-import 'package:flutter/widgets.dart';
-
 import 'package:userboffee/Core/constants/colors.dart';
 import 'package:userboffee/views/baises_screen/reading.dart';
 
 class Shelves_UI extends StatelessWidget {
-  Shelves_UI({super.key});
+  const Shelves_UI({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -35,7 +29,7 @@ class Shelves_UI extends StatelessWidget {
                       boxShadow: [
                         BoxShadow(
                           color: medium_Brown,
-                          offset: Offset(0, 2),
+                          offset: const Offset(0, 2),
                           blurRadius: 10,
                         )
                       ],
@@ -46,7 +40,7 @@ class Shelves_UI extends StatelessWidget {
                           buttomColor.withOpacity(0.5),
                           BlendMode.srcOver,
                         ),
-                        image: AssetImage(
+                        image: const AssetImage(
                           'asset/images/reading.png', // Replace with your image URL
                         ),
                       ))),
@@ -56,10 +50,10 @@ class Shelves_UI extends StatelessWidget {
               child: Text(
                 "Reading",
                 style: TextStyle(fontSize: 22, color: white),
-              ).tr(),
+              ),
             ),
           ]),
-          SizedBox(
+          const SizedBox(
             height: 40,
           ),
           InkWell(
@@ -73,7 +67,7 @@ class Shelves_UI extends StatelessWidget {
                         boxShadow: [
                           BoxShadow(
                             color: medium_Brown,
-                            offset: Offset(0, 2),
+                            offset: const Offset(0, 2),
                             blurRadius: 10,
                           )
                         ],
@@ -84,7 +78,7 @@ class Shelves_UI extends StatelessWidget {
                             buttomColor.withOpacity(0.5),
                             BlendMode.srcOver,
                           ),
-                          image: AssetImage(
+                          image: const AssetImage(
                             'asset/images/readdone.png', // Replace with your image URL
                           ),
                         ))),
@@ -93,12 +87,12 @@ class Shelves_UI extends StatelessWidget {
                   child: Text(
                     "Read Done",
                     style: TextStyle(fontSize: 22, color: white),
-                  ).tr(),
+                  ),
                 ),
               ],
             ),
           ),
-          SizedBox(
+          const SizedBox(
             height: 40,
           ),
           InkWell(
@@ -112,7 +106,7 @@ class Shelves_UI extends StatelessWidget {
                         boxShadow: [
                           BoxShadow(
                             color: medium_Brown,
-                            offset: Offset(0, 2),
+                            offset: const Offset(0, 2),
                             blurRadius: 10,
                           )
                         ],
@@ -123,7 +117,7 @@ class Shelves_UI extends StatelessWidget {
                             buttomColor.withOpacity(0.5),
                             BlendMode.srcOver,
                           ),
-                          image: AssetImage(
+                          image: const AssetImage(
                             'asset/images/readlater.png', // Replace with your image URL
                           ),
                         ))),
@@ -132,7 +126,7 @@ class Shelves_UI extends StatelessWidget {
                   child: Text(
                     "Read Later",
                     style: TextStyle(fontSize: 22, color: white),
-                  ).tr(),
+                  ),
                 ),
               ],
             ),

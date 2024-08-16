@@ -1,14 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:userboffee/Core/Models/basic_model.dart';
 import 'package:userboffee/Core/constants/colors.dart';
+import 'package:userboffee/Core/service/real/reviwe.dart';
 
 class AddComment extends StatefulWidget {
-  const AddComment({super.key});
+  AddComment({super.key, required this.id});
+  final int id;
 
   @override
   State<AddComment> createState() => _AddCommentState();
 }
 
 class _AddCommentState extends State<AddComment> {
+  TextEditingController reviwecontroller = TextEditingController();
+
   bool isWriting = false;
   void upd(String text) {
     setState(() {
@@ -20,7 +25,7 @@ class _AddCommentState extends State<AddComment> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 30, left: 20, right: 20),
+      padding: const EdgeInsets.only(bottom: 30, left: 20, right: 20, top: 180),
       child: Align(
         alignment: Alignment.bottomCenter,
         child: Container(
@@ -47,8 +52,15 @@ class _AddCommentState extends State<AddComment> {
                 IconButton(
                   color: dark_Brown,
                   icon: const Icon(Icons.send),
-                  onPressed: () {
+                  onPressed: () async {
                     // Add your send functionality here
+                    var status = await ReiweService()
+                        .PostAllReviwes(widget.id, controller.text);
+                    if (status is successModel) {
+                      print("yes");
+                    } else {
+                      print("no");
+                    }
                   },
                 ),
             ],
