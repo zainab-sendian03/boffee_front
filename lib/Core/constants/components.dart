@@ -61,7 +61,7 @@ class CircleIndecaterSwitch extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     try {
-      return const CircularProgressIndicator();
+      return CircularProgressIndicator(color: dark_Brown);
     } catch (e) {
       //print(e.toString());
       return Lottie.network(

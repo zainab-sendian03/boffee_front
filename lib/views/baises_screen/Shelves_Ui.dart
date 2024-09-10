@@ -1,10 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:userboffee/Core/constants/colors.dart';
-import 'package:userboffee/views/baises_screen/reading.dart';
+import 'package:userboffee/views/baises_screen/shelves/readDone.dart';
+import 'package:userboffee/views/baises_screen/shelves/readLater.dart';
+import 'package:userboffee/views/baises_screen/shelves/reading.dart';
 
-class Shelves_UI extends StatelessWidget {
+class Shelves_UI extends StatefulWidget {
   const Shelves_UI({super.key});
 
+  @override
+  State<Shelves_UI> createState() => _Shelves_UIState();
+}
+
+class _Shelves_UIState extends State<Shelves_UI> {
   @override
   Widget build(BuildContext context) {
     Color buttomColor = const Color(0xff94745B);
@@ -18,7 +25,7 @@ class Shelves_UI extends StatelessWidget {
                 Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) => Reading(
+                        builder: (context) => const Reading(
                               status: 'reading',
                             )));
               },
@@ -41,7 +48,7 @@ class Shelves_UI extends StatelessWidget {
                           BlendMode.srcOver,
                         ),
                         image: const AssetImage(
-                          'asset/images/reading.png', // Replace with your image URL
+                          'asset/images/reading.png',
                         ),
                       ))),
             ),
@@ -57,7 +64,14 @@ class Shelves_UI extends StatelessWidget {
             height: 40,
           ),
           InkWell(
-            onTap: () {},
+            onTap: () {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => const ReadingDone(
+                            status: 'finished',
+                          )));
+            },
             child: Stack(
               children: [
                 Container(
@@ -96,7 +110,15 @@ class Shelves_UI extends StatelessWidget {
             height: 40,
           ),
           InkWell(
-            onTap: () {},
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) =>
+                      const ReadingLater(status: 'read_later'),
+                ),
+              );
+            },
             child: Stack(
               children: [
                 Container(

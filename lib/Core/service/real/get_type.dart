@@ -35,7 +35,7 @@ class ServiceImmpl extends BookService {
   Future<List<DetailModel>> getAllBook(String id) async {
     try {
       response = await dio.get('${BaseUrl}books/type/${id}',
-          options: Options(headers: getoptions2()));
+          options: Options(headers: getoptions()));
       print(response);
       if (response.statusCode == 200) {
         List<DetailModel> book_model = List.generate(

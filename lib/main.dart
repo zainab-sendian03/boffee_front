@@ -1,6 +1,5 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:easy_localization/easy_localization.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
@@ -17,9 +16,7 @@ import 'package:userboffee/views/firstpages/splash.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await EasyLocalization.ensureInitialized();
-  WidgetsFlutterBinding.ensureInitialized();
   tz.initializeTimeZones();
-  await Firebase.initializeApp();
   Setup();
   runApp(EasyLocalization(
       supportedLocales: const [Locale('en'), Locale('ar')],
@@ -43,25 +40,37 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   late FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;
+
   @override
   void initState() {
     super.initState();
-
     flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
 
     const AndroidInitializationSettings initializationSettingsAndroid =
-        AndroidInitializationSettings('@mipmap/ic_launcher');
+        AndroidInitializationSettings('@drawable/ic_notification');
+
     const InitializationSettings initializationSettings =
         InitializationSettings(android: initializationSettingsAndroid);
 
     flutterLocalNotificationsPlugin.initialize(initializationSettings);
-    // جدولة الإشعار اليومي
-    _scheduleDailyNotification();
-    requestPermissions();
+    requestPermissionsAndScheduleNotification();
+  }
+
+  Future<void> requestPermissionsAndScheduleNotification() async {
+    final bool permissionGranted = await flutterLocalNotificationsPlugin
+            .resolvePlatformSpecificImplementation<
+                AndroidFlutterLocalNotificationsPlugin>()
+            ?.requestPermission() ??
+        false;
+    print('Permission granted: $permissionGranted');
+
+    if (permissionGranted) {
+      await _scheduleDailyNotification();
+    }
   }
 
   Future<void> _scheduleDailyNotification() async {
-    final tz.TZDateTime scheduledDate = _nextInstanceOfTime(18, 28);
+    final tz.TZDateTime scheduledDate = _nextInstanceOfTime(11, 10);
     print('Scheduling notification for: $scheduledDate');
 
     const NotificationDetails platformChannelSpecifics = NotificationDetails(
@@ -69,21 +78,18 @@ class _MyAppState extends State<MyApp> {
         'daily_reading_channel',
         'Daily Reading',
         channelDescription: 'Reminder to read daily',
+        icon: "asset/images/logo.png",
         importance: Importance.max,
         priority: Priority.high,
       ),
     );
 
-    await flutterLocalNotificationsPlugin.zonedSchedule(
-      0,
-      'وقت القراءة اليومية',
-      'لا تنسَ قراءة كتابك اليومي!',
-      scheduledDate,
+    await flutterLocalNotificationsPlugin.periodicallyShow(
+      0, // Notification ID (use a unique ID for each notification if needed)
+      'Reminder',
+      'This is a notification sent every minute',
+      RepeatInterval.everyMinute, // Interval at which notifications repeat
       platformChannelSpecifics,
-      androidAllowWhileIdle: true,
-      uiLocalNotificationDateInterpretation:
-          UILocalNotificationDateInterpretation.wallClockTime,
-      matchDateTimeComponents: DateTimeComponents.time,
     );
   }
 
@@ -91,21 +97,11 @@ class _MyAppState extends State<MyApp> {
     final tz.TZDateTime now = tz.TZDateTime.now(tz.local);
     tz.TZDateTime scheduledDate =
         tz.TZDateTime(tz.local, now.year, now.month, now.day, hour, minute);
-    if (scheduledDate.isBefore(now)) {
-      scheduledDate = scheduledDate.add(const Duration(days: 1));
-    }
+    //     if (scheduledDate.isBefore(now)) {
+    //   scheduledDate = scheduledDate.add(const Duration(days: 1));
+    // }
     print('Scheduled time: $scheduledDate');
-
     return scheduledDate;
-  }
-
-  void requestPermissions() async {
-    final bool result = await flutterLocalNotificationsPlugin
-            .resolvePlatformSpecificImplementation<
-                AndroidFlutterLocalNotificationsPlugin>()
-            ?.requestPermission() ??
-        false;
-    print('Permission granted: $result');
   }
 
   @override

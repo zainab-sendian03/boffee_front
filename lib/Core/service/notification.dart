@@ -1,58 +1,48 @@
-import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:flutter/material.dart';
-import 'package:userboffee/core/constants/colors.dart';
+// import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+// import 'package:timezone/timezone.dart' as tz;
+// import 'package:timezone/data/latest.dart' as tz;
 
-class notification extends StatefulWidget {
-  const notification({super.key});
+// class NotificationService {
+//   final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+//       FlutterLocalNotificationsPlugin();
 
-  @override
-  State<notification> createState() => _notificationState();
-}
+//   Future<void> initialize() async {
+//     const AndroidInitializationSettings initializationSettingsAndroid =
+//         AndroidInitializationSettings('@mipmap/ic_launcher');
 
-class _notificationState extends State<notification> {
-  getToken() async {
-    String? mytoken = await FirebaseMessaging.instance.getToken();
-    print("------------------------------------------------------");
-    print("token: $mytoken");
-  }
+//     final InitializationSettings initializationSettings =
+//         InitializationSettings(
+//       android: initializationSettingsAndroid,
+//     );
 
-  MyRequestPermission() async {
-    FirebaseMessaging messaging = FirebaseMessaging.instance;
+//     await flutterLocalNotificationsPlugin.initialize(
+//       initializationSettings,
+//     );
 
-    NotificationSettings settings = await messaging.requestPermission(
-      alert: true,
-      announcement: false,
-      badge: true,
-      carPlay: false,
-      criticalAlert: false,
-      provisional: false,
-      sound: true,
-    );
+//     tz.initializeTimeZones();
+//   }
 
-    if (settings.authorizationStatus == AuthorizationStatus.authorized) {
-      print('User granted permission');
-    } else if (settings.authorizationStatus ==
-        AuthorizationStatus.provisional) {
-      print('User granted provisional permission');
-    } else {
-      print('User declined or has not accepted permission');
-    }
-  }
+//   Future<void> _scheduleMinuteNotification() async {
+//     const AndroidNotificationDetails androidPlatformChannelSpecifics =
+//         AndroidNotificationDetails(
+//       'minute_channel',
+//       'Minute Reminder',
+//       channelDescription: 'Reminder every minute',
+//       importance: Importance.max,
+//       priority: Priority.high,
+//       icon: "@mipmap/ic_launcher",
+//     );
 
-  @override
-  void initState() {
-    super.initState();
-    getToken();
-  }
+//     const NotificationDetails platformChannelSpecifics = NotificationDetails(
+//       android: androidPlatformChannelSpecifics,
+//     );
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text("Notification"),
-        backgroundColor: medium_Brown,
-      ),
-      body: Container(),
-    );
-  }
-}
+//     await flutterLocalNotificationsPlugin.periodicallyShow(
+//       0, // Notification ID (use a unique ID for each notification if needed)
+//       'Reminder',
+//       'This is a notification sent every minute',
+//       RepeatInterval.everyMinute, // Interval at which notifications repeat
+//       platformChannelSpecifics,
+//     );
+//   }
+// }

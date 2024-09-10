@@ -47,7 +47,7 @@ class Levels_UI extends StatelessWidget {
                             borderRadius:
                                 const BorderRadius.all(Radius.circular(10))),
                         child: Padding(
-                          padding: const EdgeInsets.all(4.0),
+                          padding: const EdgeInsets.all(20.0),
                           child: const Text(
                                   "you will level up as you read more and more books\n then your coffee beans will increase")
                               .tr(),

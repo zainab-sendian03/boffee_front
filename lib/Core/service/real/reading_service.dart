@@ -1,57 +1,99 @@
 import 'package:dio/dio.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:userboffee/Core/Models/reading_model.dart';
 import 'package:userboffee/Core/config/options.dart';
-import 'package:userboffee/feature/getbooks/ser_get_books.dart';
+import 'package:userboffee/Core/constants/linksapi.dart';
 
 abstract class ReadingService {
   Dio dio = Dio();
-
   String baseurl = "${BaseUrl}myShelf";
-
   late Response response;
-  Future<List<ReadingModel>> getAllBook(String key);
-  Future<ReadingModel> getOneBook();
-  createBook(ReadingModel);
-  DeleteBook(num id);
+
+  Future<List<ReadingModel>> getAllBook(String status);
+  Future<ReadingModel?> getOneBook(int id);
+  Future<void> createBook(ReadingModel book);
+  Future<void> deleteBook(num id);
 }
 
 class ServeShelf extends ReadingService {
   @override
-  DeleteBook(num id) {
-    // TODO: implement DeleteBook
-    throw UnimplementedError();
-  }
-
-  @override
-  createBook(ReadingModel) {
-    // TODO: implement createBook
-    throw UnimplementedError();
-  }
-
-  String token = "2|tsg3dDjTs2dtdSG38UXbqYiPmKw9jquPmn9V7fwX";
-
-  @override
-  Future<List<ReadingModel>> getAllBook(String key) async {
+  Future<List<ReadingModel>> getAllBook(String status) async {
     try {
-      response = await dio.post(baseurl,
-          data: {'status': 'reading'}, options: Options(headers: getoptions()));
-      if (response.statusCode == 200) {
-        List<ReadingModel> reading = List.generate(response.data.length,
-            (index) => ReadingModel.fromMap(response.data[index]));
-        print(response);
-        return reading;
+      response = await dio.post(
+        baseurl,
+        data: {'status': status},
+        options: Options(headers: getoptions2()),
+      );
+
+      print("Response data: ${response.data}");
+
+      if (response.statusCode == 200 && response.data != null) {
+        // Check if 'shelves' exists and is a list
+        if (response.data.containsKey('shelves') &&
+            response.data['shelves'] is List) {
+          List<dynamic> shelvesList = response.data['shelves'];
+
+          List<ReadingModel> reading = shelvesList.map((shelfItem) {
+            return ReadingModel.fromMap(shelfItem);
+          }).toList();
+
+          return reading;
+        } else {
+          print("Response format is unexpected or 'shelves' key is missing.");
+          return [];
+        }
       } else {
+        print("Failed to fetch books: ${response.statusMessage}");
         return [];
       }
-    } on DioException catch (e) {
-      print(e);
+    } on DioError catch (e) {
+      print("Error fetching books: $e");
       return [];
     }
   }
 
+  Future<void> updateBookStatus(int id, String newStatus) async {
+    try {
+      response = await dio.put(
+        "$baseurl/$id",
+        data: {'status': newStatus},
+        options: Options(headers: getoptions2()),
+      );
+
+      if (response.statusCode == 200) {
+        print("Book status updated successfully");
+      } else {
+        print("Failed to update book status: ${response.statusMessage}");
+      }
+    } on DioError catch (e) {
+      print("Error updating book status: $e");
+    }
+  }
+
   @override
-  Future<ReadingModel> getOneBook() {
+  Future<void> deleteBook(num id) async {
+    try {
+      response = await dio.delete(
+        "$baseurl/$id",
+        options: Options(headers: getoptions2()),
+      );
+      if (response.statusCode == 200) {
+        print("Book deleted successfully");
+      } else {
+        print("Failed to delete book: ${response.statusMessage}");
+      }
+    } on DioError catch (e) {
+      print("Error deleting book: $e");
+    }
+  }
+
+  @override
+  Future<void> createBook(ReadingModel book) {
+    // TODO: implement createBook
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<ReadingModel?> getOneBook(int id) {
     // TODO: implement getOneBook
     throw UnimplementedError();
   }

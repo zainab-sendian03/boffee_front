@@ -5,6 +5,7 @@ import 'package:share_plus/share_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:userboffee/Core/Models/basic_model.dart';
 import 'package:userboffee/Core/config/options.dart';
+import 'package:userboffee/Core/constants/colors.dart';
 import 'package:userboffee/Core/constants/components.dart';
 import 'package:userboffee/Core/service/real/qutes_ser.dart';
 import 'package:userboffee/feature/getpost/bloc/getpost_bloc.dart';
@@ -87,7 +88,7 @@ class QuetsPage extends StatelessWidget {
                                         child: IconButton(
                                           onPressed: () async {
                                             const urlPreview =
-                                                "https://www.youtube.com/watch?v=CNUBhb_cM6E";
+                                                "https://boffee10.serv00.net/books/cover_images/book112.jpg";
                                             await Share.share(
                                                 "Boofee App\nحمل تطبيق بوفي الان وشاركنا اقتباس أحببته\n( ${state.posts[index].body})\n$urlPreview");
                                           },
@@ -156,10 +157,10 @@ class QuetsPage extends StatelessWidget {
             );
           } else if (state is ErorrGetpost_state) {
             print("Error in else if");
-            return const Center(child: CircularProgressIndicator());
+            return Center(child: CircularProgressIndicator(color: dark_Brown));
           } else {
             print("Excep in else ");
-            return const Center(child: CircularProgressIndicator());
+            return Center(child: CircularProgressIndicator(color: dark_Brown));
           }
         },
       );

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:userboffee/Core/Models/reading_model.dart';
+import 'package:userboffee/Core/constants/colors.dart';
 import 'package:userboffee/Core/service/real/reading_service.dart';
 
 class Reading extends StatelessWidget {
@@ -9,7 +10,10 @@ class Reading extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(),
+      appBar: AppBar(
+        title: Text("Reading"),
+        backgroundColor: Light_Brown,
+      ),
       body: FutureBuilder(
           future: ServeShelf().getAllBook(key.toString()),
           builder: (context, snapshot) {
@@ -38,7 +42,8 @@ class Reading extends StatelessWidget {
                         child: Text(status[index].status));
                   });
             } else {
-              return const Center(child: CircularProgressIndicator());
+              return Center(
+                  child: CircularProgressIndicator(color: dark_Brown));
             }
           }),
     );

@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:userboffee/Core/Models/favourite_model.dart';
+import 'package:userboffee/Core/config/options.dart';
 import 'package:userboffee/Core/constants/linksapi.dart';
 
 abstract class Favourite {
@@ -28,7 +29,8 @@ class FavouriteService extends Favourite {
   @override
   Future<List<FavouriteMODEL>> getAllFavouritebooks() async {
     try {
-      response = await dio.get(baseurl);
+      response =
+          await dio.get(baseurl, options: Options(headers: getoptions2()));
       print("Response Data: ${response.data}");
 
       if (response.statusCode == 200 && response.data['data'] != null) {

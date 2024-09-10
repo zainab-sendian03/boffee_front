@@ -5,7 +5,6 @@ import 'package:animated_snack_bar/animated_snack_bar.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
-import 'package:retry/retry.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
 import 'package:http/http.dart' as http;
@@ -37,7 +36,7 @@ class _PDFviewerState extends State<PDFviewer> {
   int indexPage = 0;
   int selectedColor = 1;
   double ratingValue = 0;
-  String? shelfId;
+  int? shelfId;
   int? userId;
   bool hasReachedLastPage = false;
   final Crud crud = Crud();
@@ -53,8 +52,7 @@ class _PDFviewerState extends State<PDFviewer> {
     }
     await Future.wait([
       _loadLastPage(),
-      _loadPDF(),
-    ]);
+    ]).timeout(const Duration(seconds: 30));
   }
 
   Future<void> _checkAndClearForNewUser() async {
@@ -98,9 +96,10 @@ class _PDFviewerState extends State<PDFviewer> {
       var response = await http
           .get(
             Uri.parse(link_userDetails),
-            headers: getoptions(),
+            headers: getoptions2(),
           )
-          .timeout(const Duration(seconds: 30));
+          .timeout(const Duration(seconds: 40));
+
       print("Server response: ${response.body}");
 
       if (response.statusCode == 200) {
@@ -205,7 +204,6 @@ class _PDFviewerState extends State<PDFviewer> {
 
   Future<void> fetchShelfId() async {
     // ignore: unused_local_variable
-    const r = RetryOptions(maxAttempts: 3);
     try {
       final bookId = widget.detail_File.file!.id;
 
@@ -214,9 +212,7 @@ class _PDFviewerState extends State<PDFviewer> {
             Uri.parse("$link_enough/$bookId"),
             headers: getoptions(),
           )
-          .timeout(
-            const Duration(seconds: 30),
-          );
+          .timeout(const Duration(seconds: 40));
       print("Server response: ${response.body}");
       print("bookID:$bookId");
 
@@ -225,7 +221,7 @@ class _PDFviewerState extends State<PDFviewer> {
         if (responseBody is Map<String, dynamic> &&
             responseBody['success'] == true) {
           setState(() {
-            shelfId = responseBody['data']['Shelf_id'].toString();
+            shelfId = responseBody['data']['Shelf_id'];
             print("self_id: $shelfId");
           });
         } else {
@@ -235,25 +231,16 @@ class _PDFviewerState extends State<PDFviewer> {
         print('Failed to fetch User Details');
       }
     } catch (e) {
-      // ignore: unused_label
-      retryIf:
-      (e) => e is SocketException || e is TimeoutException;
-      print(e);
       print('An error occurred');
     }
   }
 
-  update_progress() async {
+  update_progress(int shelfid) async {
     try {
-      // ignore: unused_local_variable
-      const r = RetryOptions(maxAttempts: 3);
-      if (shelfId == null) {
-        print("Shelf ID is null. Cannot update progress.");
-        return;
-      }
-      final url = "$link_progress/$shelfId";
+      String shleve = shelfId.toString();
+      final url = "$link_progress/$shleve";
 
-      print("-------------------------Shelf ID: $shelfId");
+      print("-------------------------Shelf ID: $shleve");
       int index = indexPage + 1;
       Map<String, dynamic> body = {
         "progress": index,
@@ -279,7 +266,6 @@ class _PDFviewerState extends State<PDFviewer> {
       }
     } catch (e) {
       // ignore: unused_label
-      retryIf:
       print("ERROR: $e");
 
       if (e is HttpException) {
@@ -289,22 +275,6 @@ class _PDFviewerState extends State<PDFviewer> {
       } else {
         print("Unknown error: $e");
       }
-    }
-  }
-
-  Future<void> _loadPDF() async {
-    const r = RetryOptions(maxAttempts: 3);
-    try {
-      final pdfUrl = Uri.parse(
-          "http://$ip_Zainab:8000/${Uri.encodeComponent(widget.detail_File.file!.file)}");
-
-      await r.retry(
-        () => http.get(pdfUrl).timeout(const Duration(seconds: 30)),
-        retryIf: (e) => e is SocketException || e is TimeoutException,
-      );
-    } catch (e) {
-      print("Failed to load PDF: $e");
-      throw Exception("Failed to load PDF");
     }
   }
 
@@ -571,7 +541,7 @@ class _PDFviewerState extends State<PDFviewer> {
                                 child: ElevatedButton(
                                   onPressed: () async {
                                     if (indexPage > 0) {
-                                      await update_progress();
+                                      await update_progress(shelfId!);
                                       setState(() {
                                         indexPage--;
                                         _pdfViewerController
@@ -610,7 +580,7 @@ class _PDFviewerState extends State<PDFviewer> {
                                         _savePageIndex(indexPage);
                                         print("$indexPage");
                                       });
-                                      await update_progress();
+                                      await update_progress(shelfId!);
                                     } else {
                                       if (!hasReachedLastPage) {
                                         setState(() {
@@ -679,7 +649,7 @@ class _PDFviewerState extends State<PDFviewer> {
                                           .jumpToPage(indexPage);
                                       _savePageIndex(indexPage);
                                     });
-                                    await update_progress();
+                                    await update_progress(shelfId!);
                                   },
                                 ),
                               ),

@@ -143,7 +143,8 @@ class _BookUiState extends State<BookUi> {
                         ),
                       );
                     } else {
-                      return const Center(child: CircularProgressIndicator());
+                      return Center(
+                          child: CircularProgressIndicator(color: dark_Brown));
                     }
                   },
                 ),
@@ -189,8 +190,6 @@ class _BookUiState extends State<BookUi> {
                           ).tr(),
                         ),
                       ),
-
-                      // indicatorSize: TabBarIndicatorSize.tab,
                     )),
                 ValueListenableBuilder(
                     valueListenable: indexOfType,
@@ -346,7 +345,13 @@ class _BookUiState extends State<BookUi> {
                                   ),
                                 ));
                               } else {
-                                return const CircularProgressIndicator();
+                                return Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    CircularProgressIndicator(
+                                        color: dark_Brown),
+                                  ],
+                                );
                               }
                             }),
                       );
@@ -354,8 +359,8 @@ class _BookUiState extends State<BookUi> {
               ]),
             );
           } else {
-            return const Center(
-              child: CircularProgressIndicator(),
+            return Center(
+              child: CircularProgressIndicator(color: dark_Brown),
             );
           }
         });

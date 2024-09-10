@@ -236,6 +236,7 @@ class _signupState extends State<signup> {
                               if (value == true) {
                                 ar = true;
                                 en = false;
+                                context.setLocale(Locale("ar"));
                               }
                             });
                           },
@@ -255,6 +256,7 @@ class _signupState extends State<signup> {
                               if (value == true) {
                                 en = true;
                                 ar = false;
+                                context.setLocale(Locale("en"));
                               }
                             });
                           },

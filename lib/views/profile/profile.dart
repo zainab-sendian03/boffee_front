@@ -5,6 +5,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:http/http.dart' as http;
+import 'package:userboffee/Core/Models/d_withFile.dart';
 import 'package:userboffee/Core/Models/favourite_model.dart';
 import 'package:userboffee/Core/Models/note_model.dart';
 import 'package:userboffee/Core/config/options.dart';
@@ -15,6 +16,7 @@ import 'package:userboffee/Core/provider/Note_provider.dart';
 import 'package:userboffee/Core/provider/Theme_provider.dart';
 import 'package:userboffee/Core/service/real/Favourite_service.dart';
 import 'package:userboffee/Core/service/real/crud.dart';
+import 'package:userboffee/views/baises_screen/Details.dart';
 import 'package:userboffee/views/profile/my_post.dart';
 import 'package:userboffee/views/profile/myfavpost.dart';
 
@@ -208,8 +210,12 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
                   future: _user,
                   builder: (context, snapshot) {
                     if (snapshot.connectionState == ConnectionState.waiting) {
-                      return Center(
-                          child: CircularProgressIndicator(color: dark_Brown));
+                      return Padding(
+                        padding: const EdgeInsets.only(left: 160),
+                        child: Center(
+                            child:
+                                CircularProgressIndicator(color: dark_Brown)),
+                      );
                     } else if (snapshot.hasError) {
                       return Center(child: Text('Error: ${snapshot.error}'));
                     } else if (snapshot.hasData &&
@@ -360,7 +366,7 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
               children: [
                 myPostUi(), // "My quotes"
                 myfavPostUI(), // "Favourite quotes"
-                buildFavouriteTab(), //  "Favourite book"
+                buildFavouriteTab(), // "Favourite book"
                 buildNotesTab(), // "My notes"
               ],
             ),
@@ -378,52 +384,113 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
             List<FavouriteMODEL> fav = snapshot.data as List<FavouriteMODEL>;
             return GridView.builder(
               gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 1, mainAxisSpacing: 8, crossAxisSpacing: 8),
+                  crossAxisCount: 2, mainAxisSpacing: 8, crossAxisSpacing: 2),
               itemCount: fav.length,
               itemBuilder: (context, index) => Padding(
-                padding: const EdgeInsets.only(left: 30, right: 30, top: 30),
+                padding: const EdgeInsets.only(top: 8, left: 8, right: 8),
                 child: Stack(
                   children: [
                     Container(
+                      width: 200,
+                      height: 200,
                       decoration: BoxDecoration(
-                        color: Colors.white,
                         borderRadius: BorderRadius.circular(10),
-                        boxShadow: const [
+                        color: white,
+                        border: Border.all(
+                          color: medium_Brown,
+                        ),
+                        boxShadow: [
                           BoxShadow(
-                            color: Colors.brown,
-                            offset: Offset(0, 5),
+                            color: Light_Brown,
+                            offset: const Offset(0, 1),
                             blurRadius: 10,
                           )
                         ],
                       ),
-                      height: 100,
-                      width: 20,
                       child: Padding(
-                        padding: const EdgeInsets.only(left: 15, top: 35),
+                        padding: const EdgeInsets.only(right: 5),
                         child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              fav[index].title.toString(),
-                              style: const TextStyle(
-                                  fontSize: 24.0, fontWeight: FontWeight.bold),
-                            ),
-                            const SizedBox(height: 10.0),
-                            Text(
-                              fav[index].author_name.toString(),
-                              style: const TextStyle(
-                                  fontSize: 24.0, fontWeight: FontWeight.bold),
-                            ),
-                          ],
-                        ),
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.only(top: 105),
+                                child: Text(
+                                  fav[index].title.toString(),
+                                  style: TextStyle(
+                                      fontSize: 14, color: dark_Brown),
+                                  overflow: TextOverflow.ellipsis,
+                                ).tr(),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.only(
+                                  left: 45,
+                                ),
+                                child: Text(
+                                  fav[index].author_name.toString(),
+                                  style: TextStyle(
+                                      fontSize: 15, color: medium_Brown),
+                                  overflow: TextOverflow.ellipsis,
+                                ).tr(),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.only(left: 40),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Text(
+                                      "${"coffee beans:".tr()} ${fav[index].points}",
+                                      style: TextStyle(
+                                          fontSize: 14, color: medium_Brown),
+                                    ),
+                                    const SizedBox(
+                                      width: 5,
+                                    ),
+                                    Image.asset(
+                                      "asset/images/coin.png",
+                                      scale: 5,
+                                    ),
+                                    const SizedBox(width: 4.0),
+                                  ],
+                                ),
+                              ),
+                            ]),
                       ),
                     ),
+                    Padding(
+                      padding:
+                          const EdgeInsets.only(top: 6, left: 10, right: 10),
+                      child: InkWell(
+                        onTap: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => BookDetailsPage(
+                                  detail_File: Detail_withFile(file: null),
+                                ),
+                              ));
+                        },
+                        child: Container(
+                          height: 103,
+                          width: 170,
+                          decoration: BoxDecoration(
+                            image: DecorationImage(
+                                image: NetworkImage(
+                                  "$linkservername${fav[index].cover}",
+                                ),
+                                fit: BoxFit.fill),
+                            borderRadius: BorderRadius.circular(10),
+                            color: Light_Brown,
+                          ),
+                        ),
+                      ),
+                    )
                   ],
                 ),
               ),
             );
           } else {
-            return const Center(child: CircularProgressIndicator());
+            return Center(child: CircularProgressIndicator(color: dark_Brown));
           }
         });
   }

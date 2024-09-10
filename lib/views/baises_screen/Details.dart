@@ -10,6 +10,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:userboffee/Core.dart';
 import 'package:userboffee/Core/Models/basic_model.dart';
 import 'package:userboffee/Core/Models/d_withFile.dart';
+import 'package:userboffee/Core/Models/reading_model.dart';
 import 'package:userboffee/Core/Models/reviwe.dart';
 import 'package:userboffee/Core/config/options.dart';
 import 'package:userboffee/Core/constants/colors.dart';
@@ -17,6 +18,8 @@ import 'package:userboffee/Core/constants/linksapi.dart';
 import 'package:userboffee/Core/provider/Theme_provider.dart';
 import 'package:userboffee/Core/service/real/crud.dart';
 import 'package:userboffee/Core/service/real/getallrevuwe.dart';
+import 'package:userboffee/Core/service/real/reading_service.dart';
+import 'package:userboffee/Core/service/real/readinglater.dart';
 import 'package:userboffee/Core/service/reporrt.dart';
 import 'package:userboffee/views/profile/AddComment.dart';
 import 'package:userboffee/views/PDFviewer.dart';
@@ -37,7 +40,6 @@ class _BookDetailsPageState extends State<BookDetailsPage>
   bool isFirstTime = true;
   int MyPoints = 0;
   bool isReviwe = true;
-
   Future<dynamic> alert_report(
       BuildContext context, TextEditingController noteCont) {
     return showDialog(
@@ -70,8 +72,8 @@ class _BookDetailsPageState extends State<BookDetailsPage>
                   if (resultModel is successModel) {
                     Navigator.pop(context);
                   } else {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text("Please enter new report")));
+                    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                        content: Text("Please enter new report")));
                   }
                   ElevatedButton.styleFrom(
                     backgroundColor: medium_Brown,
@@ -98,8 +100,7 @@ class _BookDetailsPageState extends State<BookDetailsPage>
         });
   }
 
-  bool isFav = true;
-  int bookId = 0;
+  bool isFav = false;
 
   final Crud _crud = Crud();
   Future<void> get_AVG_rating() async {
@@ -174,6 +175,7 @@ class _BookDetailsPageState extends State<BookDetailsPage>
     super.initState();
     get_AVG_rating();
     fetchPoints();
+    _initializePreferences();
   }
 
   Future<void> checkFirstTime() async {
@@ -184,6 +186,14 @@ class _BookDetailsPageState extends State<BookDetailsPage>
           AnimatedSnackBarType.success);
       await prefs.setBool('isFirstTime', false);
     }
+  }
+
+  Future<void> _initializePreferences() async {
+    pref = await SharedPreferences.getInstance();
+    setState(() {
+      // Load the saved favorite status
+      isFav = pref.getBool('isFav_${widget.detail_File.file!.id}') ?? false;
+    });
   }
 
   @override
@@ -199,42 +209,48 @@ class _BookDetailsPageState extends State<BookDetailsPage>
         ),
         actions: [
           IconButton(
-            color: white,
-            icon: Icon(
-              Icons.favorite_outline,
-              // color: isFav ? Colors.red :Colors.white ,
-            ),
-            onPressed: () async {
-              var headers = getoptions();
-              if (isFav) {
-                try {
-                  await Dio().post("http://$ip_Zainab:8000/api/add/3",
-                      options: Options(headers: headers));
-
-                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                    content: Text("Success"),
-                    backgroundColor: Colors.green,
-                  ));
-                } catch (e) {
-                  ScaffoldMessenger.of(context)
-                      .showSnackBar(SnackBar(content: Text("Failed")));
+              color: white,
+              icon: Icon(
+                isFav ? Icons.favorite : Icons.favorite_border,
+                color: isFav ? const Color.fromARGB(255, 160, 14, 3) : white,
+              ),
+              onPressed: () async {
+                if (!isFav) {
+                  try {
+                    await Dio().post(
+                      "http://$ip_Zainab:8000/api/add/${widget.detail_File.file!.id}",
+                      options: Options(headers: getoptions2()),
+                    );
+                    setState(() {
+                      isFav = true;
+                    });
+                    _showSnackBar("The book has been added to your profile",
+                        AnimatedSnackBarType.success);
+                  } catch (e) {
+                    print('Error adding to favorites: $e');
+                    ScaffoldMessenger.of(context)
+                        .showSnackBar(const SnackBar(content: Text("Failed")));
+                  }
+                } else {
+                  try {
+                    await Dio().delete(
+                      "http://$ip_Zainab:8000/api/remove/${widget.detail_File.file!.id}",
+                      options: Options(headers: getoptions2()),
+                    );
+                    setState(() {
+                      isFav = false;
+                    });
+                    _showSnackBar("The book has been removed from your profile",
+                        AnimatedSnackBarType.info);
+                  } catch (e) {
+                    print('Error removing from favorites: $e');
+                    ScaffoldMessenger.of(context)
+                        .showSnackBar(const SnackBar(content: Text("Failed")));
+                  }
                 }
-              } else {
-                try {
-                  await Dio().post("http://$ip_Zainab:8000/api/remove/3",
-                      options: Options(headers: headers));
-
-                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                    content: Text("Success"),
-                    backgroundColor: Colors.green,
-                  ));
-                } catch (e) {
-                  ScaffoldMessenger.of(context)
-                      .showSnackBar(SnackBar(content: Text("Failed")));
-                }
-              }
-            },
-          ),
+                ;
+                pref.setBool('isFav_${widget.detail_File.file!.id}', isFav);
+              }),
         ],
         leading: IconButton(
           icon: Icon(
@@ -374,7 +390,7 @@ class _BookDetailsPageState extends State<BookDetailsPage>
                                         MaterialStateProperty.all<Color>(
                                             Colors.brown),
                                   ),
-                                  onPressed: () {
+                                  onPressed: () async {
                                     int bookPonits =
                                         widget.detail_File.file!.points;
                                     if (bookPonits <= MyPoints) {
@@ -385,11 +401,22 @@ class _BookDetailsPageState extends State<BookDetailsPage>
                                           ),
                                         ),
                                       );
-                                      print(
-                                          "path:${widget.detail_File.file!.file}");
-                                      _showSnackBar(
-                                          "${"The book has been added to Reading shelf and".tr()} $bookPonits${"coffee beans were extracted".tr()}",
-                                          AnimatedSnackBarType.success);
+
+                                      bool added = await ReadLaterService()
+                                          .addToReadLater(
+                                        widget.detail_File.file!.id,
+                                      );
+                                      if (added) {
+                                        _showSnackBar(
+                                            "${"The book has been added to Reading shelf and".tr()} $bookPonits${"coffee beans were extracted".tr()}",
+                                            AnimatedSnackBarType.success);
+                                      } else {
+                                        _showSnackBar(
+                                          "Failed to add the book to Read Later shelf"
+                                              .tr(),
+                                          AnimatedSnackBarType.error,
+                                        );
+                                      }
                                     } else {
                                       _showSnackBar(
                                           "You don't have enough coffee beans to open this book.\nEarn more beans by reading more books and then try again"
@@ -424,7 +451,27 @@ class _BookDetailsPageState extends State<BookDetailsPage>
                                     side: MaterialStateProperty.all(
                                         const BorderSide(color: Colors.brown)),
                                   ),
-                                  onPressed: () {},
+                                  onPressed: () async {
+                                    bool added =
+                                        await ReadLaterService().addToReadLater(
+                                      widget.detail_File.file!.id,
+                                    );
+                                    print("bookid issss:" +
+                                        widget.detail_File.file!.id.toString());
+                                    if (added) {
+                                      _showSnackBar(
+                                        "The book has been added to Read Later shelf"
+                                            .tr(),
+                                        AnimatedSnackBarType.success,
+                                      );
+                                    } else {
+                                      _showSnackBar(
+                                        "Failed to add the book to Read Later shelf"
+                                            .tr(),
+                                        AnimatedSnackBarType.error,
+                                      );
+                                    }
+                                  },
                                   child: Text(
                                     'Read Later',
                                     style: TextStyle(
@@ -466,8 +513,7 @@ class _BookDetailsPageState extends State<BookDetailsPage>
                               itemCount: comment.length,
                               itemBuilder: (context, int index) {
                                 return (index + 1 != comment.length)
-                                    ? Expanded(
-                                        child: Padding(
+                                    ? Padding(
                                         padding: const EdgeInsets.only(
                                             left: 30, right: 30, top: 30),
                                         child: Container(
@@ -485,28 +531,32 @@ class _BookDetailsPageState extends State<BookDetailsPage>
                                               ]),
                                           height: 140,
                                           width: 20,
-                                          child: Column(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.start,
-                                            children: [
-                                              Text(
-                                                comment[index].body,
-                                                style: const TextStyle(
+                                          child: Padding(
+                                            padding: const EdgeInsets.all(12.0),
+                                            child: Column(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.start,
+                                              children: [
+                                                Text(
+                                                  comment[index].body,
+                                                  style: const TextStyle(
                                                     fontSize: 20,
-                                                    fontWeight:
-                                                        FontWeight.bold),
-                                              ),
-                                            ],
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
                                           ),
                                         ),
-                                      ))
-                                    : AddComment(id: bookId);
+                                      )
+                                    : AddComment(
+                                        id: widget.detail_File.file!.id);
                               },
                             );
-                            print('yeeeesss');
                           } else {
                             print('nooo');
-                            return Center(child: CircularProgressIndicator());
+                            return Center(
+                                child: CircularProgressIndicator(
+                                    color: dark_Brown));
                           }
                         }),
                   ],
